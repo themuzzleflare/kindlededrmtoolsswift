@@ -1,6 +1,6 @@
 //
-//  File.swift
-//  
+//  MobiBookError.swift
+//
 //
 //  Created by Paul Tavitian on 6/9/2024.
 //
@@ -9,7 +9,7 @@ import Foundation
 
 enum MobiBookError {
   case urlCreationFiled
-  case invalidFileFormat
+  case invalidFileFormat(data: Data)
 }
 
 extension MobiBookError: LocalizedError {
@@ -17,8 +17,8 @@ extension MobiBookError: LocalizedError {
     switch self {
     case .urlCreationFiled:
       return "Failed to create URL representing input file path."
-    case .invalidFileFormat:
-      return "Invalid File Format"
+    case let .invalidFileFormat(data):
+      return "Invalid File Format: \(Util.formatData(data: data))"
     }
   }
 }

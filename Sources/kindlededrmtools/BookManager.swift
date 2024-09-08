@@ -1,6 +1,6 @@
 //
-//  File.swift
-//  
+//  BookManager.swift
+//
 //
 //  Created by Paul Tavitian on 6/9/2024.
 //

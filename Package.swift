@@ -16,7 +16,7 @@ let package = Package(
     .package(url: "https://github.com/apple/swift-algorithms", from: "1.2.0"),
     .package(
       url: "https://github.com/apple/swift-collections.git",
-      .upToNextMinor(from: "1.1.0") // or `.upToNextMajor
+      .upToNextMinor(from: "1.1.0")
     )
   ],
   targets: [

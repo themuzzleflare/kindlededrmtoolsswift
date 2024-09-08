@@ -1,6 +1,6 @@
 //
-//  File.swift
-//  
+//  PukallCipher.swift
+//
 //
 //  Created by Paul Tavitian on 6/9/2024.
 //
@@ -13,8 +13,8 @@ final class PukallCipher {
   public static func pc1(key: Data, src: Data, decryption: Bool = true) throws -> Data {
     try validateKeyLength(key: key)
     
-    var wkey: Data = initialiseWKey(key: key)
-    var dst: Data = .init(capacity: src.count)
+    var wkey: [UInt16] = initialiseWKey(key: key)
+    var dst: Data = .init(count: src.count)
     
     processSourceArray(src: src, decryption: decryption, wkey: &wkey, dst: &dst)
     
@@ -27,47 +27,49 @@ final class PukallCipher {
     }
   }
   
-  private static func initialiseWKey(key: Data) -> Data {
-    var wkey: Data = .init(capacity: 8)
+  private static func initialiseWKey(key: Data) -> [UInt16] {
+    var wkey: [UInt16] = .init()
     
-    for i in (0..<8) {
-      wkey[i] = key[i * 2] << 8 | key[i * 2 + 1]
+    for i in 0..<8 {
+      let high = UInt16(key[i * 2]) << 8
+      let low = UInt16(key[i * 2 + 1])
+      wkey.append(high | low)
     }
     
     return wkey
   }
   
-  private static func processSourceArray(src: Data, decryption: Bool, wkey: inout Data, dst: inout Data) {
-    var sum1 = 0
-    var sum2 = 0
-    var keyXorVal = 0
+  private static func processSourceArray(src: Data, decryption: Bool, wkey: inout [UInt16], dst: inout Data) {
+    var sum1: UInt16 = 0
+    var sum2: UInt16 = 0
+    var keyXorVal: UInt16 = 0
     
-    for i in (0..<src.count) {
-      var temp1 = 0
-      var byteXorVal = 0
+    for i in 0..<src.count {
+      var temp1: UInt16 = 0
+      var byteXorVal: UInt16 = 0
       
-      for j in (0..<8) {
+      for j in 0..<8 {
         temp1 ^= wkey[j]
-        sum2 = (sum2 + j) * 20021 + sum1
+        sum2 = UInt16((UInt32(sum2) + UInt32(j)) * 20021 + UInt32(sum1)) & 0xFFFF
         sum1 = (temp1 * 346) & 0xFFFF
         sum2 = (sum2 + sum1) & 0xFFFF
         temp1 = (temp1 * 20021 + 1) & 0xFFFF
         byteXorVal ^= temp1 ^ sum2
       }
       
-      var curByte = src[i]
+      var curByte: UInt8 = src[i]
       
       if !decryption {
-        keyXorVal = curByte * 257
+        keyXorVal = UInt16(curByte) * 257
       }
       
-      curByte = ((curByte ^ (byteXorVal >> 8)) ^ byteXorVal) & 0xFF
+      curByte = UInt8(((UInt16(curByte) ^ (byteXorVal >> 8)) ^ byteXorVal) & 0xFF)
       
       if decryption {
-        keyXorVal = curByte * 257
+        keyXorVal = UInt16(curByte) * 257
       }
       
-      for j in (0..<8) {
+      for j in 0..<8 {
         wkey[j] ^= keyXorVal
       }
       
