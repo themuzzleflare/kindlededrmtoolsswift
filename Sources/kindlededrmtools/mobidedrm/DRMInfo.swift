@@ -8,12 +8,12 @@
 import Foundation
 
 struct DRMInfo {
-  let key: Data
-  let pid: String
+    let key: Data
+    let pid: String
 }
 
 extension DRMInfo: CustomStringConvertible {
-  var description: String {
-    return "(key: \(Util.formatData(data: key)), pid: \(pid))"
-  }
+    var description: String {
+        return "(key: \(Util.formatData(data: key)), pid: \(pid))"
+    }
 }

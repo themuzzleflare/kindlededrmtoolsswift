@@ -8,15 +8,15 @@
 import Foundation
 
 struct BookSection {
-  let offset: Int
-  let flags: Int
-  let val: Int
+    let offset: Int
+    let flags: Int
+    let val: Int
 }
 
 extension BookSection: CustomStringConvertible {
-  var description: String {
-    return "(offset: \(offset.description), flags: \(flags.description), val: \(val.description))"
-  }
+    var description: String {
+        return "(offset: \(offset.description), flags: \(flags.description), val: \(val.description))"
+    }
 }
 
 //extension Array where Element == BookSection {

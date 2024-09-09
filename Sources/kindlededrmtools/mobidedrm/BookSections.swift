@@ -10,9 +10,9 @@ import Foundation
 typealias BookSections = Array<BookSection>
 
 extension BookSections {
-  var description: String {
-    return self.map { section in
-      return section.description
-    }.joined(separator: ",\n")
-  }
+    var description: String {
+        return self.map { section in
+            return section.description
+        }.joined(separator: ",\n")
+    }
 }

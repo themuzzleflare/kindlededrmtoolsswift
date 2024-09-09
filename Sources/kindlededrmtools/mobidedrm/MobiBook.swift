@@ -9,339 +9,546 @@ import Foundation
 import Collections
 
 public final class MobiBook {
-  private static let version: String = "3.0.0"
-  private static let bookmobiBytes: Data = "BOOKMOBI".data(using: .ascii)!
-  private static let textreadBytes: Data = "TEXtREAd".data(using: .ascii)!
-  private static let exthBytes = "EXTH".data(using: .ascii)!
-  
-  private var dataFile: Data
-  private var header: Data
-  private var magic: Data
-  private var numSections: Int = 0
-  private var sections: BookSections = .init()
-  private var metaArray: MetaDictionary = .init()
-  private var sect: Data = .init()
-  private var records: Int = 0
-  private var compression: Int = -1
-  private var mobiData: Data = .init()
-  private var cryptoType: Int = -1
-  private var printReplica: Bool = false
-  private var extraDataFlags: Int = 0
-  private var mobiLength: Int = 0
-  private var mobiCodepage: Int = 1252
-  private var mobiVersion: Int = -1
-  
-  public init(infile: String) throws {
-    print("MobiDeDrm v\(MobiBook.version.description).")
-    print("Removes protection from Kindle/Mobipocket, Kindle/KF8 and Kindle/Print Replica eBooks.")
+    private static let version: String = "3.0.0"
+    private static let bookmobiBytes: Data = "BOOKMOBI".data(using: .ascii)!
+    private static let textreadBytes: Data = "TEXtREAd".data(using: .ascii)!
+    private static let exthBytes: Data = "EXTH".data(using: .ascii)!
+    private static let letters: Data = "ABCDEFGHIJKLMNPQRSTUVWXYZ123456789".data(using: .ascii)!
+    private static let mopBytes: Data = "%MOP".data(using: .ascii)!
     
-    let url = URL(fileURLWithPath: infile)
+    private var dataFile: Data
+    private var header: Data
+    private var magic: Data
+    private var numSections: Int = 0
+    private var sections: BookSections = .init()
+    private var metaArray: MetaDictionary = .init()
+    private var sect: Data = .init()
+    private var records: Int = 0
+    private var compression: Int = -1
+    internal var mobiData: Data = .init()
+    private var cryptoType: Int = -1
+    private var printReplica: Bool = false
+    private var extraDataFlags: Int = 0
+    private var mobiLength: Int = 0
+    private var mobiCodepage: Int = 1252
+    private var mobiVersion: Int = -1
     
-    dataFile = try Data(contentsOf: url)
-    
-    header = dataFile[0..<78]
-    
-    print("header: \(Util.formatData(data: header))")
-    
-    magic = header[0x3C..<0x3C + 8]
-    
-    print("magic: \(Util.formatData(data: magic))")
-    
-    if magic != MobiBook.bookmobiBytes && magic != MobiBook.textreadBytes {
-      throw MobiBookError.invalidFileFormat(data: magic)
-    }
-    
-    numSections = Int(header[76..<78].withUnsafeBytes { $0.load(as: UInt16.self).bigEndian })
-    
-    print("numSections: \(numSections.description)")
-    
-    for i in 0..<numSections {
-      // Calculate the range for each section
-      let startIndex = 78 + i * 8
-      let range = startIndex..<startIndex + 8
-      
-      // Extract the 8-byte slice from Data
-      let sectionData = dataFile.subdata(in: range)
-      
-      // Read values from the data slice
-      let offset = Int(sectionData.withUnsafeBytes { $0.load(as: UInt32.self).bigEndian })
-      
-      let a1 = sectionData[4]
-      let a2 = sectionData[5]
-      let a3 = sectionData[6]
-      let a4 = sectionData[7]
-      
-      // Calculate flags and val
-      let flags = a1
-      let val = Int(a2) << 16 | Int(a3) << 8 | Int(a4)
-      
-      // Create BookSection and add to the array
-      let bookSection = BookSection(offset: offset, flags: Int(flags), val: Int(val))
-      
-      sections.append(bookSection)
-    }
-    
-    print("sections: \(sections.description)")
-    
-    sect = loadSection(section: 0)
-    
-    print("sect: \(Util.formatData(data: sect))")
-    
-    records = Int(sect[0x8..<0x8 + 2].withUnsafeBytes { $0.load(as: UInt8.self).bigEndian })
-    compression = Int(sect[0x0..<0x0 + 2].withUnsafeBytes { $0.load(as: UInt16.self).bigEndian })
-    
-    print("records: \(records.description)")
-    print("compression: \(compression.description)")
-    
-    if magic == MobiBook.textreadBytes {
-      print("PalmDoc format book detected.")
-      return
-    }
-    
-    mobiLength = Int(sect[0x14..<0x14 + 4].withUnsafeBytes { $0.load(as: UInt32.self).bigEndian })
-    mobiCodepage = Int(sect[0x1c..<0x1c + 4].withUnsafeBytes { $0.load(as: UInt32.self).bigEndian })
-    mobiVersion = Int(sect[0x68..<0x68 + 4].withUnsafeBytes { $0.load(as: UInt32.self).bigEndian })
-    
-    print("mobiLength: \(mobiLength.description)")
-    print("mobiCodepage: \(mobiCodepage.description)")
-    print("mobiVersion: \(mobiVersion.description)")
-    
-    
-    if mobiLength >= 0xE4 && mobiVersion >= 5 {
-      extraDataFlags = Int(sect[0xF2..<0xF2 + 2].withUnsafeBytes { $0.load(as: UInt16.self).bigEndian })
-    }
-    
-    if compression != 17480 {
-      extraDataFlags &= 0xFFFE
-    }
-    
-    print("extraDataFlags: \(extraDataFlags.description)")
-    
-    let exthFlag = Int(sect[0x80..<0x80 + 4].withUnsafeBytes { $0.load(as: UInt32.self).bigEndian })
-    
-    print("exthFlag: \(exthFlag.description)")
-    
-    var exth: Data = .init()
-    
-    if (exthFlag & 0x40) != 0 {
-      let range = 16 + mobiLength..<sect.count
-      exth = sect.subdata(in: range)
-    }
-    
-    print("exth: \(Util.formatData(data: exth))")
-    
-    if exth.count >= 12 && exth[0..<4] == MobiBook.exthBytes {
-      let nItems = Int(exth[8..<12].withUnsafeBytes { $0.load(as: UInt32.self).bigEndian })
-      var pos = 12
-      
-      print("nItems: \(nItems.description)")
-      
-      for _ in 0..<nItems {
-        let typeRange = pos..<pos + 4
-        let sizeRange = pos + 4..<pos + 8
+    public init(infile: String) throws {
+        print("MobiDeDrm v\(MobiBook.version.description).")
+        print("Removes protection from Kindle/Mobipocket, Kindle/KF8 and Kindle/Print Replica eBooks.")
         
-        let type = Int(exth.subdata(in: typeRange).withUnsafeBytes { $0.load(as: UInt32.self).bigEndian })
-        let size = Int(exth.subdata(in: sizeRange).withUnsafeBytes { $0.load(as: UInt32.self).bigEndian })
+        let url: URL = .init(fileURLWithPath: infile)
         
-        print("type: \(type.description)")
-        print("size: \(size.description)")
+        dataFile = try .init(contentsOf: url)
         
-        let contentRange = pos + 8..<pos + size
+        header = dataFile[0..<78]
         
-        let content = exth.subdata(in: contentRange)
+        Debug.print("header:", Util.formatData(data: header))
         
-        print("content: \(Util.formatData(data: content))")
+        magic = header[0x3C..<0x3C + 8]
         
-        metaArray.updateValue(content, forKey: type)
+        Debug.print("magic:", Util.formatData(data: magic))
         
-        if type == 401 && size == 9 {
-          let newContent: Data = .init(repeating: 100, count: 1)
-          patchSection(section: 0, newContent: newContent, inOff: 16 + mobiLength + pos + 8);
-        } else if type == 404 && size == 9 {
-          let newContent: Data = .init(count: 0)
-          patchSection(section: 0, newContent: newContent, inOff: 16 + mobiLength + pos + 8);
-        } else if type == 405 && size == 9 {
-          let newContent: Data = .init(count: 0)
-          patchSection(section: 0, newContent: newContent, inOff: 16 + mobiLength + pos + 8);
-        } else if type == 406 && size == 16 {
-          let newContent: Data = .init(count: 8)
-          patchSection(section: 0, newContent: newContent, inOff: 16 + mobiLength + pos + 8);
-        } else if type == 208 {
-          let newContent: Data = .init(count: size - 8)
-          patchSection(section: 0, newContent: newContent, inOff: 16 + mobiLength + pos + 8);
+        if magic != MobiBook.bookmobiBytes && magic != MobiBook.textreadBytes {
+            throw MobiBookError.invalidFileFormat(data: magic)
         }
         
-        pos += size
-      }
-    }
-    
-    print("metaArray: \(metaArray.description)")
-  }
-  
-  private func loadSection(section: Int) -> Data {
-    let endoff = section + 1 == numSections ? dataFile.count : sections[section + 1].offset
-    let off = sections[section].offset
-    return dataFile.subdata(in: off..<endoff)
-  }
-  
-  private static func getSizeOfTrailingDataEntries(ptr: Data, size: Int, flags: Int) -> Int {
-    var num = 0
-    var testflags = flags >> 1
-    
-    while testflags != 0 {
-      if (testflags & 1) != 0 {
-        num += getSizeOfTrailingDataEntry(ptr: ptr, size: size - num)
-      }
-      
-      testflags >>= 1
-    }
-    
-    // Check the low bit to see if there's multibyte data present.
-    // If multibyte data is included in the encrypted data, we'll have already cleared this flag.
-    if (flags & 1) != 0 {
-      num += Int((ptr[size - num - 1] & 0x3) + 1)
-    }
-    
-    return num
-  }
-  
-  private static func getSizeOfTrailingDataEntry(ptr: Data, size: Int) -> Int {
-    var bitpos = 0
-    var result = 0
-    var size = size
-    
-    if size <= 0 { return result }
-    
-    while true {
-      let v = ptr[size - 1]
-      result |= Int(v & 0x7F) << bitpos
-      
-      bitpos += 7
-      size -= 1
-      
-      if (v & 0x80) != 0 || (bitpos >= 28) || (size == 0) {
-        return result
-      }
-    }
-  }
-  
-  private func patch(off: Int, newContent: Data) {
-    dataFile.replaceSubrange(off..<(off + newContent.count), with: newContent)
-  }
-  
-  private func patchSection(section: Int, newContent: Data, inOff: Int = 0) {
-    let endoff = (section + 1 == numSections) ? dataFile.count : sections[section + 1].offset
-    let off = sections[section].offset
-    
-    assert(off + inOff + newContent.count <= endoff)
-    
-    patch(off: off + inOff, newContent: newContent)
-  }
-  
-  private static func parseDrm(data: Data, count: Int, pidSet: OrderedSet<String>) throws -> DRMInfo {
-    var foundKey: Data?
-    var foundPid: String?
-    
-    let keyvec1: Data = .init([0x72, 0x38, 0x33, 0xB0, 0xB4, 0xF2, 0xE3, 0xCA, 0xDF, 0x09, 0x01, 0xD6, 0xE2, 0xE0, 0x3F, 0x96])
-    
-    for pid in pidSet {
-      guard let bigPidBytes: Data = pid.data(using: .utf8) else {
-        continue
-      }
-      
-      let bigPid: Data = Util.ljustBytes(data: bigPidBytes, width: 16, padByte: 0)
-      let tempKey: Data = try PukallCipher.pc1(key: keyvec1, src: bigPid, decryption: false)
-      let tempKeySum: Int = Util.sumBytes(data: tempKey)
-      
-      for i in 0..<count {
-        let startIndex = i * 0x30
-        let range = startIndex..<startIndex + 0x30
+        numSections = .init(header[76..<78].withUnsafeBytes { $0.load(as: UInt16.self).bigEndian })
         
-        let buffer = data.subdata(in: range)
+        Debug.print("numSections:", numSections.description)
         
-        let verification = Int(buffer.withUnsafeBytes { $0.load(as: UInt32.self).bigEndian })
-        let size = Int(buffer.withUnsafeBytes { $0.load(fromByteOffset: 4, as: UInt32.self).bigEndian })
-        let type = Int(buffer.withUnsafeBytes { $0.load(fromByteOffset: 8, as: UInt32.self).bigEndian })
-        let cksum = buffer[12]
-        var cookie: Data = buffer.subdata(in: 16..<16 + 32)
-        
-        print("verification: \(verification.description)")
-        print("size: \(size.description)")
-        print("type: \(type.description)")
-        print("cksum: \(cksum.description)")
-        print("cookie: \(Util.formatData(data: cookie))")
-        
-        if cksum == tempKeySum {
-          cookie = try PukallCipher.pc1(key: tempKey, src: cookie)
-          
-          let ver = Int(cookie.withUnsafeBytes { $0.load(as: UInt32.self).bigEndian })
-          let flags = Int(cookie.withUnsafeBytes { $0.load(fromByteOffset: 4, as: UInt32.self).bigEndian })
-          
-          let finalKey: Data = cookie.subdata(in: 8..<8 + 16)
-          
-          let expiry1 = Int(cookie.withUnsafeBytes { $0.load(fromByteOffset: 24, as: UInt32.self).bigEndian })
-          let expiry2 = Int(cookie.withUnsafeBytes { $0.load(fromByteOffset: 28, as: UInt32.self).bigEndian })
-          
-          print("cookie: \(Util.formatData(data: cookie))")
-          print("ver: \(ver.description)")
-          print("flags: \(flags.description)")
-          print("finalKey: \(Util.formatData(data: finalKey))")
-          print("expiry1: \(expiry1.description)")
-          print("expiry2: \(expiry2.description)")
-          
-          if verification == ver && (flags & 0x1F) == 1 {
-            foundKey = finalKey
-            foundPid = pid
-            break
-          }
+        for i in 0..<numSections {
+            // Calculate the range for each section
+            let startIndex: Int = 78 + i * 8
+            let range: Range<Int> = startIndex..<startIndex + 8
+            
+            // Extract the 8-byte slice from Data
+            let sectionData: Data = dataFile.subdata(in: range)
+            
+            // Read values from the data slice
+            let offset: Int = .init(sectionData.withUnsafeBytes { $0.load(as: UInt32.self).bigEndian })
+            
+            let a1: UInt8 = sectionData[4]
+            let a2: UInt8 = sectionData[5]
+            let a3: UInt8 = sectionData[6]
+            let a4: UInt8 = sectionData[7]
+            
+            // Calculate flags and val
+            let flags: UInt8 = a1
+            let val: Int = Int(a2) << 16 | Int(a3) << 8 | Int(a4)
+            
+            // Create BookSection and add to the array
+            let bookSection: BookSection = .init(offset: offset, flags: .init(flags), val: val)
+            
+            sections.append(bookSection)
         }
-      }
-      
-      if foundKey != nil {
-        break
-      }
+        
+        Debug.print("sections:", sections.description)
+        
+        sect = loadSection(section: 0)
+        
+        Debug.print("sect:", Util.formatData(data: sect))
+        
+        records = .init(sect[0x8..<0x8 + 2].withUnsafeBytes { $0.load(as: UInt16.self).bigEndian })
+        compression = .init(sect[0x0..<0x0 + 2].withUnsafeBytes { $0.load(as: UInt16.self).bigEndian })
+        
+        Debug.print("records:", records.description)
+        Debug.print("compression:", compression.description)
+        
+        if magic == MobiBook.textreadBytes {
+            print("PalmDoc format book detected.")
+            return
+        }
+        
+        mobiLength = .init(sect[0x14..<0x14 + 4].withUnsafeBytes { $0.load(as: UInt32.self).bigEndian })
+        mobiCodepage = .init(sect[0x1c..<0x1c + 4].withUnsafeBytes { $0.load(as: UInt32.self).bigEndian })
+        mobiVersion = .init(sect[0x68..<0x68 + 4].withUnsafeBytes { $0.load(as: UInt32.self).bigEndian })
+        
+        Debug.print("mobiLength:", mobiLength.description)
+        Debug.print("mobiCodepage:", mobiCodepage.description)
+        Debug.print("mobiVersion:", mobiVersion.description)
+        
+        
+        if mobiLength >= 0xE4 && mobiVersion >= 5 {
+            extraDataFlags = .init(sect[0xF2..<0xF2 + 2].withUnsafeBytes { $0.load(as: UInt16.self).bigEndian })
+        }
+        
+        if compression != 17480 {
+            extraDataFlags &= 0xFFFE
+        }
+        
+        Debug.print("extraDataFlags:", extraDataFlags.description)
+        
+        let exthFlag: Int = .init(sect[0x80..<0x80 + 4].withUnsafeBytes { $0.load(as: UInt32.self).bigEndian })
+        
+        Debug.print("exthFlag:", exthFlag.description)
+        
+        var exth: Data = .init()
+        
+        if (exthFlag & 0x40) != 0 {
+            let range: Range<Int> = 16 + mobiLength..<sect.count
+            exth = sect.subdata(in: range)
+        }
+        
+        Debug.print("exth:", Util.formatData(data: exth))
+        
+        if exth.count >= 12 && exth[0..<4] == MobiBook.exthBytes {
+            let nItems: Int = .init(exth[8..<12].withUnsafeBytes { $0.load(as: UInt32.self).bigEndian })
+            var pos: Int = 12
+            
+            Debug.print("nItems:", nItems.description)
+            
+            for _ in 0..<nItems {
+                let typeRange: Range<Int> = pos..<pos + 4
+                let sizeRange: Range<Int> = pos + 4..<pos + 8
+                
+                let type: Int = .init(exth.subdata(in: typeRange).withUnsafeBytes { $0.load(as: UInt32.self).bigEndian })
+                let size: Int = .init(exth.subdata(in: sizeRange).withUnsafeBytes { $0.load(as: UInt32.self).bigEndian })
+                
+                Debug.print("type:", type.description)
+                Debug.print("size:", size.description)
+                
+                let contentRange: Range<Int> = pos + 8..<pos + size
+                
+                let content: Data = exth.subdata(in: contentRange)
+                
+                Debug.print("content:", Util.formatData(data: content))
+                
+                metaArray.updateValue(content, forKey: type)
+                
+                if type == 401 && size == 9 {
+                    let newContent: Data = .init([100])
+                    patchSection(section: 0, newContent: newContent, inOff: 16 + mobiLength + pos + 8);
+                } else if type == 404 && size == 9 {
+                    let newContent: Data = .init(count: 0)
+                    patchSection(section: 0, newContent: newContent, inOff: 16 + mobiLength + pos + 8);
+                } else if type == 405 && size == 9 {
+                    let newContent: Data = .init(count: 0)
+                    patchSection(section: 0, newContent: newContent, inOff: 16 + mobiLength + pos + 8);
+                } else if type == 406 && size == 16 {
+                    let newContent: Data = .init(count: 8)
+                    patchSection(section: 0, newContent: newContent, inOff: 16 + mobiLength + pos + 8);
+                } else if type == 208 {
+                    let newContent: Data = .init(count: size - 8)
+                    patchSection(section: 0, newContent: newContent, inOff: 16 + mobiLength + pos + 8);
+                }
+                
+                pos += size
+            }
+        }
+        
+        Debug.print("metaArray:", metaArray.description)
     }
     
-    return DRMInfo(key: foundKey!, pid: foundPid!)
-  }
+    private func loadSection(section: Int) -> Data {
+        let endoff: Int = section + 1 == numSections ? dataFile.count : sections[section + 1].offset
+        let off: Int = sections[section].offset
+        return dataFile.subdata(in: off..<endoff)
+    }
+    
+    private static func getSizeOfTrailingDataEntries(ptr: Data, size: Int, flags: Int) -> Int {
+        var num: Int = 0
+        var testflags: Int = flags >> 1
+        
+        while testflags != 0 {
+            if (testflags & 1) != 0 {
+                num += getSizeOfTrailingDataEntry(ptr: ptr, size: size - num)
+            }
+            
+            testflags >>= 1
+        }
+        
+        // Check the low bit to see if there's multibyte data present.
+        // If multibyte data is included in the encrypted data, we'll have already cleared this flag.
+        if (flags & 1) != 0 {
+            num += Int((ptr[size - num - 1] & 0x3) + 1)
+        }
+        
+        return num
+    }
+    
+    private static func getSizeOfTrailingDataEntry(ptr: Data, size: Int) -> Int {
+        var bitpos: Int = 0
+        var result: Int = 0
+        var size: Int = size
+        
+        if size <= 0 { return result }
+        
+        while true {
+            let v: UInt8 = ptr[size - 1]
+            result |= Int(v & 0x7F) << bitpos
+            
+            bitpos += 7
+            size -= 1
+            
+            if (v & 0x80) != 0 || (bitpos >= 28) || (size == 0) {
+                return result
+            }
+        }
+    }
+    
+    private func patch(off: Int, newContent: Data) {
+        dataFile.replaceSubrange(off..<(off + newContent.count), with: newContent)
+    }
+    
+    private func patchSection(section: Int, newContent: Data, inOff: Int = 0) {
+        let endoff: Int = (section + 1 == numSections) ? dataFile.count : sections[section + 1].offset
+        let off: Int = sections[section].offset
+        
+        assert(off + inOff + newContent.count <= endoff)
+        
+        patch(off: off + inOff, newContent: newContent)
+    }
+    
+    private static func parseDrm(data: Data, count: Int, pidSet: OrderedSet<String>) throws -> DRMInfo {
+        var foundKey: Data!
+        var foundPid: String!
+        
+        let keyvec1: Data = .init([0x72, 0x38, 0x33, 0xB0, 0xB4, 0xF2, 0xE3, 0xCA, 0xDF, 0x09, 0x01, 0xD6, 0xE2, 0xE0, 0x3F, 0x96])
+        
+        for pid in pidSet {
+            guard let bigPidBytes: Data = pid.data(using: .utf8) else {
+                continue
+            }
+            
+            let bigPid: Data = Util.ljustBytes(data: bigPidBytes, width: 16, padByte: 0)
+            let tempKey: Data = try PukallCipher.pc1(key: keyvec1, src: bigPid, decryption: false)
+            let tempKeySum: Int = Util.sumBytes(data: tempKey)
+            
+            try parseDrmRoutine(data: data, count: count, pid: pid, tempKey: tempKey, tempKeySum: tempKeySum, foundKey: &foundKey, foundPid: &foundPid)
+            
+            if foundKey != nil {
+                break
+            }
+        }
+        
+        if foundKey == nil {
+            let pid: String = "00000000"
+            
+            let tempKeySum: Int = Util.sumBytes(data: keyvec1)
+            
+            try parseDrmRoutine(data: data, count: count, pid: pid, tempKey: keyvec1, tempKeySum: tempKeySum, foundKey: &foundKey, foundPid: &foundPid)
+        }
+        
+        return .init(key: foundKey, pid: foundPid)
+    }
+    
+    private static func parseDrmRoutine(data: Data, count: Int, pid: String, tempKey: Data, tempKeySum: Int, foundKey: inout Data!, foundPid: inout String!) throws {
+        for i in 0..<count {
+            let startIndex: Int = i * 0x30
+            let range: Range<Int> = startIndex..<startIndex + 0x30
+            
+            let buffer: Data = data.subdata(in: range)
+            
+            let verification: Int = .init(buffer.withUnsafeBytes { $0.load(as: UInt32.self).bigEndian })
+            let size: Int = .init(buffer.withUnsafeBytes { $0.load(fromByteOffset: 4, as: UInt32.self).bigEndian })
+            let type: Int = .init(buffer.withUnsafeBytes { $0.load(fromByteOffset: 8, as: UInt32.self).bigEndian })
+            let cksum: UInt8 = buffer[12]
+            var cookie: Data = buffer.subdata(in: 16..<16 + 32)
+            
+            Debug.print("verification:", verification.description)
+            Debug.print("size:", size.description)
+            Debug.print("type:", type.description)
+            Debug.print("cksum:", cksum.description)
+            Debug.print("cookie:", Util.formatData(data: cookie))
+            
+            if cksum == tempKeySum {
+                cookie = try PukallCipher.pc1(key: tempKey, src: cookie)
+                
+                let ver: Int = .init(cookie.withUnsafeBytes { $0.load(as: UInt32.self).bigEndian })
+                let flags: Int = .init(cookie.withUnsafeBytes { $0.load(fromByteOffset: 4, as: UInt32.self).bigEndian })
+                
+                let finalKey: Data = cookie.subdata(in: 8..<8 + 16)
+                
+                let expiry1: Int = .init(cookie.withUnsafeBytes { $0.load(fromByteOffset: 24, as: UInt32.self).bigEndian })
+                let expiry2: Int = .init(cookie.withUnsafeBytes { $0.load(fromByteOffset: 28, as: UInt32.self).bigEndian })
+                
+                Debug.print("cookie:", Util.formatData(data: cookie))
+                Debug.print("ver:", ver.description)
+                Debug.print("flags:", flags.description)
+                Debug.print("finalKey:", Util.formatData(data: finalKey))
+                Debug.print("expiry1:", expiry1.description)
+                Debug.print("expiry2:", expiry2.description)
+                
+                if verification == ver && (flags & 0x1F) == 1 {
+                    foundKey = finalKey
+                    foundPid = pid
+                    break
+                }
+            }
+        }
+    }
+    
+    private static func normalisePids(pidSet: OrderedSet<String>) -> OrderedSet<String> {
+        var goodPids: OrderedSet<String> = .init()
+        
+        for pid in pidSet {
+            if pid.count == 10 {
+                let endIndex: String.Index = pid.endIndex
+                let index: String.Index = pid.index(endIndex, offsetBy: -2)
+                let substring: String.SubSequence = pid[..<index]
+                let string: String = .init(substring)
+                let checksumPid: String = KindleKeyUtils.checksumPid(data: string, charMap: letters)
+                
+                if checksumPid != pid {
+                    print("Warning: PID \(pid) has an incorrect checksum, should have been \(checksumPid)")
+                }
+                
+                goodPids.append(string)
+            } else if pid.count == 8 {
+                goodPids.append(pid)
+            } else {
+                print("Warning: PID \(pid) has the wrong number of digits")
+            }
+        }
+        
+        return goodPids
+    }
 }
 
 extension MobiBook: BookManager {
-  func getBookTitle() -> String {
-    return ""
-  }
-  
-  func getBookType() -> String {
-    if printReplica {
-      return "Print Replica"
+    public func getBookTitle() -> String {
+        let codecMap: Dictionary<Int, String.Encoding> = [1252: .windowsCP1252, 65001: .utf8]
+        
+        var title: Data = .init()
+        var codec: String.Encoding = .windowsCP1252
+        
+        if magic == MobiBook.bookmobiBytes {
+            if let data = metaArray[503] {
+                title = data
+            } else {
+                let toff: Int = .init(sect[0x54..<0x54 + 4].withUnsafeBytes { $0.load(as: UInt32.self).bigEndian })
+                let tlen: Int = .init(sect[0x58..<0x58 + 4].withUnsafeBytes { $0.load(as: UInt32.self).bigEndian })
+                let tend: Int = toff + tlen
+                
+                title = sect.subdata(in: toff..<tend)
+            }
+            
+            if let data = codecMap[mobiCodepage] {
+                codec = data
+            }
+        }
+        
+        if title.count == 0 {
+            title = header.subdata(in: 0..<32).split(separator: 0)[0]
+        }
+        
+        return .init(data: title, encoding: codec)!
     }
     
-    if mobiVersion >= 8 {
-      return "Kindle Format 8"
+    public func getBookType() -> String {
+        if printReplica {
+            return "Print Replica"
+        }
+        
+        if mobiVersion >= 8 {
+            return "Kindle Format 8"
+        }
+        
+        if mobiVersion >= 0 {
+            return "Mobipocket \(mobiVersion.description)"
+        }
+        
+        return "PalmDoc"
     }
     
-    if mobiVersion >= 0 {
-      return "Mobipocket " + mobiVersion.description
+    public func getBookExtension() -> String {
+        if printReplica {
+            return ".azw4"
+        }
+        
+        if mobiVersion >= 8 {
+            return ".azw3"
+        }
+        
+        return ".mobi"
     }
     
-    return "PalmDoc"
-  }
-  
-  func getBookExtension() -> String {
-    if printReplica {
-      return ".azw4"
+    public func getFile(outpath: String) throws {
+        let url: URL = .init(fileURLWithPath: outpath)
+        try mobiData.write(to: url)
     }
     
-    if mobiVersion >= 8 {
-      return ".azw3"
+    public func processBook(pidSet: OrderedSet<String>) throws {
+        cryptoType = .init(sect[0xC..<0xC + 2].withUnsafeBytes { $0.load(as: UInt16.self).bigEndian })
+        
+        print("Crypto Type is:", cryptoType.description)
+        
+        if cryptoType == 0 {
+            print("This book is not encrypted.")
+            
+            let data: Data = loadSection(section: 1)
+            let range: Range<Int> = 0..<4
+            
+            printReplica = data[range] == MobiBook.mopBytes
+            
+            mobiData = dataFile
+            
+            return
+        }
+        
+        if cryptoType != 2 && cryptoType != 1 {
+            throw MobiBookError.unknownEncryptionType(type: cryptoType)
+        }
+        
+        if let data406 = metaArray[406] {
+            let val406: Int = .init(data406.withUnsafeBytes { $0.load(as: UInt64.self).bigEndian })
+            
+            if val406 != 0 {
+                print("Warning: This is a library or rented eBook (\(val406.description)). Continuing...")
+            }
+        }
+        
+        let goodPids: OrderedSet<String> = MobiBook.normalisePids(pidSet: pidSet)
+        
+        Debug.print("PIDs: \(pidSet)")
+        Debug.print("Good PIDs: \(goodPids)")
+        
+        var foundKey: Data!
+        var pid: String!
+        
+        if cryptoType == 1 {
+            let t1Keyvec: Data = "QDCVEPMU675RUBSZ".data(using: .ascii)!
+            var bookKeyData: Data!
+            
+            if magic == MobiBook.textreadBytes {
+                bookKeyData = sect.subdata(in: 0x0E..<0x0E + 16)
+            } else if mobiVersion < 0 {
+                bookKeyData = sect.subdata(in: 0x90..<0x90 + 16)
+            } else {
+                bookKeyData = sect.subdata(in: mobiLength + 16..<mobiLength + 32)
+            }
+            
+            pid = "00000000"
+            foundKey = try PukallCipher.pc1(key: t1Keyvec, src: bookKeyData)
+        } else {
+            let drmPtr: Int = .init(sect[0xA8..<0xA8 + 4].withUnsafeBytes { $0.load(as: UInt32.self).bigEndian })
+            let drmCount: Int = .init(sect[0xAC..<0xAC + 4].withUnsafeBytes { $0.load(as: UInt32.self).bigEndian })
+            let drmSize: Int = .init(sect[0xB0..<0xB0 + 4].withUnsafeBytes { $0.load(as: UInt32.self).bigEndian })
+            
+            if drmCount == 0 {
+                throw MobiBookError.encryptionNotInitialised
+            }
+            
+            let drmData: Data = sect.subdata(in: drmPtr..<drmPtr + drmSize)
+            
+            let drmResult: DRMInfo = try MobiBook.parseDrm(data: drmData, count: drmCount, pidSet: goodPids)
+            
+            foundKey = drmResult.key
+            pid = drmResult.pid
+            
+            if foundKey == nil {
+                throw MobiBookError.noKeyFound(pids: goodPids.count)
+            }
+            
+            patchSection(section: 0, newContent: .init(repeating: 0, count: drmSize), inOff: drmPtr)
+            patchSection(section: 0, newContent: .init([0xFF, 0xFF, 0xFF, 0xFF, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]), inOff: 0xA8)
+        }
+        
+        if pid == "00000000" {
+            print("File has default encryption, no specific key needed.")
+        } else {
+            print("File is encoded with PID \(KindleKeyUtils.checksumPid(data: pid, charMap: MobiBook.letters)).")
+        }
+        
+        patchSection(section: 0, newContent: .init(repeating: 0, count: 2), inOff: 0xC)
+        
+        print("Decrypting. Please wait . . .", terminator: "")
+        
+        var decryptedData: Data = .init()
+        
+        let rangeToWrite: Data = dataFile.subdata(in: 0..<sections[1].offset)
+        decryptedData.append(rangeToWrite)
+        
+        for i in 1...records {
+            let data: Data = loadSection(section: i)
+            let extraSize: Int = MobiBook.getSizeOfTrailingDataEntries(ptr: data, size: data.count, flags: extraDataFlags)
+            
+            if i % 100 == 0 {
+                print(" .", terminator: "")
+            }
+            
+            let rangeToDecode: Data = data.subdata(in: 0..<data.count - extraSize)
+            let decodedData: Data = try PukallCipher.pc1(key: foundKey, src: rangeToDecode)
+            
+            if i == 1 {
+                printReplica = decodedData[0..<4] == MobiBook.mopBytes
+            }
+            
+            decryptedData.append(decodedData)
+            
+            if extraSize > 0 {
+                let rangeToWrite: Data = data.subdata(in: data.count - extraSize..<data.count)
+                decryptedData.append(rangeToWrite)
+            }
+        }
+        
+        if numSections > records + 1 {
+            let rangeToWrite: Data = dataFile.subdata(in: sections[records + 1].offset..<dataFile.count)
+            decryptedData.append(rangeToWrite)
+        }
+        
+        mobiData = decryptedData
+        
+        print(" done")
     }
     
-    return ".mobi"
-  }
-  
-  func getFile(outpath: String) {
-  }
-  
-  func processBook(pidSet: OrderedSet<String>) {
-  }
+    public func getPidMetaInfo() -> PIDMetaInfo {
+        var rec209: Data = .init()
+        var token: Data = .init()
+        
+        if let data = metaArray[209] {
+            rec209 = data
+            
+            for i in stride(from: 0, to: rec209.count, by: 5) {
+                let startIndex: Int = i + 1
+                let range: Range<Int> = startIndex..<startIndex + 4
+                let val: Int = .init(rec209.subdata(in: range).withUnsafeBytes { $0.load(as: UInt32.self).bigEndian })
+                let sval: Data = metaArray[val] ?? .init()
+                token.append(sval)
+            }
+        }
+        
+        return .init(rec209: rec209, token: token)
+    }
 }

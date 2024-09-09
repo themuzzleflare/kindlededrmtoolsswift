@@ -8,10 +8,11 @@
 import Foundation
 import Collections
 
-protocol BookManager {
-  func getBookTitle() -> String
-  func getBookType() -> String
-  func getBookExtension() -> String
-  func getFile(outpath: String)
-  func processBook(pidSet: OrderedSet<String>)
+public protocol BookManager {
+    func getBookTitle() -> String
+    func getBookType() -> String
+    func getBookExtension() -> String
+    func getFile(outpath: String) throws
+    func processBook(pidSet: OrderedSet<String>) throws
+    func getPidMetaInfo() -> PIDMetaInfo
 }

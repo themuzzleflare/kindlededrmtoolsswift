@@ -11,9 +11,9 @@ import Collections
 typealias MetaDictionary = OrderedDictionary<Int, Data>
 
 extension MetaDictionary {
-  var description: String {
-    return self.map { key, value in
-      return "\(key): \(Util.formatData(data: value))"
-    }.joined(separator: "\n")
-  }
+    var description: String {
+        return self.map { key, value in
+            return "\(key): \(Util.formatData(data: value))"
+        }.joined(separator: "\n")
+    }
 }

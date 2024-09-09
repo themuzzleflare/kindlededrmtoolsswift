@@ -8,5 +8,5 @@
 import Foundation
 
 protocol BookCleanup {
-  func cleanup()
+    func cleanup()
 }
