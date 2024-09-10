@@ -8,7 +8,7 @@
 import Foundation
 
 public enum Debug {
-    private static var isEnabled: Bool = true
+    private static var isEnabled: Bool = false
     
     public static func enable() {
         isEnabled = true

@@ -7,10 +7,8 @@
 
 import Foundation
 
-final class PukallCipher {
-    private init() {}
-    
-    public static func pc1(key: Data, src: Data, decryption: Bool = true) throws -> Data {
+enum PukallCipher {
+    static func pc1(key: Data, src: Data, decryption: Bool = true) throws -> Data {
         try validateKeyLength(key: key)
         
         var wkey: [UInt16] = initialiseWKey(key: key)

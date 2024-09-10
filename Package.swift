@@ -16,7 +16,6 @@ let package = Package(
             targets: ["kindlededrmtools"])
     ],
     dependencies: [
-        .package(url: "https://github.com/apple/swift-algorithms.git", .upToNextMajor(from: "1.2.0")),
         .package(url: "https://github.com/apple/swift-collections.git", .upToNextMajor(from: "1.1.3"))
     ],
     targets: [
@@ -25,7 +24,6 @@ let package = Package(
         .target(
             name: "kindlededrmtools",
             dependencies: [
-                .product(name: "Algorithms", package: "swift-algorithms"),
                 .product(name: "Collections", package: "swift-collections")
             ]),
         .testTarget(

@@ -8,29 +8,26 @@
 import Foundation
 
 enum MobiBookError {
-    case urlCreationFiled
+    case urlCreationFiled(string: String)
     case invalidFileFormat(data: Data)
-    case drmParseFailed
     case unknownEncryptionType(type: Int)
     case encryptionNotInitialised
-    case noKeyFound(pids: Int)
+    case noKeyFound(pidsSize: Int)
 }
 
 extension MobiBookError: LocalizedError {
     var errorDescription: String? {
         switch self {
-        case .urlCreationFiled:
-            return "Failed to create URL representing input file path."
+        case let .urlCreationFiled(string):
+            return "Failed to create URL representing path: \(string)"
         case let .invalidFileFormat(data):
-            return "Invalid File Format: \(Util.formatData(data: data))."
-        case .drmParseFailed:
-            return "DRM parse failed."
+            return "Invalid file format: \(Util.formatData(data: data))"
         case let .unknownEncryptionType(type):
-            return "Cannot decode unknown Mobipocket encryption type: \(type)"
+            return "Cannot decode unknown Mobipocket encryption type: \(type.description)"
         case .encryptionNotInitialised:
             return "Encryption not initialised. Must be opened with Mobipocket Reader first."
-        case let .noKeyFound(pids):
-            return "No key found in \(pids.description) PIDs tried."
+        case let .noKeyFound(pidsSize):
+            return "No key found in \(pidsSize.description) PIDs tried."
         }
     }
 }

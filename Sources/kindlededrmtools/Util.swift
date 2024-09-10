@@ -7,10 +7,14 @@
 
 import Foundation
 
-final class Util {
-    private init() {}
+enum Util {
+    static let copyright: String = "Copyright © 2024 Paul Tavitian"
     
-    static func formatData(data: Data) -> String {
+    static func formatData(data: Data?) -> String {
+        guard let data else {
+            return "b''"
+        }
+        
         var result = "b'"
         
         for byte in data {

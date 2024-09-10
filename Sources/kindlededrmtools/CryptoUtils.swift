@@ -9,9 +9,7 @@ import Foundation
 import CryptoKit
 import CommonCrypto
 
-final class CryptoUtils {
-    private init() {}
-    
+enum CryptoUtils {
     /**
      * Computes the HMAC-SHA256 hash of the given message using the provided key.
      * - Parameters:
@@ -19,7 +17,7 @@ final class CryptoUtils {
      *   - message: The message to hash.
      * - Returns: The HMAC-SHA256 hash of the message as `Data`.
      */
-    public static func hmacsha256(key: Data, message: Data) -> Data {
+    static func hmacsha256(key: Data, message: Data) -> Data {
         let symmetricKey = SymmetricKey(data: key)
         let authenticationCode = HMAC<SHA256>.authenticationCode(for: message, using: symmetricKey)
         return Data(authenticationCode)
@@ -33,7 +31,7 @@ final class CryptoUtils {
      *   - cipherText: The encrypted data.
      * - Returns: The decrypted data as `Data`.
      */
-    public static func aescbcdecrypt(key: Data, iv: Data, cipherText: Data) throws -> Data {
+    static func aescbcdecrypt(key: Data, iv: Data, cipherText: Data) throws -> Data {
         return try Data(QCCAESPadCBCDecrypt(key: .init(key), iv: .init(iv), cipherText: .init(cipherText)))
     }
     
@@ -45,7 +43,7 @@ final class CryptoUtils {
      *   - cipherText: The encrypted data.
      * - Returns: The decrypted data as `Data`.
      */
-    public static func aesctrdecrypt(key: Data, iv: Data, cipherText: Data) throws -> Data {
+    static func aesctrdecrypt(key: Data, iv: Data, cipherText: Data) throws -> Data {
         let keySymmetric = SymmetricKey(data: key)
         let nonce = try AES.GCM.Nonce(data: iv)
         let sealedBox = try AES.GCM.SealedBox(nonce: nonce, ciphertext: cipherText, tag: Data())

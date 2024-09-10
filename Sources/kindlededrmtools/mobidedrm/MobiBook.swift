@@ -10,16 +10,11 @@ import Collections
 
 public final class MobiBook {
     private static let version: String = "3.0.0"
-    private static let bookmobiBytes: Data = "BOOKMOBI".data(using: .ascii)!
-    private static let textreadBytes: Data = "TEXtREAd".data(using: .ascii)!
-    private static let exthBytes: Data = "EXTH".data(using: .ascii)!
-    private static let letters: Data = "ABCDEFGHIJKLMNPQRSTUVWXYZ123456789".data(using: .ascii)!
-    private static let mopBytes: Data = "%MOP".data(using: .ascii)!
     
     private var dataFile: Data
     private var header: Data
     private var magic: Data
-    private var numSections: Int = 0
+    private var numSections: Int
     private var sections: BookSections = .init()
     private var metaArray: MetaDictionary = .init()
     private var sect: Data = .init()
@@ -33,15 +28,16 @@ public final class MobiBook {
     private var mobiCodepage: Int = 1252
     private var mobiVersion: Int = -1
     
-    public init(infile: String) throws {
+    init(infile: String) throws {
         print("MobiDeDrm v\(MobiBook.version.description).")
+        print("\(Util.copyright).")
         print("Removes protection from Kindle/Mobipocket, Kindle/KF8 and Kindle/Print Replica eBooks.")
         
-        let url: URL = .init(fileURLWithPath: infile)
+        let url: URL = .init(filePath: infile)
         
         dataFile = try .init(contentsOf: url)
         
-        header = dataFile[0..<78]
+        header = dataFile[..<78]
         
         Debug.print("header:", Util.formatData(data: header))
         
@@ -49,7 +45,7 @@ public final class MobiBook {
         
         Debug.print("magic:", Util.formatData(data: magic))
         
-        if magic != MobiBook.bookmobiBytes && magic != MobiBook.textreadBytes {
+        if magic != CharMaps.bookmobiBytes && magic != CharMaps.textreadBytes {
             throw MobiBookError.invalidFileFormat(data: magic)
         }
         
@@ -95,7 +91,7 @@ public final class MobiBook {
         Debug.print("records:", records.description)
         Debug.print("compression:", compression.description)
         
-        if magic == MobiBook.textreadBytes {
+        if magic == CharMaps.textreadBytes {
             print("PalmDoc format book detected.")
             return
         }
@@ -132,7 +128,7 @@ public final class MobiBook {
         
         Debug.print("exth:", Util.formatData(data: exth))
         
-        if exth.count >= 12 && exth[0..<4] == MobiBook.exthBytes {
+        if exth.count >= 12 && exth[..<4] == CharMaps.exthBytes {
             let nItems: Int = .init(exth[8..<12].withUnsafeBytes { $0.load(as: UInt32.self).bigEndian })
             var pos: Int = 12
             
@@ -241,7 +237,7 @@ public final class MobiBook {
     }
     
     private static func parseDrm(data: Data, count: Int, pidSet: OrderedSet<String>) throws -> DRMInfo {
-        var foundKey: Data!
+        var foundKey: Data?
         var foundPid: String!
         
         let keyvec1: Data = .init([0x72, 0x38, 0x33, 0xB0, 0xB4, 0xF2, 0xE3, 0xCA, 0xDF, 0x09, 0x01, 0xD6, 0xE2, 0xE0, 0x3F, 0x96])
@@ -263,17 +259,17 @@ public final class MobiBook {
         }
         
         if foundKey == nil {
-            let pid: String = "00000000"
+            foundPid = "00000000"
             
             let tempKeySum: Int = Util.sumBytes(data: keyvec1)
             
-            try parseDrmRoutine(data: data, count: count, pid: pid, tempKey: keyvec1, tempKeySum: tempKeySum, foundKey: &foundKey, foundPid: &foundPid)
+            try parseDrmRoutine(data: data, count: count, pid: foundPid, tempKey: keyvec1, tempKeySum: tempKeySum, foundKey: &foundKey, foundPid: &foundPid)
         }
         
         return .init(key: foundKey, pid: foundPid)
     }
     
-    private static func parseDrmRoutine(data: Data, count: Int, pid: String, tempKey: Data, tempKeySum: Int, foundKey: inout Data!, foundPid: inout String!) throws {
+    private static func parseDrmRoutine(data: Data, count: Int, pid: String, tempKey: Data, tempKeySum: Int, foundKey: inout Data?, foundPid: inout String?) throws {
         for i in 0..<count {
             let startIndex: Int = i * 0x30
             let range: Range<Int> = startIndex..<startIndex + 0x30
@@ -328,7 +324,7 @@ public final class MobiBook {
                 let index: String.Index = pid.index(endIndex, offsetBy: -2)
                 let substring: String.SubSequence = pid[..<index]
                 let string: String = .init(substring)
-                let checksumPid: String = KindleKeyUtils.checksumPid(data: string, charMap: letters)
+                let checksumPid: String = KindleKeyUtils.checksumPid(data: string, charMap: CharMaps.letters)
                 
                 if checksumPid != pid {
                     print("Warning: PID \(pid) has an incorrect checksum, should have been \(checksumPid)")
@@ -353,7 +349,7 @@ extension MobiBook: BookManager {
         var title: Data = .init()
         var codec: String.Encoding = .windowsCP1252
         
-        if magic == MobiBook.bookmobiBytes {
+        if magic == CharMaps.bookmobiBytes {
             if let data = metaArray[503] {
                 title = data
             } else {
@@ -373,39 +369,34 @@ extension MobiBook: BookManager {
             title = header.subdata(in: 0..<32).split(separator: 0)[0]
         }
         
-        return .init(data: title, encoding: codec)!
+        return .init(data: title, encoding: codec) ?? ""
     }
     
     public func getBookType() -> String {
         if printReplica {
             return "Print Replica"
-        }
-        
-        if mobiVersion >= 8 {
+        } else if mobiVersion >= 8 {
             return "Kindle Format 8"
-        }
-        
-        if mobiVersion >= 0 {
+        } else if mobiVersion >= 0 {
             return "Mobipocket \(mobiVersion.description)"
+        } else {
+            return "PalmDoc"
         }
-        
-        return "PalmDoc"
     }
     
     public func getBookExtension() -> String {
         if printReplica {
             return ".azw4"
-        }
-        
-        if mobiVersion >= 8 {
+        } else if mobiVersion >= 8 {
             return ".azw3"
+        } else {
+            return ".mobi"
         }
-        
-        return ".mobi"
     }
     
     public func getFile(outpath: String) throws {
-        let url: URL = .init(fileURLWithPath: outpath)
+        let url: URL = .init(filePath: outpath)
+        
         try mobiData.write(to: url)
     }
     
@@ -418,9 +409,9 @@ extension MobiBook: BookManager {
             print("This book is not encrypted.")
             
             let data: Data = loadSection(section: 1)
-            let range: Range<Int> = 0..<4
+            let range: PartialRangeUpTo<Int> = ..<4
             
-            printReplica = data[range] == MobiBook.mopBytes
+            printReplica = data[range] == CharMaps.mopBytes
             
             mobiData = dataFile
             
@@ -444,14 +435,14 @@ extension MobiBook: BookManager {
         Debug.print("PIDs: \(pidSet)")
         Debug.print("Good PIDs: \(goodPids)")
         
-        var foundKey: Data!
-        var pid: String!
+        let foundKey: Data!
+        let pid: String!
         
         if cryptoType == 1 {
             let t1Keyvec: Data = "QDCVEPMU675RUBSZ".data(using: .ascii)!
-            var bookKeyData: Data!
+            let bookKeyData: Data!
             
-            if magic == MobiBook.textreadBytes {
+            if magic == CharMaps.textreadBytes {
                 bookKeyData = sect.subdata(in: 0x0E..<0x0E + 16)
             } else if mobiVersion < 0 {
                 bookKeyData = sect.subdata(in: 0x90..<0x90 + 16)
@@ -478,7 +469,7 @@ extension MobiBook: BookManager {
             pid = drmResult.pid
             
             if foundKey == nil {
-                throw MobiBookError.noKeyFound(pids: goodPids.count)
+                throw MobiBookError.noKeyFound(pidsSize: goodPids.count)
             }
             
             patchSection(section: 0, newContent: .init(repeating: 0, count: drmSize), inOff: drmPtr)
@@ -488,7 +479,7 @@ extension MobiBook: BookManager {
         if pid == "00000000" {
             print("File has default encryption, no specific key needed.")
         } else {
-            print("File is encoded with PID \(KindleKeyUtils.checksumPid(data: pid, charMap: MobiBook.letters)).")
+            print("File is encoded with PID \(KindleKeyUtils.checksumPid(data: pid, charMap: CharMaps.letters)).")
         }
         
         patchSection(section: 0, newContent: .init(repeating: 0, count: 2), inOff: 0xC)
@@ -512,7 +503,7 @@ extension MobiBook: BookManager {
             let decodedData: Data = try PukallCipher.pc1(key: foundKey, src: rangeToDecode)
             
             if i == 1 {
-                printReplica = decodedData[0..<4] == MobiBook.mopBytes
+                printReplica = decodedData[..<4] == CharMaps.mopBytes
             }
             
             decryptedData.append(decodedData)
@@ -550,5 +541,8 @@ extension MobiBook: BookManager {
         }
         
         return .init(rec209: rec209, token: token)
+    }
+    
+    public func cleanup() {
     }
 }

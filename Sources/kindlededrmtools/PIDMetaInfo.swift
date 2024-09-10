@@ -8,8 +8,8 @@
 import Foundation
 
 public struct PIDMetaInfo {
-    let rec209: Data
-    let token: Data
+    let rec209: Data?
+    let token: Data?
 }
 
 extension PIDMetaInfo: CustomStringConvertible {

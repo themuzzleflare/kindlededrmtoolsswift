@@ -8,9 +8,7 @@
 import Foundation
 import zlib
 
-final class KindleKeyUtils {
-    private init() {}
-    
+enum KindleKeyUtils {
     static func encode(data: Data, charMap: Data) -> Data {
         var result = [UInt8]()
         
@@ -54,7 +52,7 @@ final class KindleKeyUtils {
         return Data(result)
     }
     
-    public static func checksumPid(data: String, charMap: Data) -> String {
+    static func checksumPid(data: String, charMap: Data) -> String {
         guard let dataBytes = data.data(using: .utf8) else {
             return ""
         }
@@ -62,7 +60,7 @@ final class KindleKeyUtils {
         return String(data: checksumPid(data: dataBytes, charMap: charMap), encoding: .utf8) ?? ""
     }
     
-    public static func checksumPid(data: Data, charMap: Data) -> Data {
+    static func checksumPid(data: Data, charMap: Data) -> Data {
         var crc = Int(crc32(data: data))
         
         crc = crc ^ (crc >> 16)

@@ -8,7 +8,7 @@
 import Foundation
 
 struct DRMInfo {
-    let key: Data
+    let key: Data?
     let pid: String
 }
 

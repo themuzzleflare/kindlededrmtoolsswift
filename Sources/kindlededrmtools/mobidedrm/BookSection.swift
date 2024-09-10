@@ -18,11 +18,3 @@ extension BookSection: CustomStringConvertible {
         return "(offset: \(offset.description), flags: \(flags.description), val: \(val.description))"
     }
 }
-
-//extension Array where Element == BookSection {
-//  var description: String {
-//    return self.map { section in
-//      return section.description
-//    }.joined(separator: "\n")
-//  }
-//}

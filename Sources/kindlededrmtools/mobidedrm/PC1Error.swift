@@ -14,7 +14,7 @@ enum PC1Error {
 extension PC1Error: LocalizedError {
     var errorDescription: String? {
         switch self {
-        case .badKeyLength(let length):
+        case let .badKeyLength(length):
             return "PC1: Bad key length: " + length.description + ". Must be 16."
         }
     }
