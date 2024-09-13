@@ -11,15 +11,15 @@ import Collections
 enum KindlePID {
     // Returns two bits at offset from a bit field
     private static func getTwoBitsFromBitField(bitField: Data, offset: Int) -> Int {
-        let byteNumber = offset / 4
-        let bitPosition = 6 - 2 * (offset % 4)
+        let byteNumber: Int = offset / 4
+        let bitPosition: Int = 6 - 2 * (offset % 4)
         
-        return Int(bitField[byteNumber] >> bitPosition) & 3
+        return .init(bitField[byteNumber] >> bitPosition) & 3
     }
     
     // Returns six bits at the given offset from a bit field
     private static func getSixBitsFromBitField(bitField: Data, offset: Int) -> Int {
-        let newOffset = offset * 3
+        let newOffset: Int = offset * 3
         
         return (getTwoBitsFromBitField(bitField: bitField, offset: newOffset) << 4) +
         (getTwoBitsFromBitField(bitField: bitField, offset: newOffset + 1) << 2) +
@@ -40,10 +40,10 @@ enum KindlePID {
     
     // Seed value used to generate the device PID
     private static func generatePidSeed(table: [Int], dsn: Data) -> Int {
-        var value = 0
+        var value: Int = 0
         
         for counter in 0..<4 {
-            let index = Int((dsn[counter] ^ UInt8(value & 0xFF)))
+            let index: Int = .init((dsn[counter] ^ .init(value & 0xFF)))
             value = (value >> 8) ^ table[index]
         }
         
@@ -53,7 +53,7 @@ enum KindlePID {
     // Generate the device PID
     private static func generateDevicePid(table: [Int], dsn: Data, nbRoll: Int) -> Data {
         // Generate the seed
-        let seed = generatePidSeed(table: table, dsn: dsn)
+        let seed: Int = generatePidSeed(table: table, dsn: dsn)
         
         var pidAscii: Data = .init()
         
@@ -63,11 +63,11 @@ enum KindlePID {
             (seed >> 24) & 0xFF, (seed >> 16) & 0xFF, (seed >> 8) & 0xFF, seed & 0xFF
         ]
         
-        var index = 0
+        var index: Int = 0
         
         // Apply rolling operation using DSN and nbRoll
         for counter in 0..<nbRoll {
-            pid[index] = pid[index] ^ Int(dsn[counter] & 0xFF) // XOR with DSN
+            pid[index] = pid[index] ^ .init(dsn[counter] & 0xFF) // XOR with DSN
             index = (index + 1) % 8
         }
         
@@ -82,10 +82,10 @@ enum KindlePID {
     
     // Generate the encryption table used to generate the device PID
     private static func generatePidEncryptionTable() -> [Int] {
-        var table = [Int]()
+        var table: [Int] = .init()
         
         for counter1 in 0..<0x100 {
-            var value = counter1
+            var value: Int = counter1
             
             for _ in 0..<8 {
                 if (value & 1) == 0 {
@@ -103,18 +103,18 @@ enum KindlePID {
     }
     
     private static func pidFromSerial(serial: Data, length: Int) -> Data {
-        let crc = Int(KindleKeyUtils.crc32(data: serial))
+        let crc: Int = .init(KindleKeyUtils.crc32(data: serial))
         
         // Initialize arr1 with length `length` and fill with zeros
-        var arr1 = [Int](repeating: 0, count: length)
+        var arr1: [Int] = .init(repeating: 0, count: length)
         
         // XOR each byte of `serial` with `arr1`
         for i in 0..<serial.count {
-            arr1[i % length] ^= Int(serial[i])
+            arr1[i % length] ^= .init(serial[i])
         }
         
         // Extract the CRC bytes
-        let crcBytes = [
+        let crcBytes: [Int] = [
             (crc >> 24) & 0xff,
             (crc >> 16) & 0xff,
             (crc >> 8) & 0xff,
@@ -130,8 +130,8 @@ enum KindlePID {
         
         // Convert arr1 to encoded ASCII using `charMap4`
         for i in 0..<length {
-            let b = arr1[i] & 0xff
-            let charIndex = (b >> 7) + ((b >> 5 & 3) ^ (b & 0x1f))
+            let b: Int = arr1[i] & 0xff
+            let charIndex: Int = (b >> 7) + ((b >> 5 & 3) ^ (b & 0x1f))
             pid.append(CharMaps.charMap4[charIndex])
         }
         

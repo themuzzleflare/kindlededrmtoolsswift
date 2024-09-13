@@ -8,7 +8,7 @@
 import Foundation
 import Collections
 
-public final class MobiBook {
+final class MobiBook {
     private static let version: String = "3.0.0"
     
     private var dataFile: Data
@@ -28,16 +28,24 @@ public final class MobiBook {
     private var mobiCodepage: Int = 1252
     private var mobiVersion: Int = -1
     
-    init(infile: String) throws {
+    convenience init(infile: String) throws {
+        let url: URL = .init(filePath: infile)
+        try self.init(url: url)
+    }
+    
+    convenience init(url: URL) throws {
+        let data: Data = try .init(contentsOf: url)
+        try self.init(data: data)
+    }
+    
+    init(data: Data) throws {
         print("MobiDeDrm v\(MobiBook.version.description).")
         print("\(Util.copyright).")
         print("Removes protection from Kindle/Mobipocket, Kindle/KF8 and Kindle/Print Replica eBooks.")
+                
+        dataFile = data
         
-        let url: URL = .init(filePath: infile)
-        
-        dataFile = try .init(contentsOf: url)
-        
-        header = dataFile[..<78]
+        header = dataFile.prefix(78)
         
         Debug.print("header:", Util.formatData(data: header))
         
@@ -197,7 +205,7 @@ public final class MobiBook {
         // Check the low bit to see if there's multibyte data present.
         // If multibyte data is included in the encrypted data, we'll have already cleared this flag.
         if (flags & 1) != 0 {
-            num += Int((ptr[size - num - 1] & 0x3) + 1)
+            num += .init((ptr[size - num - 1] & 0x3) + 1)
         }
         
         return num
@@ -208,16 +216,18 @@ public final class MobiBook {
         var result: Int = 0
         var size: Int = size
         
-        if size <= 0 { return result }
+        if size <= 0 {
+            return result
+        }
         
         while true {
             let v: UInt8 = ptr[size - 1]
-            result |= Int(v & 0x7F) << bitpos
+            result |= .init(v & 0x7F) << bitpos
             
             bitpos += 7
             size -= 1
             
-            if (v & 0x80) != 0 || (bitpos >= 28) || (size == 0) {
+            if (v & 0x80) != 0 || bitpos >= 28 || size == 0 {
                 return result
             }
         }
@@ -472,7 +482,7 @@ extension MobiBook: BookManager {
                 throw MobiBookError.noKeyFound(pidsSize: goodPids.count)
             }
             
-            patchSection(section: 0, newContent: .init(repeating: 0, count: drmSize), inOff: drmPtr)
+            patchSection(section: 0, newContent: .init(count: drmSize), inOff: drmPtr)
             patchSection(section: 0, newContent: .init([0xFF, 0xFF, 0xFF, 0xFF, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]), inOff: 0xA8)
         }
         
@@ -482,7 +492,7 @@ extension MobiBook: BookManager {
             print("File is encoded with PID \(KindleKeyUtils.checksumPid(data: pid, charMap: CharMaps.letters)).")
         }
         
-        patchSection(section: 0, newContent: .init(repeating: 0, count: 2), inOff: 0xC)
+        patchSection(section: 0, newContent: .init(count: 2), inOff: 0xC)
         
         print("Decrypting. Please wait . . .", terminator: "")
         

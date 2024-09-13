@@ -9,6 +9,7 @@ import Foundation
 
 enum TestError {
     case pathNotFound
+    case dataFromStringFailed
 }
 
 extension TestError: LocalizedError {
@@ -16,6 +17,8 @@ extension TestError: LocalizedError {
         switch self {
         case .pathNotFound:
             return "File path not found"
+        case .dataFromStringFailed:
+            return "Failed to create a data representation of string(s)"
         }
     }
 }

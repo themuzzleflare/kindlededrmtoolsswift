@@ -22,13 +22,13 @@ public enum Debug {
         isEnabled = enabled
     }
     
-    public static func print(_ items: Any..., separator: String = " ", terminator: String = "\n") {
+    static func print(_ items: Any..., separator: String = " ", terminator: String = "\n") {
         if isEnabled {
             Swift.print(items, separator: separator, terminator: terminator)
         }
     }
     
-    public static func debugPrint(_ items: Any..., separator: String = " ", terminator: String = "\n") {
+    static func debugPrint(_ items: Any..., separator: String = " ", terminator: String = "\n") {
         if isEnabled {
             Swift.debugPrint(items, separator: separator, terminator: terminator)
         }

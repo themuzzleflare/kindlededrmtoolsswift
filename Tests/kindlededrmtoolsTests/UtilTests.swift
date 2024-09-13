@@ -9,7 +9,7 @@ import XCTest
 @testable import kindlededrmtools
 
 final class UtilTests: XCTestCase {
-    func testFormatData() throws {
+    func testFormatData() {
         let bytes1: Data = .init([0xEA, 68, 82, 77, 73, 79, 78, 0xEE])
         let bytes2: Data = .init([84, 80, 90])
         let bytes3: Data = .init([80, 75, 0x03, 0x04])

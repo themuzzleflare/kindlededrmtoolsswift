@@ -18,9 +18,13 @@ enum CryptoUtils {
      * - Returns: The HMAC-SHA256 hash of the message as `Data`.
      */
     static func hmacsha256(key: Data, message: Data) -> Data {
-        let symmetricKey = SymmetricKey(data: key)
-        let authenticationCode = HMAC<SHA256>.authenticationCode(for: message, using: symmetricKey)
-        return Data(authenticationCode)
+        let symmetricKey: SymmetricKey = .init(data: key)
+        let authenticationCode: HashedAuthenticationCode<SHA256> = HMAC<SHA256>.authenticationCode(for: message, using: symmetricKey)
+        return .init(authenticationCode)
+    }
+    
+    static func hmacsha256(_ key: Data, _ message: Data) -> Data {
+        return hmacsha256(key: key, message: message)
     }
     
     /**
@@ -32,7 +36,11 @@ enum CryptoUtils {
      * - Returns: The decrypted data as `Data`.
      */
     static func aescbcdecrypt(key: Data, iv: Data, cipherText: Data) throws -> Data {
-        return try Data(QCCAESPadCBCDecrypt(key: .init(key), iv: .init(iv), cipherText: .init(cipherText)))
+        return try .init(QCCAESPadCBCDecrypt(key: .init(key), iv: .init(iv), cipherText: .init(cipherText)))
+    }
+    
+    static func aescbcdecrypt(_ key: Data, _ iv: Data, _ cipherText: Data) throws -> Data {
+        return try aescbcdecrypt(key: key, iv: iv, cipherText: cipherText)
     }
     
     /**
@@ -44,10 +52,10 @@ enum CryptoUtils {
      * - Returns: The decrypted data as `Data`.
      */
     static func aesctrdecrypt(key: Data, iv: Data, cipherText: Data) throws -> Data {
-        let keySymmetric = SymmetricKey(data: key)
-        let nonce = try AES.GCM.Nonce(data: iv)
-        let sealedBox = try AES.GCM.SealedBox(nonce: nonce, ciphertext: cipherText, tag: Data())
-        let decryptedData = try AES.GCM.open(sealedBox, using: keySymmetric)
+        let symmetricKey: SymmetricKey = .init(data: key)
+        let nonce: AES.GCM.Nonce = try .init(data: iv)
+        let sealedBox: AES.GCM.SealedBox = try .init(nonce: nonce, ciphertext: cipherText, tag: Data())
+        let decryptedData: Data = try AES.GCM.open(sealedBox, using: symmetricKey)
         return decryptedData
     }
     
@@ -77,9 +85,9 @@ enum CryptoUtils {
         // encryption (on decryption it can reduce space, obviously, but we don't
         // need to account for that) and it will only add at most one block size
         // worth of space.
-        var ciphertext = [UInt8](repeating: 0, count: plainText.count + kCCBlockSizeAES128)
-        var ciphertextCount = 0
-        let err = CCCrypt(
+        var ciphertext: [UInt8] = .init(repeating: 0, count: plainText.count + kCCBlockSizeAES128)
+        var ciphertextCount: Int = 0
+        let err: CCCryptorStatus = CCCrypt(
             CCOperation(kCCEncrypt),
             CCAlgorithm(kCCAlgorithmAES),
             CCOptions(kCCOptionPKCS7Padding),
@@ -129,9 +137,9 @@ enum CryptoUtils {
         
         // Padding can expand the data on encryption, but on decryption the data can
         // only shrink so we use the ciphertext size as our plaintext size.
-        var plaintext = [UInt8](repeating: 0, count: cipherText.count)
-        var plaintextCount = 0
-        let err = CCCrypt(
+        var plaintext: [UInt8] = .init(repeating: 0, count: cipherText.count)
+        var plaintextCount: Int = 0
+        let err: CCCryptorStatus = CCCrypt(
             CCOperation(kCCDecrypt),
             CCAlgorithm(kCCAlgorithmAES),
             CCOptions(kCCOptionPKCS7Padding),

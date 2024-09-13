@@ -1,5 +1,5 @@
 //
-//  TimeInterval+Extension.swift
+//  Double+Extension.swift
 //
 //
 //  Created by Paul Tavitian on 10/9/2024.
@@ -7,7 +7,7 @@
 
 import Foundation
 
-extension TimeInterval {
+extension Double {
     var oneDecimalPlace: String {
         return .init(format: "%.1f", self)
     }

@@ -41,8 +41,8 @@ enum Util {
      */
     static func ljustBytes(data: Data?, width: Int, padByte: UInt8) -> Data {
         // If data is nil, create a new Data object of 'width' size filled with 'padByte'
-        guard let data = data else {
-            return Data(repeating: padByte, count: width)
+        guard let data else {
+            return .init(repeating: padByte, count: width)
         }
         
         // If the original data is already long enough, return it as is
@@ -51,10 +51,10 @@ enum Util {
         }
         
         // Create a mutable copy of the data
-        var result = Data(data)
+        var result: Data = data
         
         // Append the padding bytes to the result
-        result.append(Data(repeating: padByte, count: width - data.count))
+        result.append(.init(repeating: padByte, count: width - data.count))
         
         return result
     }
@@ -78,5 +78,44 @@ enum Util {
         
         // Apply & 0xFF to keep the result within 8 bits
         return sum & 0xFF
+    }
+    
+    static func ord(data: Data) -> Int {
+        return .init(data[0] & 0xFF)
+    }
+    
+    static func ord(_ data: Data) -> Int {
+        return .init(data[0] & 0xFF)
+    }
+    
+    static func ordList(data: Data?) -> [Int] {
+        guard let data else {
+            return .init()
+        }
+        
+        var list: [Int] = .init()
+        
+        for byte in data {
+            list.append(ord(.init([byte])))
+        }
+        
+        return list;
+    }
+    
+    static func ordList(_ data: Data?) -> [Int] {
+        return ordList(data: data)
+    }
+    
+    static func padBytes(data: Data?, blocklen: Int, padByte: UInt8 = 0) -> Data {
+        guard let data else {
+            return .init(repeating: padByte, count: blocklen)
+        }
+        
+        if data.count.isMultiple(of: blocklen) {
+            return data
+        }
+        
+        let padding: Int = blocklen - (data.count % blocklen)
+        return data + .init(repeating: padByte, count: padding)
     }
 }

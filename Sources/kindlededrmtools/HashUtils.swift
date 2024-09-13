@@ -14,8 +14,8 @@ enum HashUtils {
      * - Parameter data: The data to hash.
      * - Returns: The SHA-256 hash of the data.
      */
-    static func sha256(data: Data?...) -> Data {
-        var hasher = SHA256()
+    static func sha256(data: [Data?]) -> Data {
+        var hasher: SHA256 = .init()
         
         for bytes in data {
             guard let bytes else {
@@ -25,7 +25,15 @@ enum HashUtils {
             hasher.update(data: bytes)
         }
         
-        return Data(hasher.finalize())
+        return .init(hasher.finalize())
+    }
+    
+    static func sha256(data: Data?...) -> Data {
+        return sha256(data: data)
+    }
+    
+    static func sha256(_ data: Data?...) -> Data {
+        return sha256(data: data)
     }
     
     /**
@@ -33,8 +41,8 @@ enum HashUtils {
      * - Parameter data: The data to hash.
      * - Returns: The MD5 hash of the data.
      */
-    static func md5(data: Data?...) -> Data {
-        var hasher = Insecure.MD5()
+    static func md5(data: [Data?]) -> Data {
+        var hasher: Insecure.MD5 = .init()
         
         for bytes in data {
             guard let bytes else {
@@ -44,7 +52,15 @@ enum HashUtils {
             hasher.update(data: bytes)
         }
         
-        return Data(hasher.finalize())
+        return .init(hasher.finalize())
+    }
+    
+    static func md5(data: Data?...) -> Data {
+        return md5(data: data)
+    }
+    
+    static func md5(_ data: Data?...) -> Data {
+        return md5(data: data)
     }
     
     /**
@@ -52,8 +68,8 @@ enum HashUtils {
      * - Parameter data: The data to hash.
      * - Returns: The SHA-1 hash of the data.
      */
-    static func sha1(data: Data?...) -> Data {
-        var hasher = Insecure.SHA1()
+    static func sha1(data: [Data?]) -> Data {
+        var hasher: Insecure.SHA1 = .init()
         
         for bytes in data {
             guard let bytes else {
@@ -63,6 +79,14 @@ enum HashUtils {
             hasher.update(data: bytes)
         }
         
-        return Data(hasher.finalize())
+        return .init(hasher.finalize())
+    }
+    
+    static func sha1(data: Data?...) -> Data {
+        return sha1(data: data)
+    }
+    
+    static func sha1(_ data: Data?...) -> Data {
+        return sha1(data: data)
     }
 }

@@ -16,7 +16,9 @@ let package = Package(
             targets: ["kindlededrmtools"])
     ],
     dependencies: [
-        .package(url: "https://github.com/apple/swift-collections.git", .upToNextMajor(from: "1.1.3"))
+        .package(url: "https://github.com/apple/swift-collections.git", .upToNextMajor(from: "1.1.3")),
+        .package(url: "https://github.com/themuzzleflare/kfxtablesswift.git", from: "1.0.0"),
+        .package(url: "https://github.com/weichsel/ZIPFoundation.git", .upToNextMinor(from: "0.9.19"))
     ],
     targets: [
         // Targets are the basic building blocks of a package, defining a module or a test suite.
@@ -24,7 +26,9 @@ let package = Package(
         .target(
             name: "kindlededrmtools",
             dependencies: [
-                .product(name: "Collections", package: "swift-collections")
+                .product(name: "Collections", package: "swift-collections"),
+                .product(name: "kfxtables", package: "kfxtablesswift"),
+                "ZIPFoundation"
             ]),
         .testTarget(
             name: "kindlededrmtoolsTests",

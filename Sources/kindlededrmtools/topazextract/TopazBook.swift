@@ -13,6 +13,7 @@ public final class TopazBook {
     
     init(infile: String) {
         print("TopazExtract v\(TopazBook.version).")
+        print("\(Util.copyright).")
         print("Removes DRM protection from Topaz eBooks and extracts the contents.")
     }
 }

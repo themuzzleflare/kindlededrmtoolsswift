@@ -10,11 +10,13 @@ import XCTest
 
 final class KindleKeyUtilsTests: XCTestCase {
     func testcrc32() throws {
-        let pid1: Data = "vCNIml/c".data(using: .ascii)!
-        let pid2: Data = "JBJfi+Wm".data(using: .ascii)!
-        let pid3: Data = "5m9pZCYO".data(using: .ascii)!
-        let pid4: Data = "bEQyy4Rz".data(using: .ascii)!
-        let pid5: Data = "EGnqh3QS".data(using: .ascii)!
+        guard let pid1: Data = "vCNIml/c".data(using: .ascii),
+              let pid2: Data = "JBJfi+Wm".data(using: .ascii),
+              let pid3: Data = "5m9pZCYO".data(using: .ascii),
+              let pid4: Data = "bEQyy4Rz".data(using: .ascii),
+              let pid5: Data = "EGnqh3QS".data(using: .ascii) else {
+            throw TestError.dataFromStringFailed
+        }
         
         let crc321Expected: Int64 = 827044802;
         let crc322Expected: Int64 = 1740101228;

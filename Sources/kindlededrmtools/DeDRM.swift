@@ -123,9 +123,9 @@ public enum DeDRM {
         
         let url: URL = .init(filePath: infile)
         
-        let magic8: Data = try .init(contentsOf: url)[..<8]
-        let magic3: Data = magic8[..<3]
-        let magic4: Data = magic8[..<4]
+        let magic8: Data = try .init(contentsOf: url).prefix(8)
+        let magic3: Data = magic8.prefix(3)
+        let magic4: Data = magic8.prefix(4)
         
         if magic8 == CharMaps.kfxDrmIonBytes {
             throw DeDRMError.noVoucher
@@ -156,6 +156,8 @@ public enum DeDRM {
         let token: Data? = pidMetaInfo.token
         
         totalPids.append(contentsOf: KindlePID.getPidSet(rec209: rec209, token: token, serials: serials, kDatabaseRecords: kDatabaseRecords))
+        
+        totalPids.append("55PSPzrfPCr7tvrnPzrk6brzPW7M63nA7zPf6z6Mcd65fc2ba340b6f29a01d9d7c99871bfb1a4a056")
         
         print("Found \(totalPids.count.description) keys to try after \(Date.now.timeIntervalSince(startTime).oneDecimalPlace) seconds")
         
