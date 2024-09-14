@@ -18,22 +18,22 @@ final class KindleKeyUtilsTests: XCTestCase {
             throw TestError.dataFromStringFailed
         }
         
-        let crc321Expected: Int64 = 827044802;
-        let crc322Expected: Int64 = 1740101228;
-        let crc323Expected: Int64 = 2795348181;
-        let crc324Expected: Int64 = 3135611226;
-        let crc325Expected: Int64 = 2682308693;
+        let crc321Expected: Int64 = 827044802
+        let crc322Expected: Int64 = 1740101228
+        let crc323Expected: Int64 = 2795348181
+        let crc324Expected: Int64 = 3135611226
+        let crc325Expected: Int64 = 2682308693
         
-        let crc321: Int64 = KindleKeyUtils.crc32(data: pid1);
-        let crc322: Int64 = KindleKeyUtils.crc32(data: pid2);
-        let crc323: Int64 = KindleKeyUtils.crc32(data: pid3);
-        let crc324: Int64 = KindleKeyUtils.crc32(data: pid4);
-        let crc325: Int64 = KindleKeyUtils.crc32(data: pid5);
+        let crc321: Int64 = KindleKeyUtils.crc32(data: pid1)
+        let crc322: Int64 = KindleKeyUtils.crc32(data: pid2)
+        let crc323: Int64 = KindleKeyUtils.crc32(data: pid3)
+        let crc324: Int64 = KindleKeyUtils.crc32(data: pid4)
+        let crc325: Int64 = KindleKeyUtils.crc32(data: pid5)
         
-        XCTAssertEqual(crc321Expected, crc321);
-        XCTAssertEqual(crc322Expected, crc322);
-        XCTAssertEqual(crc323Expected, crc323);
-        XCTAssertEqual(crc324Expected, crc324);
-        XCTAssertEqual(crc325Expected, crc325);
+        XCTAssertEqual(crc321Expected, crc321)
+        XCTAssertEqual(crc322Expected, crc322)
+        XCTAssertEqual(crc323Expected, crc323)
+        XCTAssertEqual(crc324Expected, crc324)
+        XCTAssertEqual(crc325Expected, crc325)
     }
 }

@@ -23,7 +23,7 @@ final class DRMIonVoucher {
     private var cipherIv: Data?
     private var secretKey: Data = .init()
     
-    init(voucherenv: BytesIOInputStream, dsn: Data, secret: Data) {
+    init(voucherenv: DataInputStream, dsn: Data, secret: Data) {
         Debug.print("DRMIonVoucher.", #function, separator: "")
 
         self.dsn = dsn
@@ -33,13 +33,13 @@ final class DRMIonVoucher {
         IonUtils.addProtTable(envelope)
     }
     
-    convenience init(_ voucherenv: BytesIOInputStream, _ dsn: Data, _ secret: Data) {
+    convenience init(_ voucherenv: DataInputStream, _ dsn: Data, _ secret: Data) {
         Debug.print("DRMIonVoucher.", #function, separator: "")
 
         self.init(voucherenv: voucherenv, dsn: dsn, secret: secret)
     }
     
-    convenience init(voucherenv: BytesIOInputStream, dsn: String, secret: String) throws {
+    convenience init(voucherenv: DataInputStream, dsn: String, secret: String) throws {
         Debug.print("DRMIonVoucher.", #function, separator: "")
 
         guard let dsnData = dsn.data(using: .ascii) else {
@@ -53,7 +53,7 @@ final class DRMIonVoucher {
         self.init(voucherenv: voucherenv, dsn: dsnData, secret: secretData)
     }
     
-    convenience init(_ voucherenv: BytesIOInputStream, _ dsn: String, _ secret: String) throws {
+    convenience init(_ voucherenv: DataInputStream, _ dsn: String, _ secret: String) throws {
         Debug.print("DRMIonVoucher.", #function, separator: "")
 
         try self.init(voucherenv: voucherenv, dsn: dsn, secret: secret)
@@ -133,6 +133,8 @@ final class DRMIonVoucher {
                 }
                 
                 let decryptedData: Data = try CryptoUtils.aescbcdecrypt(.init(key.prefix(32)), .init(cipherIv.prefix(16)), cipherText)
+                
+                Debug.print("decryptedVoucher:", Util.formatData(data: decryptedData))
                 
                 // Parse the decrypted data as a BinaryIonParser
                 drmKey = .init(.init(decryptedData))

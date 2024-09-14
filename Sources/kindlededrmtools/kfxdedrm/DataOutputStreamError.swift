@@ -1,5 +1,5 @@
 //
-//  BytesIOOutputStreamError.swift
+//  DataOutputStreamError.swift
 //
 //
 //  Created by Paul Tavitian on 13/9/2024.
@@ -7,11 +7,11 @@
 
 import Foundation
 
-enum BytesIOOutputStreamError {
+enum DataOutputStreamError {
     case negativeInitialSize(size: Int)
 }
 
-extension BytesIOOutputStreamError: LocalizedError {
+extension DataOutputStreamError: LocalizedError {
     var errorDescription: String? {
         switch self {
         case let .negativeInitialSize(size):

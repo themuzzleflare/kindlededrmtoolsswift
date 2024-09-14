@@ -8,7 +8,7 @@
 import Foundation
 
 final class BinaryIonParser {
-    private let stream: BytesIOInputStream
+    private let stream: DataInputStream
     private let initPos: Int
     private var annotations: [Int] = .init()
     private var catalog: [IonCatalogItem] = .init()
@@ -28,7 +28,7 @@ final class BinaryIonParser {
     private var didImports: Bool = false
     private var containerStack: [ContainerRec] = .init()
     
-    init(stream: BytesIOInputStream) {
+    init(stream: DataInputStream) {
         Debug.print("BinaryIonParser.", #function, separator: "")
         
         self.stream = stream
@@ -36,7 +36,7 @@ final class BinaryIonParser {
         reset()
     }
     
-    convenience init(_ stream: BytesIOInputStream) {
+    convenience init(_ stream: DataInputStream) {
         Debug.print("BinaryIonParser.", #function, separator: "")
         
         self.init(stream: stream)
@@ -406,7 +406,8 @@ extension BinaryIonParser {
         
         if valueTid != IonUtils.TID_NULL && valueTid != IonUtils.TID_BOOLEAN && valueTid != IonUtils.TID_POSINT &&
             valueTid != IonUtils.TID_NEGINT && valueTid != IonUtils.TID_FLOAT && valueTid != IonUtils.TID_DECIMAL &&
-            valueTid != IonUtils.TID_TIMESTAMP && valueTid != IonUtils.TID_SYMBOL && valueTid != IonUtils.TID_STRING { return
+            valueTid != IonUtils.TID_TIMESTAMP && valueTid != IonUtils.TID_SYMBOL && valueTid != IonUtils.TID_STRING {
+            return
         }
         
         if valueIsNull {
@@ -526,8 +527,6 @@ extension BinaryIonParser {
     
     private func readDecimal() throws -> Double {
         Debug.print("BinaryIonParser.", #function, separator: "")
-        
-        Debug.print("Reading decimal")
         
         if valueLen == 0 {
             return 0

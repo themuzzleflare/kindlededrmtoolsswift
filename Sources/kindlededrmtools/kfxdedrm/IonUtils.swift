@@ -349,7 +349,7 @@ enum IonUtils {
             ws.shuffle(repl)
             ws.sbox(d0x6a0797c0, d0x6a0dab50, 3)
             ws.sbox(d0x6a07e7c0, d0x6a0dab50, 3)
-            ws.shuffle(repl);
+            ws.shuffle(repl)
             ws.sbox(d0x6a0797c0, d0x6a0dab50, 3)
             ws.sbox(d0x6a07e7c0, d0x6a0dab50, 3)
             ws.exlookup(d0x6a07d7c0)
@@ -381,13 +381,13 @@ enum IonUtils {
         var out: Data = .init()
         
         while remln > 0 {
-            ws.sbox(d0x6a084498, d0x6a0dab50, 2);
-            ws.shuffle(repl);
-            ws.sbox(d0x6a089498, d0x6a0dab50, 2);
-            ws.sbox(d0x6a089498, d0x6a0dab50, 2);
-            ws.sbox(d0x6a084498, d0x6a0dab50, 2);
-            ws.shuffle(repl);
-            ws.exlookup(d0x6a088498);
+            ws.sbox(d0x6a084498, d0x6a0dab50, 2)
+            ws.shuffle(repl)
+            ws.sbox(d0x6a089498, d0x6a0dab50, 2)
+            ws.sbox(d0x6a089498, d0x6a0dab50, 2)
+            ws.sbox(d0x6a084498, d0x6a0dab50, 2)
+            ws.shuffle(repl)
+            ws.exlookup(d0x6a088498)
             
             out.append(ws.mask(st.subdata(in: sto..<sto + 16)))
             
@@ -416,14 +416,14 @@ enum IonUtils {
         var out: Data = .init()
         
         while remln > 0 {
-            ws.sbox(d0x6a094170, d0x6a0dab50, 1);
-            ws.shuffle(repl);
-            ws.shuffle(repl);
-            ws.sbox(d0x6a08f170, d0x6a0dab50, 1);
-            ws.sbox(d0x6a08f170, d0x6a0dab50, 1);
-            ws.sbox(d0x6a094170, d0x6a0dab50, 1);
+            ws.sbox(d0x6a094170, d0x6a0dab50, 1)
+            ws.shuffle(repl)
+            ws.shuffle(repl)
+            ws.sbox(d0x6a08f170, d0x6a0dab50, 1)
+            ws.sbox(d0x6a08f170, d0x6a0dab50, 1)
+            ws.sbox(d0x6a094170, d0x6a0dab50, 1)
             
-            ws.exlookup(d0x6a093170);
+            ws.exlookup(d0x6a093170)
             
             out.append(ws.mask(st.subdata(in: sto..<sto + 16)))
             
@@ -452,16 +452,16 @@ enum IonUtils {
         var out: Data = .init()
         
         while remln > 0 {
-            ws.shuffle(repl);
-            ws.sbox(d0x6a099e48, d0x6a0dab50, 2, 3);
-            ws.sbox(d0x6a09ee48, d0x6a0dab50, 2, 3);
-            ws.sbox(d0x6a09ee48, d0x6a0dab50, 2, 3);
-            ws.shuffle(repl);
-            ws.sbox(d0x6a099e48, d0x6a0dab50, 2, 3);
-            ws.sbox(d0x6a099e48, d0x6a0dab50, 2, 3);
-            ws.shuffle(repl);
-            ws.sbox(d0x6a09ee48, d0x6a0dab50, 2, 3);
-            ws.exlookup(d0x6a09de48);
+            ws.shuffle(repl)
+            ws.sbox(d0x6a099e48, d0x6a0dab50, 2, 3)
+            ws.sbox(d0x6a09ee48, d0x6a0dab50, 2, 3)
+            ws.sbox(d0x6a09ee48, d0x6a0dab50, 2, 3)
+            ws.shuffle(repl)
+            ws.sbox(d0x6a099e48, d0x6a0dab50, 2, 3)
+            ws.sbox(d0x6a099e48, d0x6a0dab50, 2, 3)
+            ws.shuffle(repl)
+            ws.sbox(d0x6a09ee48, d0x6a0dab50, 2, 3)
+            ws.exlookup(d0x6a09de48)
             
             out.append(ws.mask(st.subdata(in: sto..<sto + 16)))
             
@@ -490,17 +490,17 @@ enum IonUtils {
         var out: Data = .init()
         
         while remln > 0 {
-            ws.shuffle(repl);
-            ws.sbox(d0x6a0a4b20, d0x6a0dab50, 1, 3);
-            ws.shuffle(repl);
-            ws.sbox(d0x6a0a4b20, d0x6a0dab50, 1, 3);
-            ws.sbox(d0x6a0a9b20, d0x6a0dab50, 1, 3);
-            ws.shuffle(repl);
-            ws.sbox(d0x6a0a9b20, d0x6a0dab50, 1, 3);
-            ws.sbox(d0x6a0a9b20, d0x6a0dab50, 1, 3);
-            ws.sbox(d0x6a0a4b20, d0x6a0dab50, 1, 3);
+            ws.shuffle(repl)
+            ws.sbox(d0x6a0a4b20, d0x6a0dab50, 1, 3)
+            ws.shuffle(repl)
+            ws.sbox(d0x6a0a4b20, d0x6a0dab50, 1, 3)
+            ws.sbox(d0x6a0a9b20, d0x6a0dab50, 1, 3)
+            ws.shuffle(repl)
+            ws.sbox(d0x6a0a9b20, d0x6a0dab50, 1, 3)
+            ws.sbox(d0x6a0a9b20, d0x6a0dab50, 1, 3)
+            ws.sbox(d0x6a0a4b20, d0x6a0dab50, 1, 3)
             
-            ws.exlookup(d0x6a0a8b20);
+            ws.exlookup(d0x6a0a8b20)
             
             out.append(ws.mask(st.subdata(in: sto..<sto + 16)))
             
@@ -529,16 +529,16 @@ enum IonUtils {
         var out: Data = .init()
         
         while remln > 0 {
-            ws.sbox(d0x6a0af7f8, d0x6a0dab50, 1, 2, 3);
-            ws.sbox(d0x6a0af7f8, d0x6a0dab50, 1, 2, 3);
-            ws.sbox(d0x6a0b47f8, d0x6a0dab50, 1, 2, 3);
-            ws.sbox(d0x6a0af7f8, d0x6a0dab50, 1, 2, 3);
-            ws.shuffle(repl);
-            ws.sbox(d0x6a0b47f8, d0x6a0dab50, 1, 2, 3);
-            ws.shuffle(repl);
-            ws.shuffle(repl);
-            ws.sbox(d0x6a0b47f8, d0x6a0dab50, 1, 2, 3);
-            ws.exlookup(d0x6a0b37f8);
+            ws.sbox(d0x6a0af7f8, d0x6a0dab50, 1, 2, 3)
+            ws.sbox(d0x6a0af7f8, d0x6a0dab50, 1, 2, 3)
+            ws.sbox(d0x6a0b47f8, d0x6a0dab50, 1, 2, 3)
+            ws.sbox(d0x6a0af7f8, d0x6a0dab50, 1, 2, 3)
+            ws.shuffle(repl)
+            ws.sbox(d0x6a0b47f8, d0x6a0dab50, 1, 2, 3)
+            ws.shuffle(repl)
+            ws.shuffle(repl)
+            ws.sbox(d0x6a0b47f8, d0x6a0dab50, 1, 2, 3)
+            ws.exlookup(d0x6a0b37f8)
             
             out.append(ws.mask(st.subdata(in: sto..<sto + 16)))
             
@@ -567,16 +567,16 @@ enum IonUtils {
         var out: Data = .init()
         
         while remln > 0 {
-            ws.sbox(d0x6a0ba4d0, d0x6a0dab50, 1, 2);
-            ws.sbox(d0x6a0bf4d0, d0x6a0dab50, 1, 2);
-            ws.sbox(d0x6a0bf4d0, d0x6a0dab50, 1, 2);
-            ws.sbox(d0x6a0ba4d0, d0x6a0dab50, 1, 2);
-            ws.shuffle(repl);
-            ws.shuffle(repl);
-            ws.shuffle(repl);
-            ws.sbox(d0x6a0bf4d0, d0x6a0dab50, 1, 2);
-            ws.sbox(d0x6a0ba4d0, d0x6a0dab50, 1, 2);
-            ws.exlookup(d0x6a0be4d0);
+            ws.sbox(d0x6a0ba4d0, d0x6a0dab50, 1, 2)
+            ws.sbox(d0x6a0bf4d0, d0x6a0dab50, 1, 2)
+            ws.sbox(d0x6a0bf4d0, d0x6a0dab50, 1, 2)
+            ws.sbox(d0x6a0ba4d0, d0x6a0dab50, 1, 2)
+            ws.shuffle(repl)
+            ws.shuffle(repl)
+            ws.shuffle(repl)
+            ws.sbox(d0x6a0bf4d0, d0x6a0dab50, 1, 2)
+            ws.sbox(d0x6a0ba4d0, d0x6a0dab50, 1, 2)
+            ws.exlookup(d0x6a0be4d0)
             
             out.append(ws.mask(st.subdata(in: sto..<sto + 16)))
             
@@ -605,16 +605,16 @@ enum IonUtils {
         var out: Data = .init()
         
         while remln > 0 {
-            ws.sbox(d0x6a0ca1a8, d0x6a0dab50, 1, 3);
-            ws.shuffle(repl);
-            ws.sbox(d0x6a0ca1a8, d0x6a0dab50, 1, 3);
-            ws.sbox(d0x6a0c51a8, d0x6a0dab50, 1, 3);
-            ws.sbox(d0x6a0ca1a8, d0x6a0dab50, 1, 3);
-            ws.sbox(d0x6a0c51a8, d0x6a0dab50, 1, 3);
-            ws.sbox(d0x6a0c51a8, d0x6a0dab50, 1, 3);
-            ws.shuffle(repl);
-            ws.shuffle(repl);
-            ws.exlookup(d0x6a0c91a8);
+            ws.sbox(d0x6a0ca1a8, d0x6a0dab50, 1, 3)
+            ws.shuffle(repl)
+            ws.sbox(d0x6a0ca1a8, d0x6a0dab50, 1, 3)
+            ws.sbox(d0x6a0c51a8, d0x6a0dab50, 1, 3)
+            ws.sbox(d0x6a0ca1a8, d0x6a0dab50, 1, 3)
+            ws.sbox(d0x6a0c51a8, d0x6a0dab50, 1, 3)
+            ws.sbox(d0x6a0c51a8, d0x6a0dab50, 1, 3)
+            ws.shuffle(repl)
+            ws.shuffle(repl)
+            ws.exlookup(d0x6a0c91a8)
             
             out.append(ws.mask(st.subdata(in: sto..<sto + 16)))
             
@@ -643,16 +643,16 @@ enum IonUtils {
         var out: Data = .init()
         
         while remln > 0 {
-            ws.sbox(d0x6a0d4e80, d0x6a0dab50);
-            ws.shuffle(repl);
-            ws.sbox(d0x6a0cfe80, d0x6a0dab50);
-            ws.sbox(d0x6a0d4e80, d0x6a0dab50);
-            ws.sbox(d0x6a0cfe80, d0x6a0dab50);
-            ws.sbox(d0x6a0d4e80, d0x6a0dab50);
-            ws.shuffle(repl);
-            ws.sbox(d0x6a0cfe80, d0x6a0dab50);
-            ws.shuffle(repl);
-            ws.exlookup(d0x6a0d3e80);
+            ws.sbox(d0x6a0d4e80, d0x6a0dab50)
+            ws.shuffle(repl)
+            ws.sbox(d0x6a0cfe80, d0x6a0dab50)
+            ws.sbox(d0x6a0d4e80, d0x6a0dab50)
+            ws.sbox(d0x6a0cfe80, d0x6a0dab50)
+            ws.sbox(d0x6a0d4e80, d0x6a0dab50)
+            ws.shuffle(repl)
+            ws.sbox(d0x6a0cfe80, d0x6a0dab50)
+            ws.shuffle(repl)
+            ws.exlookup(d0x6a0d3e80)
             
             out.append(ws.mask(st.subdata(in: sto..<sto + 16)))
             

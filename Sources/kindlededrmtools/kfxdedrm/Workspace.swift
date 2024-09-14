@@ -61,95 +61,95 @@ final class Workspace {
             let uv1: Int = table[toff + nwork[wo + 1] + 0x100]
             let uv2: Int = table[toff + nwork[wo + 2] + 0x200]
             let uv3: Int = table[toff + nwork[wo + 3] + 0x300]
-            var moff: Int = 0;
+            var moff: Int = 0
             
-            var nib1: Int = 0;
-            var nib2: Int = 0;
-            var nib3: Int = 0;
-            var nib4: Int = 0;
+            var nib1: Int = 0
+            var nib2: Int = 0
+            var nib3: Int = 0
+            var nib4: Int = 0
             
             if skpList.contains(0) {
-                moff += 0x400;
+                moff += 0x400
             } else {
-                nib1 = matrix[moff + offset + ((uv1 >> 0x1c) & 0xf) | ((uv5 >> 0x18) & 0xf0)];
-                moff += 0x100;
-                nib2 = matrix[moff + offset + ((uv3 >> 0x1c) & 0xf) | ((uv2 >> 0x18) & 0xf0)];
-                moff += 0x100;
-                nib3 = matrix[moff + offset + ((uv1 >> 0x18) & 0xf) | ((uv5 >> 0x14) & 0xf0)];
-                moff += 0x100;
-                nib4 = matrix[moff + offset + ((uv3 >> 0x18) & 0xf) | ((uv2 >> 0x14) & 0xf0)];
-                moff += 0x100;
+                nib1 = matrix[moff + offset + ((uv1 >> 0x1c) & 0xf) | ((uv5 >> 0x18) & 0xf0)]
+                moff += 0x100
+                nib2 = matrix[moff + offset + ((uv3 >> 0x1c) & 0xf) | ((uv2 >> 0x18) & 0xf0)]
+                moff += 0x100
+                nib3 = matrix[moff + offset + ((uv1 >> 0x18) & 0xf) | ((uv5 >> 0x14) & 0xf0)]
+                moff += 0x100
+                nib4 = matrix[moff + offset + ((uv3 >> 0x18) & 0xf) | ((uv2 >> 0x14) & 0xf0)]
+                moff += 0x100
             }
             
-            var rnib1: Int = matrix[moff + offset + nib1 * 0x10 + nib2];
-            moff += 0x100;
-            var rnib2: Int = matrix[moff + offset + nib3 * 0x10 + nib4];
-            moff += 0x100;
-            nwork[wo] = rnib1 * 0x10 + rnib2;
+            var rnib1: Int = matrix[moff + offset + nib1 * 0x10 + nib2]
+            moff += 0x100
+            var rnib2: Int = matrix[moff + offset + nib3 * 0x10 + nib4]
+            moff += 0x100
+            nwork[wo] = rnib1 * 0x10 + rnib2
             
             if skpList.contains(1) {
-                moff += 0x400;
+                moff += 0x400
             } else {
-                nib1 = matrix[moff + offset + ((uv1 >> 0x14) & 0xf) | ((uv5 >> 0x10) & 0xf0)];
-                moff += 0x100;
-                nib2 = matrix[moff + offset + ((uv3 >> 0x14) & 0xf) | ((uv2 >> 0x10) & 0xf0)];
-                moff += 0x100;
-                nib3 = matrix[moff + offset + ((uv1 >> 0x10) & 0xf) | ((uv5 >> 0xc) & 0xf0)];
-                moff += 0x100;
-                nib4 = matrix[moff + offset + ((uv3 >> 0x10) & 0xf) | ((uv2 >> 0xc) & 0xf0)];
-                moff += 0x100;
+                nib1 = matrix[moff + offset + ((uv1 >> 0x14) & 0xf) | ((uv5 >> 0x10) & 0xf0)]
+                moff += 0x100
+                nib2 = matrix[moff + offset + ((uv3 >> 0x14) & 0xf) | ((uv2 >> 0x10) & 0xf0)]
+                moff += 0x100
+                nib3 = matrix[moff + offset + ((uv1 >> 0x10) & 0xf) | ((uv5 >> 0xc) & 0xf0)]
+                moff += 0x100
+                nib4 = matrix[moff + offset + ((uv3 >> 0x10) & 0xf) | ((uv2 >> 0xc) & 0xf0)]
+                moff += 0x100
             }
             
-            rnib1 = matrix[moff + offset + nib1 * 0x10 + nib2];
-            moff += 0x100;
-            rnib2 = matrix[moff + offset + nib3 * 0x10 + nib4];
-            moff += 0x100;
-            nwork[wo + 1] = rnib1 * 0x10 + rnib2;
+            rnib1 = matrix[moff + offset + nib1 * 0x10 + nib2]
+            moff += 0x100
+            rnib2 = matrix[moff + offset + nib3 * 0x10 + nib4]
+            moff += 0x100
+            nwork[wo + 1] = rnib1 * 0x10 + rnib2
             
             if skpList.contains(2) {
-                moff += 0x400;
+                moff += 0x400
             } else {
-                nib1 = matrix[moff + offset + ((uv1 >> 0xc) & 0xf) | ((uv5 >> 0x8) & 0xf0)];
-                moff += 0x100;
-                nib2 = matrix[moff + offset + ((uv3 >> 0xc) & 0xf) | ((uv2 >> 0x8) & 0xf0)];
-                moff += 0x100;
-                nib3 = matrix[moff + offset + ((uv1 >> 0x8) & 0xf) | ((uv5 >> 0x4) & 0xf0)];
-                moff += 0x100;
-                nib4 = matrix[moff + offset + ((uv3 >> 0x8) & 0xf) | ((uv2 >> 0x4) & 0xf0)];
-                moff += 0x100;
+                nib1 = matrix[moff + offset + ((uv1 >> 0xc) & 0xf) | ((uv5 >> 0x8) & 0xf0)]
+                moff += 0x100
+                nib2 = matrix[moff + offset + ((uv3 >> 0xc) & 0xf) | ((uv2 >> 0x8) & 0xf0)]
+                moff += 0x100
+                nib3 = matrix[moff + offset + ((uv1 >> 0x8) & 0xf) | ((uv5 >> 0x4) & 0xf0)]
+                moff += 0x100
+                nib4 = matrix[moff + offset + ((uv3 >> 0x8) & 0xf) | ((uv2 >> 0x4) & 0xf0)]
+                moff += 0x100
             }
             
-            rnib1 = matrix[moff + offset + nib1 * 0x10 + nib2];
-            moff += 0x100;
-            rnib2 = matrix[moff + offset + nib3 * 0x10 + nib4];
-            moff += 0x100;
+            rnib1 = matrix[moff + offset + nib1 * 0x10 + nib2]
+            moff += 0x100
+            rnib2 = matrix[moff + offset + nib3 * 0x10 + nib4]
+            moff += 0x100
             nwork[wo + 2] = rnib1 * 0x10 + rnib2
             
             if skpList.contains(3) {
-                moff += 0x400;
+                moff += 0x400
             } else {
-                nib1 = matrix[moff + offset + ((uv1 >> 0x4) & 0xf) | (uv5 & 0xf0)];
-                moff += 0x100;
-                nib2 = matrix[moff + offset + ((uv3 >> 0x4) & 0xf) | (uv2 & 0xf0)];
-                moff += 0x100;
-                nib3 = matrix[moff + offset + (uv1 & 0xf) | ((uv5 << 4) & 0xf0)];
-                moff += 0x100;
-                nib4 = matrix[moff + offset + (uv3 & 0xf) | ((uv2 << 4) & 0xf0)];
-                moff += 0x100;
+                nib1 = matrix[moff + offset + ((uv1 >> 0x4) & 0xf) | (uv5 & 0xf0)]
+                moff += 0x100
+                nib2 = matrix[moff + offset + ((uv3 >> 0x4) & 0xf) | (uv2 & 0xf0)]
+                moff += 0x100
+                nib3 = matrix[moff + offset + (uv1 & 0xf) | ((uv5 << 4) & 0xf0)]
+                moff += 0x100
+                nib4 = matrix[moff + offset + (uv3 & 0xf) | ((uv2 << 4) & 0xf0)]
+                moff += 0x100
             }
             
-            rnib1 = matrix[moff + offset + nib1 * 0x10 + nib2];
-            moff += 0x100;
-            rnib2 = matrix[moff + offset + nib3 * 0x10 + nib4];
-            moff += 0x100;
+            rnib1 = matrix[moff + offset + nib1 * 0x10 + nib2]
+            moff += 0x100
+            rnib2 = matrix[moff + offset + nib3 * 0x10 + nib4]
+            moff += 0x100
             nwork[wo + 3] = rnib1 * 0x10 + rnib2
             
-            offset += 0x1800;
-            wo += 4;
-            toff += 0x400;
+            offset += 0x1800
+            wo += 4
+            toff += 0x400
         }
         
-        work = nwork;
+        work = nwork
     }
     
     func sbox(_ table: [Int], _ matrix: [Int], _ skpList: [Int] = .init()) {
@@ -169,7 +169,7 @@ final class Workspace {
         
         for a in 0..<work.count {
             work[a] = ltable[work[a] + lookoffs]
-            lookoffs += 0x100;
+            lookoffs += 0x100
         }
     }
     

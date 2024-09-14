@@ -162,19 +162,19 @@ final class MobiBook {
                 
                 if type == 401 && size == 9 {
                     let newContent: Data = .init([100])
-                    patchSection(section: 0, newContent: newContent, inOff: 16 + mobiLength + pos + 8);
+                    patchSection(section: 0, newContent: newContent, inOff: 16 + mobiLength + pos + 8)
                 } else if type == 404 && size == 9 {
                     let newContent: Data = .init(count: 0)
-                    patchSection(section: 0, newContent: newContent, inOff: 16 + mobiLength + pos + 8);
+                    patchSection(section: 0, newContent: newContent, inOff: 16 + mobiLength + pos + 8)
                 } else if type == 405 && size == 9 {
                     let newContent: Data = .init(count: 0)
-                    patchSection(section: 0, newContent: newContent, inOff: 16 + mobiLength + pos + 8);
+                    patchSection(section: 0, newContent: newContent, inOff: 16 + mobiLength + pos + 8)
                 } else if type == 406 && size == 16 {
                     let newContent: Data = .init(count: 8)
-                    patchSection(section: 0, newContent: newContent, inOff: 16 + mobiLength + pos + 8);
+                    patchSection(section: 0, newContent: newContent, inOff: 16 + mobiLength + pos + 8)
                 } else if type == 208 {
                     let newContent: Data = .init(count: size - 8)
-                    patchSection(section: 0, newContent: newContent, inOff: 16 + mobiLength + pos + 8);
+                    patchSection(section: 0, newContent: newContent, inOff: 16 + mobiLength + pos + 8)
                 }
                 
                 pos += size

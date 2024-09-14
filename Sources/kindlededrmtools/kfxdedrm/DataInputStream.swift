@@ -1,5 +1,5 @@
 //
-//  BytesIOInputStream.swift
+//  DataInputStream.swift
 //
 //
 //  Created by Paul Tavitian on 11/9/2024.
@@ -7,42 +7,42 @@
 
 import Foundation
 
-final class BytesIOInputStream {
-    private let buf: Data
+final class DataInputStream {
+    private let data: Data
     
     private var pos: Int
     private var mark: Int = 0
     private var count: Int
     
-    init(buf: Data) {
-        Debug.print("BytesIOInputStream.", #function, separator: "")
+    init(data: Data) {
+        Debug.print("DataInputStream.", #function, separator: "")
         
-        self.buf = buf
+        self.data = data
         pos = 0
-        count = buf.count
+        count = data.count
     }
     
-    init(buf: Data, offset: Int = 0, length: Int) {
-        Debug.print("BytesIOInputStream.", #function, separator: "")
+    init(data: Data, offset: Int = 0, length: Int) {
+        Debug.print("DataInputStream.", #function, separator: "")
         
-        self.buf = buf
+        self.data = data
         pos = offset
-        count = min(offset + length, buf.count)
+        count = min(offset + length, data.count)
         mark = offset
     }
     
-    convenience init(_ buf: Data) {
-        Debug.print("BytesIOInputStream.", #function, separator: "")
+    convenience init(_ data: Data) {
+        Debug.print("DataInputStream.", #function, separator: "")
         
-        self.init(buf: buf)
+        self.init(data: data)
     }
     
     func read() -> Int {
-        Debug.print("BytesIOInputStream.", #function, separator: "")
+        Debug.print("DataInputStream.", #function, separator: "")
         
         if pos < count {
             pos += 1
-            return .init(buf[pos] & 0xff)
+            return .init(data[pos] & 0xff)
         } else {
             return -1
         }
@@ -50,7 +50,7 @@ final class BytesIOInputStream {
     
     @discardableResult
     func read(data: inout Data, off: Int = 0, len: Int) -> Int {
-        Debug.print("BytesIOInputStream.", #function, separator: "")
+        Debug.print("DataInputStream.", #function, separator: "")
         
         var len: Int = len
         
@@ -69,7 +69,7 @@ final class BytesIOInputStream {
         }
         
         for i in 0..<len {
-            data[off + i] = buf[pos + i]
+            data[off + i] = self.data[pos + i]
         }
         
         pos += len
@@ -78,9 +78,9 @@ final class BytesIOInputStream {
     }
     
     func readAllBytes() -> Data {
-        Debug.print("BytesIOInputStream.", #function, separator: "")
+        Debug.print("DataInputStream.", #function, separator: "")
         
-        let result: Data = buf.subdata(in: pos..<count)
+        let result: Data = data.subdata(in: pos..<count)
         
         pos = count
         
@@ -88,30 +88,30 @@ final class BytesIOInputStream {
     }
     
     @discardableResult
-    func readNBytes(b: inout Data, off: Int = 0, len: Int) -> Int {
-        Debug.print("BytesIOInputStream.", #function, separator: "")
+    func readNBytes(data: inout Data, off: Int = 0, len: Int) -> Int {
+        Debug.print("DataInputStream.", #function, separator: "")
         
-        let n: Int = read(data: &b, off: off, len: len)
+        let n: Int = read(data: &data, off: off, len: len)
         return n == -1 ? 0 : n
     }
     
     func readNBytes(len: Int) -> Data {
-        Debug.print("BytesIOInputStream.", #function, separator: "")
+        Debug.print("DataInputStream.", #function, separator: "")
         
-        var result: Data = .init()
-        readNBytes(b: &result, off: 0, len: len)
+        var result: Data = .init(count: len)
+        readNBytes(data: &result, off: 0, len: len)
         return result
     }
     
     func readNBytes(_ len: Int) -> Data {
-        Debug.print("BytesIOInputStream.", #function, separator: "")
+        Debug.print("DataInputStream.", #function, separator: "")
         
         return readNBytes(len: len)
     }
     
     @discardableResult
     func skip(n: Int64) -> Int64 {
-        Debug.print("BytesIOInputStream.", #function, separator: "")
+        Debug.print("DataInputStream.", #function, separator: "")
         
         var k: Int64 = .init(count - pos)
         
@@ -126,31 +126,31 @@ final class BytesIOInputStream {
     
     @discardableResult
     func skip(_ n: Int) -> Int {
-        Debug.print("BytesIOInputStream.", #function, separator: "")
+        Debug.print("DataInputStream.", #function, separator: "")
         
         return .init(skip(n: .init(n)))
     }
     
     func available() -> Int {
-        Debug.print("BytesIOInputStream.", #function, separator: "")
+        Debug.print("DataInputStream.", #function, separator: "")
         
         return count - pos
     }
     
     func markPos() {
-        Debug.print("BytesIOInputStream.", #function, separator: "")
+        Debug.print("DataInputStream.", #function, separator: "")
         
         mark = pos
     }
     
     func reset() {
-        Debug.print("BytesIOInputStream.", #function, separator: "")
+        Debug.print("DataInputStream.", #function, separator: "")
         
         pos = mark
     }
     
     func tell() -> Int {
-        Debug.print("BytesIOInputStream.", #function, separator: "")
+        Debug.print("DataInputStream.", #function, separator: "")
         
         return pos
     }

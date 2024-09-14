@@ -99,7 +99,7 @@ enum Util {
             list.append(ord(.init([byte])))
         }
         
-        return list;
+        return list
     }
     
     static func ordList(_ data: Data?) -> [Int] {

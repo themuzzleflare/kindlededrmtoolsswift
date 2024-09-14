@@ -10,7 +10,7 @@ import XCTest
 
 final class IonUtilsTests: XCTestCase {
     private static let bytes: Data = "PIDv3AESAES/CBC/PKCS5PaddingHmacSHA256ACCOUNT_SECRET7ea2d36b5acc3d245c26417c3ee6c9ac3495698fCLIENT_IDSW527rnb7MPznA5dP8SYrCPt7GnMSGS7Pv5Cnhnn".data(using: .ascii)!
-    private static let version: Int = 3;
+    private static let version: Int = 3
     
     func testObfuscate() throws {
         let returnBytes: [Int8] = [97, 18, -69, -69, 8, -18, 63, 11, -2, -90, -23, 79, 17, -48, -115, -97, 117, 100, -49, -66, 11, -107, 16, 1, -63, -91, -100, 78, 67, -6, -22, -94, 2, 48, -51, -20, 15, -97, 39, 11, -10, -111, -112, 31, 69, -13, -44, -94, 116, 53, -37, -17, 89, -104, 28, 123, -28, -100, -111, 28, 22, -30, -113, -95, 112, 63, -38, -71, 95, -119, 57, 58, -14, -110, -128, 30, 25, -1, -22, -60, 98, 25, -35, -23, 93, -110, 101, 15, -104, -104, -102, 25, 67, -27, -23, -97, 114, 48, -51, -24, 15, -127, 4, 36, -11, -106, -115, 73, 20, -125, -56, -97, 114, 2, -53, -17, 5, -28, 30, 34, -104, -67, -117, 30, 21, -127, -22, -15, 97, 16, -71, -24, 10, -92, 41, 76, -4, -57, -70, 75, 25, -40, -115, -15]

@@ -40,11 +40,11 @@ final class MobiBookTests: XCTestCase {
         
         let token5: Data = .init([97, 116, 118, 58, 107, 105, 110, 58, 50, 58, 77, 111, 97, 103, 43, 101, 56, 70, 84, 80, 81, 70, 121, 51, 115, 68, 118, 69, 57, 74, 84, 50, 52, 47, 68, 48, 55, 90, 101, 53, 103, 120, 110, 82, 118, 82, 109, 87, 84, 52, 69, 101, 47, 76, 112, 86, 79, 118, 108, 55, 65, 108, 72, 90, 122, 110, 85, 83, 43, 81, 71, 43, 117, 121, 69, 68, 76, 48, 47, 82, 111, 117, 100, 106, 107, 81, 86, 72, 66, 119, 75, 120, 98, 71, 114, 78, 78, 66, 51, 100, 101, 122, 116, 78, 110, 52, 74, 83, 86, 110, 52, 106, 66, 99, 90, 98, 70, 101, 51, 83, 66, 54, 102, 69, 103, 88, 76, 116, 117, 69, 105, 114, 98, 50, 79, 80, 74, 77, 56, 57, 105, 75, 113, 66, 67, 107, 85, 72, 99, 73, 69, 77, 69, 115, 115, 108, 105, 106, 81, 79, 79, 115, 90, 87, 55, 98, 83, 102, 77, 65, 47, 118, 47, 117, 72, 109, 80, 88, 110, 89, 52, 61, 58, 98, 84, 83, 79, 70, 101, 67, 101, 53, 112, 115, 109, 66, 47, 48, 71, 80, 68, 71, 84, 118, 97, 115, 122, 116, 89, 115, 61, 0, 10, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0])
         
-        XCTAssertEqual(token1, pidMetaInfo1.token);
-        XCTAssertEqual(token2, pidMetaInfo2.token);
-        XCTAssertEqual(token3, pidMetaInfo3.token);
-        XCTAssertEqual(token4, pidMetaInfo4.token);
-        XCTAssertEqual(token5, pidMetaInfo5.token);
+        XCTAssertEqual(token1, pidMetaInfo1.token)
+        XCTAssertEqual(token2, pidMetaInfo2.token)
+        XCTAssertEqual(token3, pidMetaInfo3.token)
+        XCTAssertEqual(token4, pidMetaInfo4.token)
+        XCTAssertEqual(token5, pidMetaInfo5.token)
     }
     
     func testProcessBook() throws {

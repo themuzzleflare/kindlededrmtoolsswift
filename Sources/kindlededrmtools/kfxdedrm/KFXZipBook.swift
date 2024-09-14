@@ -141,7 +141,19 @@ extension KFXZipBook: BookManager {
             
             for infileEntry in infileArchive {
                 if let decryptedContent = decrypted[infileEntry.path] {
-                    try outfileArchive.addEntry(with: infileEntry.path, fileURL: .init(dataRepresentation: decryptedContent, relativeTo: nil)!)
+                    let url: URL = .init(filePath: infileEntry.path, relativeTo: .temporaryDirectory)
+                    
+                    do {
+                        try decryptedContent.write(to: url)
+                    } catch {
+                        
+                    }
+                    
+                    do {
+                        try outfileArchive.addEntry(with: infileEntry.path, fileURL: url)
+                    } catch {
+                        
+                    }
                 } else {
                     var data: Data = .init()
                     
@@ -149,7 +161,19 @@ extension KFXZipBook: BookManager {
                         data += entryData
                     }
                     
-                    try outfileArchive.addEntry(with: infileEntry.path, fileURL: .init(dataRepresentation: data, relativeTo: nil)!)
+                    let url: URL = .init(filePath: infileEntry.path, relativeTo: .temporaryDirectory)
+                    
+                    do {
+                        try data.write(to: url)
+                    } catch {
+                        
+                    }
+                    
+                    do {
+                        try outfileArchive.addEntry(with: infileEntry.path, fileURL: url)
+                    } catch {
+                        
+                    }
                 }
             }
         }
@@ -178,7 +202,7 @@ extension KFXZipBook: BookManager {
             
             print("Decrypting KFX DRMION: \(entry.path)")
             
-            let outfile: BytesIOOutputStream = .init()
+            let outfile: DataOutputStream = .init()
             
             try DRMIon(.init(data.subdata(in: 8..<data.count - 8)), voucher).parse(outpages: outfile)
             

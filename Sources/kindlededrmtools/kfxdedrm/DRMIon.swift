@@ -14,7 +14,7 @@ final class DRMIon {
     private var voucherName: String = ""
     private var key: Data?
     
-    init(ionStream: BytesIOInputStream, voucher: DRMIonVoucher) {
+    init(ionStream: DataInputStream, voucher: DRMIonVoucher) {
         Debug.print("DRMIon.", #function, separator: "")
         
         ion = .init(ionStream)
@@ -22,13 +22,13 @@ final class DRMIon {
         self.voucher = voucher
     }
     
-    convenience init(_ ionStream: BytesIOInputStream, _ voucher: DRMIonVoucher) {
+    convenience init(_ ionStream: DataInputStream, _ voucher: DRMIonVoucher) {
         Debug.print("DRMIon.", #function, separator: "")
         
         self.init(ionStream: ionStream, voucher: voucher)
     }
     
-    func parse(outpages: BytesIOOutputStream) throws {
+    func parse(outpages: DataOutputStream) throws {
         Debug.print("DRMIon.", #function, separator: "")
         
         ion.reset()
@@ -47,7 +47,7 @@ final class DRMIon {
         }
         
         while true {
-            if try ion.getTypeName() == "endoc" {
+            if try ion.getTypeName() == "enddoc" {
                 break
             }
             
@@ -98,8 +98,7 @@ final class DRMIon {
                         
                         if try ion.getFieldName() == "cipher_text" {
                             ct = try ion.lobValue()
-                        }
-                        else if try ion.getFieldName() == "cipher_iv" {
+                        } else if try ion.getFieldName() == "cipher_iv" {
                             civ = try ion.lobValue()
                         }
                     }
@@ -146,7 +145,7 @@ final class DRMIon {
         }
     }
     
-    private func processPage(ct: Data, civ: Data? = nil, outpages: BytesIOOutputStream, decompress: Bool, decrypt: Bool) throws {
+    private func processPage(ct: Data, civ: Data? = nil, outpages: DataOutputStream, decompress: Bool, decrypt: Bool) throws {
         Debug.print("DRMIon.", #function, separator: "")
         
         var msg: Data
@@ -176,7 +175,7 @@ final class DRMIon {
         decompressData(msg.subdata(in: 1..<msg.count), outpages)
     }
     
-    private func processPage(_ ct: Data, _ civ: Data? = nil, _ outpages: BytesIOOutputStream, _ decompress: Bool, _ decrypt: Bool) throws {
+    private func processPage(_ ct: Data, _ civ: Data? = nil, _ outpages: DataOutputStream, _ decompress: Bool, _ decrypt: Bool) throws {
         Debug.print("DRMIon.", #function, separator: "")
         
         try processPage(ct: ct, civ: civ, outpages: outpages, decompress: decompress, decrypt: decrypt)
@@ -185,11 +184,11 @@ final class DRMIon {
 
 // MARK: - LZMA
 extension DRMIon {
-    private func decompressData(data: Data, outputStream: BytesIOOutputStream) {
+    private func decompressData(data: Data, outputStream: DataOutputStream) {
         Debug.print("DRMIon.", #function, separator: "")
         
-        let algorithm = COMPRESSION_LZMA
-        let dataToWrite = data.withUnsafeBytes { (srcBuffer: UnsafeRawBufferPointer) -> Data? in
+        let algorithm: compression_algorithm = COMPRESSION_LZMA
+        let dataToWrite: Data? = data.withUnsafeBytes { (srcBuffer: UnsafeRawBufferPointer) -> Data? in
             guard let srcPointer = srcBuffer.baseAddress else { return nil }
             let srcSize = data.count
             
@@ -214,7 +213,7 @@ extension DRMIon {
         }
     }
     
-    private func decompressData(_ data: Data, _ outputStream: BytesIOOutputStream) {
+    private func decompressData(_ data: Data, _ outputStream: DataOutputStream) {
         Debug.print("DRMIon.", #function, separator: "")
         
         decompressData(data: data, outputStream: outputStream)

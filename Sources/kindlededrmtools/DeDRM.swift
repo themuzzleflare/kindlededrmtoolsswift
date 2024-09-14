@@ -157,8 +157,6 @@ public enum DeDRM {
         
         totalPids.append(contentsOf: KindlePID.getPidSet(rec209: rec209, token: token, serials: serials, kDatabaseRecords: kDatabaseRecords))
         
-        totalPids.append("55PSPzrfPCr7tvrnPzrk6brzPW7M63nA7zPf6z6Mcd65fc2ba340b6f29a01d9d7c99871bfb1a4a056")
-        
         print("Found \(totalPids.count.description) keys to try after \(Date.now.timeIntervalSince(startTime).oneDecimalPlace) seconds")
         
         do {
