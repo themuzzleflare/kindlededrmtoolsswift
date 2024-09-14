@@ -140,19 +140,27 @@ extension KFXZipBook: BookManager {
             let outfileArchive: Archive = try .init(url: outpathUrl, accessMode: .create)
             
             for infileEntry in infileArchive {
+                if infileEntry.type == .directory {
+                    let url: URL = .temporaryDirectory.appending(path: infileEntry.path)
+                    try FileManager().createDirectory(at: url, withIntermediateDirectories: true)
+                    continue
+                }
+                
                 if let decryptedContent = decrypted[infileEntry.path] {
-                    let url: URL = .init(filePath: infileEntry.path, relativeTo: .temporaryDirectory)
+                    let url: URL = .temporaryDirectory.appending(path: infileEntry.path)
                     
                     do {
                         try decryptedContent.write(to: url)
                     } catch {
-                        
+                        print(error.localizedDescription)
+                        throw error
                     }
                     
                     do {
                         try outfileArchive.addEntry(with: infileEntry.path, fileURL: url)
                     } catch {
-                        
+                        print(error.localizedDescription)
+                        throw error
                     }
                 } else {
                     var data: Data = .init()
@@ -161,18 +169,20 @@ extension KFXZipBook: BookManager {
                         data += entryData
                     }
                     
-                    let url: URL = .init(filePath: infileEntry.path, relativeTo: .temporaryDirectory)
+                    let url: URL = .temporaryDirectory.appending(path: infileEntry.path)
                     
                     do {
                         try data.write(to: url)
                     } catch {
-                        
+                        print(error.localizedDescription)
+                        throw error
                     }
                     
                     do {
                         try outfileArchive.addEntry(with: infileEntry.path, fileURL: url)
                     } catch {
-                        
+                        print(error.localizedDescription)
+                        throw error
                     }
                 }
             }

@@ -35,7 +35,7 @@ final class DataOutputStream {
     }
     
     func write(data: Data, off: Int = 0, len: Int) {
-        self.data.replaceSubrange(count..<count+len, with: data[off..<off+len])
+        self.data.append(data.subdata(in: off..<len))
         count += len
     }
     

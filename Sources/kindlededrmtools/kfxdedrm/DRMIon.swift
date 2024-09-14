@@ -187,26 +187,7 @@ extension DRMIon {
     private func decompressData(data: Data, outputStream: DataOutputStream) {
         Debug.print("DRMIon.", #function, separator: "")
         
-        let algorithm: compression_algorithm = COMPRESSION_LZMA
-        let dataToWrite: Data? = data.withUnsafeBytes { (srcBuffer: UnsafeRawBufferPointer) -> Data? in
-            guard let srcPointer = srcBuffer.baseAddress else { return nil }
-            let srcSize = data.count
-            
-            // Estimate the size of the decompressed data
-            let dstSize = 10 * srcSize  // Adjust size accordingly
-            let dstBuffer = UnsafeMutablePointer<UInt8>.allocate(capacity: dstSize)
-            defer { dstBuffer.deallocate() }
-            
-            let decompressedSize = compression_decode_buffer(
-                dstBuffer, dstSize,
-                srcPointer.assumingMemoryBound(to: UInt8.self), srcSize,
-                nil,
-                algorithm
-            )
-            
-            guard decompressedSize != 0 else { return nil }
-            return Data(bytes: dstBuffer, count: decompressedSize)
-        }
+        let dataToWrite: Data? = decompressLZMA(data: data)
         
         if let dataToWrite {
             outputStream.write(dataToWrite)
@@ -217,5 +198,50 @@ extension DRMIon {
         Debug.print("DRMIon.", #function, separator: "")
         
         decompressData(data: data, outputStream: outputStream)
+    }
+    
+    private func decompressLZMA(data: Data) -> Data? {
+        Debug.print("DRMIon.", #function, separator: "")
+
+        // Create a buffer to hold the decompressed data
+        let bufferSize = 64 * 1024
+        var outputData = Data()
+        
+        // Initialize the compression stream
+        var stream = UnsafeMutablePointer<compression_stream>.allocate(capacity: 1).pointee
+        defer {
+            compression_stream_destroy(&stream)
+        }
+        var status = compression_stream_init(&stream, COMPRESSION_STREAM_DECODE, COMPRESSION_LZMA)
+        guard status != COMPRESSION_STATUS_ERROR else { return nil }
+        
+        // Set the source data
+        data.withUnsafeBytes { (inputPtr: UnsafeRawBufferPointer) in
+            guard let baseAddress = inputPtr.baseAddress else { return }
+            stream.src_ptr = baseAddress.assumingMemoryBound(to: UInt8.self)
+            stream.src_size = data.count
+        }
+        
+        // Allocate destination buffer
+        let dstBuffer = UnsafeMutablePointer<UInt8>.allocate(capacity: bufferSize)
+        defer {
+            dstBuffer.deallocate()
+        }
+        
+        // Perform decompression
+        repeat {
+            stream.dst_ptr = dstBuffer
+            stream.dst_size = bufferSize
+            
+            status = compression_stream_process(&stream, Int32(0))
+            if status == COMPRESSION_STATUS_ERROR {
+                return nil
+            }
+            
+            let outputSize = bufferSize - stream.dst_size
+            outputData.append(dstBuffer, count: outputSize)
+        } while status == COMPRESSION_STATUS_OK
+        
+        return outputData
     }
 }
