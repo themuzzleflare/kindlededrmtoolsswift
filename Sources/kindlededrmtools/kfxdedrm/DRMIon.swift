@@ -202,7 +202,7 @@ extension DRMIon {
     
     private func decompressLZMA(data: Data) -> Data? {
         Debug.print("DRMIon.", #function, separator: "")
-
+        
         // Create a buffer to hold the decompressed data
         let bufferSize = 64 * 1024
         var outputData = Data()

@@ -141,13 +141,13 @@ extension KFXZipBook: BookManager {
             
             for infileEntry in infileArchive {
                 if infileEntry.type == .directory {
-                    let url: URL = .temporaryDirectory.appending(path: infileEntry.path)
-                    try FileManager().createDirectory(at: url, withIntermediateDirectories: true)
+                    let url: URL = .init(filePath: infileEntry.path, relativeTo: .temporaryDirectory)
+                    try FileManager.default.createDirectory(at: url, withIntermediateDirectories: true)
                     continue
                 }
                 
                 if let decryptedContent = decrypted[infileEntry.path] {
-                    let url: URL = .temporaryDirectory.appending(path: infileEntry.path)
+                    let url: URL = .init(filePath: infileEntry.path, relativeTo: .temporaryDirectory)
                     
                     do {
                         try decryptedContent.write(to: url)
@@ -169,7 +169,7 @@ extension KFXZipBook: BookManager {
                         data += entryData
                     }
                     
-                    let url: URL = .temporaryDirectory.appending(path: infileEntry.path)
+                    let url: URL = .init(filePath: infileEntry.path, relativeTo: .temporaryDirectory)
                     
                     do {
                         try data.write(to: url)
