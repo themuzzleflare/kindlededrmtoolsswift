@@ -8,6 +8,18 @@
 import Foundation
 
 extension URL {
+    static var inputTemporaryDirectory: URL {
+        return .temporaryDirectory.appending(path: "input", directoryHint: .isDirectory)
+    }
+    
+    static var outputTemporaryDirectory: URL {
+        return .temporaryDirectory.appending(path: "output", directoryHint: .isDirectory)
+    }
+    
+    var filename: String {
+        return lastPathComponent
+    }
+    
     var filenameRoot: String {
         return deletingPathExtension().lastPathComponent
     }

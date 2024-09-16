@@ -32,10 +32,6 @@ enum HashUtils {
         return sha256(data: data)
     }
     
-    static func sha256(_ data: Data?...) -> Data {
-        return sha256(data: data)
-    }
-    
     /**
      * Computes the MD5 hash of the given data.
      * - Parameter data: The data to hash.
@@ -59,10 +55,6 @@ enum HashUtils {
         return md5(data: data)
     }
     
-    static func md5(_ data: Data?...) -> Data {
-        return md5(data: data)
-    }
-    
     /**
      * Computes the SHA-1 hash of the given data.
      * - Parameter data: The data to hash.
@@ -83,6 +75,29 @@ enum HashUtils {
     }
     
     static func sha1(data: Data?...) -> Data {
+        return sha1(data: data)
+    }
+}
+
+// MARK: - Convenience Functions
+extension HashUtils {
+    static func sha256(_ data: [Data?]) -> Data {
+        return sha256(data: data)
+    }
+    
+    static func sha256(_ data: Data?...) -> Data {
+        return sha256(data: data)
+    }
+    
+    static func md5(_ data: [Data?]) -> Data {
+        return md5(data: data)
+    }
+    
+    static func md5(_ data: Data?...) -> Data {
+        return md5(data: data)
+    }
+    
+    static func sha1(_ data: [Data?]) -> Data {
         return sha1(data: data)
     }
     

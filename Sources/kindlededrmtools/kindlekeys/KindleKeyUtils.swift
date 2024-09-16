@@ -10,10 +10,10 @@ import zlib
 
 enum KindleKeyUtils {
     static func encode(data: Data, charMap: Data) -> Data {
-        var result: [UInt8] = .init()
+        var result: Data = .init()
         
-        for b in data {
-            let value: Int = .init(b & 0xFF) // Convert byte to an unsigned integer (0 to 255)
+        for char in data {
+            let value: Int = .init(char & 0xFF) // Convert byte to an unsigned integer (0 to 255)
             
             let q: Int = (value ^ 0x80) / charMap.count
             let r: Int = value % charMap.count
@@ -22,17 +22,17 @@ enum KindleKeyUtils {
             result.append(charMap[r])
         }
         
-        return .init(result)
+        return result
     }
     
     // Hash the bytes in data and then encode the digest with the characters in map
-    static func encodeHash(data: Data, charMap: Data) -> Data {
+    static func encodeHash(data: Data?, charMap: Data) -> Data {
         return encode(data: HashUtils.md5(data: data), charMap: charMap)
     }
     
     // Decode the byte array `data` using the byte array `map`. Returns the decoded bytes as a new byte array.
     static func decode(data: Data, map: Data) -> Data {
-        var result: [UInt8] = .init()
+        var result: Data = .init()
         
         var i: Int = 0
         
@@ -50,7 +50,7 @@ enum KindleKeyUtils {
             i += 2
         }
         
-        return .init(result)
+        return result
     }
     
     static func checksumPid(data: String, charMap: Data) -> String {
@@ -86,5 +86,32 @@ enum KindleKeyUtils {
     
     private static func zlibcrc32(data: [UInt8]) -> UInt32 {
         return ~.init(zlib.crc32(.max, data, .init(data.count)))
+    }
+}
+
+// MARK: - Convenience Functions
+extension KindleKeyUtils {
+    static func encode(_ data: Data, _ charMap: Data) -> Data {
+        return encode(data: data, charMap: charMap)
+    }
+    
+    static func encodeHash(_ data: Data?, _ charMap: Data) -> Data {
+        return encodeHash(data: data, charMap: charMap)
+    }
+    
+    static func decode(_ data: Data, _ map: Data) -> Data {
+        return decode(data: data, map: map)
+    }
+    
+    static func checksumPid(_ data: String, _ charMap: Data) -> String {
+        return checksumPid(data: data, charMap: charMap)
+    }
+    
+    static func checksumPid(_ data: Data, _ charMap: Data) -> Data {
+        return checksumPid(data: data, charMap: charMap)
+    }
+    
+    static func crc32(_ data: Data) -> Int64 {
+        return crc32(data: data)
     }
 }

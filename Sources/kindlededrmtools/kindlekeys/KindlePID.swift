@@ -138,19 +138,92 @@ enum KindlePID {
         return pid
     }
     
-    private static func getK4Pids(rec209: Data?, token: Data?, kDatabaseRecord: KDatabaseRecord) -> OrderedSet<String> {
-        return .init()
-    }
-    
-    private static func getKindlePids(rec209: Data?, token: Data?, serialnum: String) -> OrderedSet<String> {
-        let serialnum: Data = serialnum.data(using: .utf8) ?? .init()
-        return getKindlePids(rec209: rec209, token: token, serialnum: serialnum)
-    }
-    
-    private static func getKindlePids(rec209: Data?, token: Data?, serialnum: Data) -> OrderedSet<String> {
+    private static func getK4Pids(rec209: Data?, token: Data?, kDatabaseRecord: KDatabaseRecord) throws -> OrderedSet<String> {
         var pids: OrderedSet<String> = .init()
         
-        let serialnumString: String = .init(data: serialnum, encoding: .utf8) ?? ""
+        let kindleAccountToken: Data = kDatabaseRecord.kindleDatabase.genKindleAccountToken()
+        var dsn: Data
+        
+        do {
+            dsn = try kDatabaseRecord.kindleDatabase.genDSN()
+        } catch {
+            print("Keys not found in the database \(kDatabaseRecord.dbFile).")
+            return pids
+        }
+        
+        guard let rec209 else {
+            let data: Data = dsn + kindleAccountToken
+            guard let string: String = .init(data: data, encoding: .utf8) else {
+                throw KindlePIDError.stringFromDataFailed(data: data)
+            }
+            
+            pids.append(string)
+            return pids
+        }
+        
+        // Compute the device PID
+        let table: [Int] = generatePidEncryptionTable()
+        var devicePid: Data = generateDevicePid(table: table, dsn: dsn, nbRoll: 4)
+        devicePid = KindleKeyUtils.checksumPid(devicePid, CharMaps.charMap4)
+        
+        guard let string: String = .init(data: devicePid, encoding: .utf8) else {
+            throw KindlePIDError.stringFromDataFailed(data: devicePid)
+        }
+        
+        pids.append(string)
+        
+        // Compute book PIDs
+        
+        // Book PID
+        var pidHash: Data = HashUtils.sha1(dsn, kindleAccountToken, rec209, token)
+        var bookPid: Data = encodePid(pidHash)
+        bookPid = KindleKeyUtils.checksumPid(bookPid, CharMaps.charMap4)
+        
+        guard let string: String = .init(data: bookPid, encoding: .utf8) else {
+            throw KindlePIDError.stringFromDataFailed(data: bookPid)
+        }
+        
+        pids.append(string)
+        
+        // Variant 1
+        pidHash = HashUtils.sha1(kindleAccountToken, rec209, token)
+        bookPid = encodePid(pidHash)
+        bookPid = KindleKeyUtils.checksumPid(bookPid, CharMaps.charMap4)
+        
+        guard let string: String = .init(data: bookPid, encoding: .utf8) else {
+            throw KindlePIDError.stringFromDataFailed(data: bookPid)
+        }
+        
+        pids.append(string)
+        
+        // Variant 2
+        pidHash = HashUtils.sha1(dsn, rec209, token)
+        bookPid = encodePid(pidHash)
+        bookPid = KindleKeyUtils.checksumPid(bookPid, CharMaps.charMap4)
+        
+        guard let string: String = .init(data: bookPid, encoding: .utf8) else {
+            throw KindlePIDError.stringFromDataFailed(data: bookPid)
+        }
+        
+        pids.append(string)
+        
+        return pids
+    }
+    
+    private static func getKindlePids(rec209: Data?, token: Data?, serialnum: String) throws -> OrderedSet<String> {
+        guard let serialnum: Data = serialnum.data(using: .utf8) else {
+            throw KindlePIDError.dataFromStringFailed(string: serialnum)
+        }
+        
+        return try getKindlePids(rec209: rec209, token: token, serialnum: serialnum)
+    }
+    
+    private static func getKindlePids(rec209: Data?, token: Data?, serialnum: Data) throws -> OrderedSet<String> {
+        var pids: OrderedSet<String> = .init()
+        
+        guard let serialnumString: String = .init(data: serialnum, encoding: .utf8) else {
+            throw KindlePIDError.stringFromDataFailed(data: serialnum)
+        }
         
         guard let rec209 else {
             pids.append(serialnumString)
@@ -161,16 +234,20 @@ enum KindlePID {
         var bookPid: Data = encodePid(hashVal: bookPidHash)
         bookPid = KindleKeyUtils.checksumPid(data: bookPid, charMap: CharMaps.charMap4)
         
-        let bookPidString: String = .init(data: bookPid, encoding: .utf8) ?? ""
+        guard let bookPidString: String = .init(data: bookPid, encoding: .utf8) else {
+            throw KindlePIDError.stringFromDataFailed(data: bookPid)
+        }
+        
         pids.append(bookPidString)
         
-        var kindlePidResult: Data = .init()
-        
-        kindlePidResult.append(pidFromSerial(serial: serialnum, length: 7))
-        kindlePidResult.append(CharMaps.asteriskBytes)
+        let kindlePidResult: Data = pidFromSerial(serial: serialnum, length: 7) + CharMaps.asteriskBytes
         
         let kindlePid: Data = KindleKeyUtils.checksumPid(data: kindlePidResult, charMap: CharMaps.charMap4)
-        let kindlePidString: String = .init(data: kindlePid, encoding: .utf8) ?? ""
+        
+        guard let kindlePidString: String = .init(data: kindlePid, encoding: .utf8) else {
+            throw KindlePIDError.stringFromDataFailed(data: kindlePid)
+        }
+        
         pids.append(kindlePidString)
         
         return pids
@@ -180,15 +257,51 @@ enum KindlePID {
         var pids: OrderedSet<String> = .init()
         
         for kDatabaseRecord in kDatabaseRecords {
-            let k4Pids: OrderedSet<String> = getK4Pids(rec209: rec209, token: token, kDatabaseRecord: kDatabaseRecord)
-            pids.append(contentsOf: k4Pids)
+            do {
+                let k4Pids: OrderedSet<String> = try getK4Pids(rec209: rec209, token: token, kDatabaseRecord: kDatabaseRecord)
+                pids.append(contentsOf: k4Pids)
+            } catch {
+                print("Error getting PIDs from database \(kDatabaseRecord.dbFile): \(error.localizedDescription)")
+            }
         }
         
         for serial in serials {
-            let kindlePids: OrderedSet<String> = getKindlePids(rec209: rec209, token: token, serialnum: serial)
-            pids.append(contentsOf: kindlePids)
+            do {
+                let kindlePids: OrderedSet<String> = try getKindlePids(rec209: rec209, token: token, serialnum: serial)
+                pids.append(contentsOf: kindlePids)
+            } catch {
+                print("Error getting PIDs from serial number \(serial): \(error.localizedDescription)")
+            }
         }
         
         return pids
+    }
+}
+
+
+// MARK: - Convenience Functions
+extension KindlePID {
+    private static func getTwoBitsFromBitField(_ bitField: Data, _ offset: Int) -> Int {
+        return getTwoBitsFromBitField(bitField: bitField, offset: offset)
+    }
+    
+    private static func getSixBitsFromBitField(_ bitField: Data, _ offset: Int) -> Int {
+        return getSixBitsFromBitField(bitField: bitField, offset: offset)
+    }
+    
+    private static func encodePid(_ hashVal: Data) -> Data {
+        return encodePid(hashVal: hashVal)
+    }
+    
+    private static func generatePidSeed(_ table: [Int], _ dsn: Data) -> Int {
+        return generatePidSeed(table: table, dsn: dsn)
+    }
+    
+    private static func generateDevicePid(_ table: [Int], _ dsn: Data, _ nbRoll: Int) -> Data {
+        return generateDevicePid(table: table, dsn: dsn, nbRoll: nbRoll)
+    }
+    
+    private static func pidFromSerial(_ serial: Data, _ length: Int) -> Data {
+        return pidFromSerial(serial: serial, length: length)
     }
 }

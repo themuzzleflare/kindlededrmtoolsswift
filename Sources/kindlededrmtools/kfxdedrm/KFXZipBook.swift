@@ -24,8 +24,6 @@ public final class KFXZipBook {
     }
     
     private func decryptVoucher(pidSet: OrderedSet<String>) throws {
-        Debug.print("KFXZipBook.", #function, separator: "")
-        
         var voucherFilename: String!
         var voucherData: Data!
         var decrypted: Bool = false
@@ -39,7 +37,7 @@ public final class KFXZipBook {
         for entry in archive {
             var data: Data = .init()
             
-            try archive.extract(entry, skipCRC32: true) { entryData in
+            _ = try archive.extract(entry) { entryData in
                 data += entryData
             }
             
@@ -63,21 +61,15 @@ public final class KFXZipBook {
         
         Debug.print("PIDs:", pidSet)
         
-    outerLoop: for pid in pidSet {
-        for lengths in [[0, 0], [16, 0], [16, 40], [32, 0], [32, 40], [40, 0], [40, 40]] {
-            let dsn_len: Int = lengths[0]
-            let secret_len: Int = lengths[1]
-            
-            if pid.count == dsn_len + secret_len {
+    outerLoop: for pid in pidSet + [""] {
+        for (dsnLen, secretLen) in [(0, 0), (16, 0), (16, 40), (32, 0), (32, 40), (40, 0), (40, 40)] {
+            if pid.count == dsnLen + secretLen {
                 // Split the PID into DSN and account secret
-                let startIndex: String.Index = pid.startIndex
-                let endIndex: String.Index = pid.endIndex
-                let dsnIndex: String.Index = pid.index(endIndex, offsetBy: -dsn_len)
-                let accountSecretIndex: String.Index = pid.index(startIndex, offsetBy: dsn_len)
-                let dsnSubstring: String.SubSequence = pid[..<dsnIndex]
-                let accountSecretSubstring: String.SubSequence = pid[accountSecretIndex...]
-                let dsn: String = .init(dsnSubstring)
-                let accountSecret: String = .init(accountSecretSubstring)
+                let dsnSubstr: String.SubSequence = pid.prefix(dsnLen)
+                let accountSecretSubstr: String.SubSequence = pid.suffix(secretLen)
+                
+                let dsn: String = .init(dsnSubstr)
+                let accountSecret: String = .init(accountSecretSubstr)
                 
                 Debug.print("DSN:", dsn)
                 Debug.print("Account Secret:", accountSecret)
@@ -127,78 +119,74 @@ extension KFXZipBook: BookManager {
     }
     
     public func getFile(outpath: String) throws {
-        Debug.print("KFXZipBook.", #function, separator: "")
-        
-        let infileUrl: URL = .init(filePath: infile)
-        let infileData: Data = try .init(contentsOf: infileUrl)
-        let outpathUrl: URL = .init(filePath: outpath)
-        
-        if decrypted.isEmpty {
-            try infileData.write(to: outpathUrl)
-        } else {
-            let infileArchive: Archive = try .init(url: infileUrl, accessMode: .read)
-            let outfileArchive: Archive = try .init(url: outpathUrl, accessMode: .create)
-            
-            for infileEntry in infileArchive {
-                if infileEntry.type == .directory {
-                    let url: URL = .init(filePath: infileEntry.path, relativeTo: .temporaryDirectory)
-                    try FileManager.default.createDirectory(at: url, withIntermediateDirectories: true)
-                    continue
-                }
-                
-                if let decryptedContent = decrypted[infileEntry.path] {
-                    let url: URL = .init(filePath: infileEntry.path, relativeTo: .temporaryDirectory)
-                    
-                    do {
-                        try decryptedContent.write(to: url)
-                    } catch {
-                        print(error.localizedDescription)
-                        throw error
-                    }
-                    
-                    do {
-                        try outfileArchive.addEntry(with: infileEntry.path, fileURL: url)
-                    } catch {
-                        print(error.localizedDescription)
-                        throw error
-                    }
-                } else {
-                    var data: Data = .init()
-                    
-                    try infileArchive.extract(infileEntry, skipCRC32: true) { entryData in
-                        data += entryData
-                    }
-                    
-                    let url: URL = .init(filePath: infileEntry.path, relativeTo: .temporaryDirectory)
-                    
-                    do {
-                        try data.write(to: url)
-                    } catch {
-                        print(error.localizedDescription)
-                        throw error
-                    }
-                    
-                    do {
-                        try outfileArchive.addEntry(with: infileEntry.path, fileURL: url)
-                    } catch {
-                        print(error.localizedDescription)
-                        throw error
-                    }
-                }
+        defer {
+            do {
+                try FileManager.default.removeItem(at: .outputTemporaryDirectory)
+                Debug.print("Removed directory:", URL.outputTemporaryDirectory.path(percentEncoded: false))
+            } catch {
+                Debug.print("Failed to remove directory:", URL.outputTemporaryDirectory.path(percentEncoded: false))
             }
         }
+        
+        let infileUrl: URL = .init(filePath: infile)
+        let outpathUrl: URL = .init(filePath: outpath)
+        
+        guard !decrypted.isEmpty else {
+            let infileData: Data = try .init(contentsOf: infileUrl)
+            try infileData.write(to: outpathUrl)
+            return
+        }
+        
+        let infileArchive: Archive = try .init(url: infileUrl, accessMode: .read)
+        let outfileArchive: Archive = try .init(accessMode: .create)
+        
+        try FileManager.default.createDirectory(at: .outputTemporaryDirectory, withIntermediateDirectories: true)
+        
+        Debug.print("Created directory:", URL.outputTemporaryDirectory.path(percentEncoded: false))
+        
+        for infileEntry in infileArchive {
+            Debug.print("infileEntry:", infileEntry.path)
+            
+            if infileEntry.type == .directory {
+                Debug.print("This entry is a directory.")
+                
+                let url: URL = .init(filePath: infileEntry.path, relativeTo: .outputTemporaryDirectory)
+                
+                try FileManager.default.createDirectory(at: url, withIntermediateDirectories: true)
+                
+                Debug.print("Created directory:", url.path(percentEncoded: false))
+                
+                continue
+            }
+            
+            if let decryptedContent = decrypted[infileEntry.path] {
+                let url: URL = .init(filePath: infileEntry.path, relativeTo: .outputTemporaryDirectory)
+                
+                try decryptedContent.write(to: url)
+                
+                try outfileArchive.addEntry(with: infileEntry.path, fileURL: url)
+            } else {
+                let url: URL = .init(filePath: infileEntry.path, relativeTo: .outputTemporaryDirectory)
+                
+                _ = try infileArchive.extract(infileEntry, to: url)
+                
+                try outfileArchive.addEntry(with: infileEntry.path, fileURL: url)
+            }
+        }
+        
+        try outfileArchive.data?.write(to: outpathUrl)
+        
+        Debug.print("Wrote data to URL:", outpathUrl.path(percentEncoded: false))
     }
     
     public func processBook(pidSet: OrderedSet<String>) throws {
-        Debug.print("KFXZipBook.", #function, separator: "")
-        
         let url: URL = .init(filePath: infile)
         let archive: Archive = try .init(url: url, accessMode: .read)
         
         for entry in archive {
             var data: Data = .init()
             
-            try archive.extract(entry, skipCRC32: true) { entryData in
+            _ = try archive.extract(entry) { entryData in
                 data += entryData
             }
             
@@ -210,7 +198,7 @@ extension KFXZipBook: BookManager {
                 try decryptVoucher(pidSet: pidSet)
             }
             
-            print("Decrypting KFX DRMION: \(entry.path)")
+            print("Decrypting KFX DRMION:", entry.path)
             
             let outfile: DataOutputStream = .init()
             
@@ -225,7 +213,7 @@ extension KFXZipBook: BookManager {
     }
     
     public func getPidMetaInfo() -> PIDMetaInfo {
-        return .init(rec209: nil, token: nil)
+        return .init()
     }
     
     public func cleanup() {

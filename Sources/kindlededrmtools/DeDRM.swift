@@ -89,7 +89,23 @@ public enum DeDRM {
     }
     
     private static func loadKDatabaseRecords(kDatabaseFiles: OrderedSet<String>) -> OrderedSet<KDatabaseRecord> {
-        return .init()
+        var kDatabaseRecords: OrderedSet<KDatabaseRecord> = .init()
+        
+        if Util.practicalIsEmpty(kDatabaseFiles) {
+            return kDatabaseRecords
+        }
+        
+        for kDatabaseFile in kDatabaseFiles {
+            do {
+                let kindleDatabase: KindleDatabase = try .init(kDatabaseFile)
+                let kDatabaseRecord: KDatabaseRecord = .init(kDatabaseFile, kindleDatabase)
+                kDatabaseRecords.append(kDatabaseRecord)
+            } catch {
+                print("Error getting database from file \(kDatabaseFile): \(error.localizedDescription)")
+            }
+        }
+        
+        return kDatabaseRecords
     }
     
     private static func decryptionRoutine(infile: String, outdir: String, kDatabaseRecords: OrderedSet<KDatabaseRecord>, serials: OrderedSet<String>, pids: OrderedSet<String>, startTime: Date = .now) throws {
@@ -176,6 +192,10 @@ public enum DeDRM {
         print("\(Util.copyright).")
         print("Removes DRM protection from Mobipocket, Amazon KF8, Amazon Print Replica, and Amazon Topaz eBooks.")
         
+        let kDatabaseFiles: OrderedSet<String> = Util.sanitiseSet(kDatabaseFiles)
+        let serials: OrderedSet<String> = Util.sanitiseSet(serials)
+        let pids: OrderedSet<String> = Util.sanitiseSet(pids)
+        
         let kDatabaseRecords: OrderedSet<KDatabaseRecord> = loadKDatabaseRecords(kDatabaseFiles: kDatabaseFiles)
         
         do {
@@ -189,6 +209,10 @@ public enum DeDRM {
         print("\(Util.copyright).")
         print("Removes DRM protection from Mobipocket, Amazon KF8, Amazon Print Replica, and Amazon Topaz eBooks.")
         
+        let kDatabaseFiles: OrderedSet<String> = Util.sanitiseSet(kDatabaseFiles)
+        let serials: OrderedSet<String> = Util.sanitiseSet(serials)
+        let pids: OrderedSet<String> = Util.sanitiseSet(pids)
+        
         let kDatabaseRecords: OrderedSet<KDatabaseRecord> = loadKDatabaseRecords(kDatabaseFiles: kDatabaseFiles)
         
         try decryptionRoutine(infile: infile, outdir: outdir, kDatabaseRecords: kDatabaseRecords, serials: serials, pids: pids, startTime: startTime)
@@ -198,6 +222,10 @@ public enum DeDRM {
         print("K4MobiDeDrm v\(DeDRM.version).")
         print("\(Util.copyright).")
         print("Removes DRM protection from Mobipocket, Amazon KF8, Amazon Print Replica, and Amazon Topaz eBooks.")
+        
+        let kDatabaseFiles: OrderedSet<String> = Util.sanitiseSet(kDatabaseFiles)
+        let serials: OrderedSet<String> = Util.sanitiseSet(serials)
+        let pids: OrderedSet<String> = Util.sanitiseSet(pids)
         
         let kDatabaseRecords: OrderedSet<KDatabaseRecord> = loadKDatabaseRecords(kDatabaseFiles: kDatabaseFiles)
         

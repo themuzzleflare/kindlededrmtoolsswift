@@ -15,22 +15,16 @@ final class DRMIon {
     private var key: Data?
     
     init(ionStream: DataInputStream, voucher: DRMIonVoucher) {
-        Debug.print("DRMIon.", #function, separator: "")
-        
         ion = .init(ionStream)
         IonUtils.addProtTable(ion)
         self.voucher = voucher
     }
     
     convenience init(_ ionStream: DataInputStream, _ voucher: DRMIonVoucher) {
-        Debug.print("DRMIon.", #function, separator: "")
-        
         self.init(ionStream: ionStream, voucher: voucher)
     }
     
     func parse(outpages: DataOutputStream) throws {
-        Debug.print("DRMIon.", #function, separator: "")
-        
         ion.reset()
         
         if try !ion.hasNext() {
@@ -146,8 +140,6 @@ final class DRMIon {
     }
     
     private func processPage(ct: Data, civ: Data? = nil, outpages: DataOutputStream, decompress: Bool, decrypt: Bool) throws {
-        Debug.print("DRMIon.", #function, separator: "")
-        
         var msg: Data
         
         if decrypt {
@@ -176,8 +168,6 @@ final class DRMIon {
     }
     
     private func processPage(_ ct: Data, _ civ: Data? = nil, _ outpages: DataOutputStream, _ decompress: Bool, _ decrypt: Bool) throws {
-        Debug.print("DRMIon.", #function, separator: "")
-        
         try processPage(ct: ct, civ: civ, outpages: outpages, decompress: decompress, decrypt: decrypt)
     }
 }
@@ -185,8 +175,6 @@ final class DRMIon {
 // MARK: - LZMA
 extension DRMIon {
     private func decompressData(data: Data, outputStream: DataOutputStream) {
-        Debug.print("DRMIon.", #function, separator: "")
-        
         let dataToWrite: Data? = decompressLZMA(data: data)
         
         if let dataToWrite {
@@ -195,14 +183,10 @@ extension DRMIon {
     }
     
     private func decompressData(_ data: Data, _ outputStream: DataOutputStream) {
-        Debug.print("DRMIon.", #function, separator: "")
-        
         decompressData(data: data, outputStream: outputStream)
     }
     
     private func decompressLZMA(data: Data) -> Data? {
-        Debug.print("DRMIon.", #function, separator: "")
-        
         // Create a buffer to hold the decompressed data
         let bufferSize = 64 * 1024
         var outputData = Data()

@@ -29,22 +29,16 @@ final class BinaryIonParser {
     private var containerStack: [ContainerRec] = .init()
     
     init(stream: DataInputStream) {
-        Debug.print("BinaryIonParser.", #function, separator: "")
-        
         self.stream = stream
         initPos = stream.tell()
         reset()
     }
     
     convenience init(_ stream: DataInputStream) {
-        Debug.print("BinaryIonParser.", #function, separator: "")
-        
         self.init(stream: stream)
     }
     
     func reset() {
-        Debug.print("BinaryIonParser.", #function, separator: "")
-        
         needHasNext = true
         localRemaining = -1
         eof = false
@@ -54,8 +48,6 @@ final class BinaryIonParser {
     }
     
     func hasNext() throws -> Bool {
-        Debug.print("BinaryIonParser.", #function, separator: "")
-        
         while needHasNext && !eof {
             try hasNextRaw()
             
@@ -80,8 +72,6 @@ final class BinaryIonParser {
     }
     
     private func hasNextRaw() throws {
-        Debug.print("BinaryIonParser.", #function, separator: "")
-        
         clearValue()
         
         while valueTid == -1 && !eof {
@@ -137,8 +127,6 @@ final class BinaryIonParser {
 // MARK: - Read
 extension BinaryIonParser {
     private func read(count: Int = 1) throws -> Data {
-        Debug.print("BinaryIonParser.", #function, separator: "")
-        
         if localRemaining != -1 {
             localRemaining -= count
             
@@ -157,14 +145,10 @@ extension BinaryIonParser {
     }
     
     private func read(_ count: Int) throws -> Data {
-        Debug.print("BinaryIonParser.", #function, separator: "")
-        
         return try read(count: count)
     }
     
     private func clearValue() {
-        Debug.print("BinaryIonParser.", #function, separator: "")
-        
         valueTid = -1
         value = nil
         valueIsNull = false
@@ -173,8 +157,6 @@ extension BinaryIonParser {
     }
     
     private func skip(count: Int) throws {
-        Debug.print("BinaryIonParser.", #function, separator: "")
-        
         if localRemaining != -1 {
             localRemaining -= count
             
@@ -187,14 +169,10 @@ extension BinaryIonParser {
     }
     
     private func skip(_ count: Int) throws {
-        Debug.print("BinaryIonParser.", #function, separator: "")
-        
         try skip(count: count)
     }
     
     private func readFieldId() -> Int {
-        Debug.print("BinaryIonParser.", #function, separator: "")
-        
         if localRemaining != -1 && localRemaining < 1 {
             return -1
         }
@@ -207,8 +185,6 @@ extension BinaryIonParser {
     }
     
     private func readTypeId() throws -> Int {
-        Debug.print("BinaryIonParser.", #function, separator: "")
-        
         if localRemaining != -1 {
             if localRemaining < 1 {
                 return -1
@@ -256,8 +232,6 @@ extension BinaryIonParser {
     }
     
     private func readVarUInt() throws -> Int {
-        Debug.print("BinaryIonParser.", #function, separator: "")
-        
         var b: Int = Util.ord(data: try read())
         
         var result: Int = b & 0x7F
@@ -278,8 +252,6 @@ extension BinaryIonParser {
     }
     
     private func readVarInt() throws -> Int {
-        Debug.print("BinaryIonParser.", #function, separator: "")
-        
         var b: Int = Util.ord(try read())
         
         let negative: Bool = (b & 0x40) != 0
@@ -310,8 +282,6 @@ extension BinaryIonParser {
 extension BinaryIonParser {
     @discardableResult
     func next() throws -> Int {
-        Debug.print("BinaryIonParser.", #function, separator: "")
-        
         if try hasNext() {
             needHasNext = true
             return valueTid
@@ -321,8 +291,6 @@ extension BinaryIonParser {
     }
     
     func stepIn() throws {
-        Debug.print("BinaryIonParser.", #function, separator: "")
-        
         if (valueTid != IonUtils.TID_STRUCT && valueTid != IonUtils.TID_LIST && valueTid != IonUtils.TID_SEXP) || eof {
             throw BinaryIonParserError.stepInAssertionsFailed
         }
@@ -358,8 +326,6 @@ extension BinaryIonParser {
     }
     
     func stepOut() throws {
-        Debug.print("BinaryIonParser.", #function, separator: "")
-        
         let rec: ContainerRec = containerStack.removeLast()
         
         eof = false
@@ -394,16 +360,12 @@ extension BinaryIonParser {
 // MARK: - Type Values
 extension BinaryIonParser {
     private func prepareValue() throws {
-        Debug.print("BinaryIonParser.", #function, separator: "")
-        
         if value == nil {
             try loadScalarValue()
         }
     }
     
     private func loadScalarValue() throws {
-        Debug.print("BinaryIonParser.", #function, separator: "")
-        
         if valueTid != IonUtils.TID_NULL && valueTid != IonUtils.TID_BOOLEAN && valueTid != IonUtils.TID_POSINT &&
             valueTid != IonUtils.TID_NEGINT && valueTid != IonUtils.TID_FLOAT && valueTid != IonUtils.TID_DECIMAL &&
             valueTid != IonUtils.TID_TIMESTAMP && valueTid != IonUtils.TID_SYMBOL && valueTid != IonUtils.TID_STRING {
@@ -449,8 +411,6 @@ extension BinaryIonParser {
     }
     
     private func intValue() throws -> Int {
-        Debug.print("BinaryIonParser.", #function, separator: "")
-        
         if valueTid !=  IonUtils.TID_POSINT && valueTid != IonUtils.TID_NEGINT {
             throw BinaryIonParserError.notInt
         }
@@ -466,8 +426,6 @@ extension BinaryIonParser {
     }
     
     public func stringValue() throws -> String {
-        Debug.print("BinaryIonParser.", #function, separator: "")
-        
         if valueTid != IonUtils.TID_STRING {
             throw BinaryIonParserError.notString
         }
@@ -486,8 +444,6 @@ extension BinaryIonParser {
     }
     
     private func symbolValue() throws -> String {
-        Debug.print("BinaryIonParser.", #function, separator: "")
-        
         if valueTid != IonUtils.TID_SYMBOL {
             throw BinaryIonParserError.notSymbol
         }
@@ -508,8 +464,6 @@ extension BinaryIonParser {
     }
     
     public func lobValue() throws -> Data? {
-        Debug.print("BinaryIonParser.", #function, separator: "")
-        
         if valueTid != IonUtils.TID_CLOB && valueTid != IonUtils.TID_BLOB {
             throw BinaryIonParserError.notLobType(found: try getFieldName())
         }
@@ -526,8 +480,6 @@ extension BinaryIonParser {
     }
     
     private func readDecimal() throws -> Double {
-        Debug.print("BinaryIonParser.", #function, separator: "")
-        
         if valueLen == 0 {
             return 0
         }
@@ -577,8 +529,6 @@ extension BinaryIonParser {
     }
     
     func getFieldName() throws -> String {
-        Debug.print("BinaryIonParser.", #function, separator: "")
-        
         if valueFieldId == IonUtils.SID_UNKNOWN {
             return ""
         }
@@ -587,14 +537,10 @@ extension BinaryIonParser {
     }
     
     private func getFieldNameSymbol() throws -> SymbolToken {
-        Debug.print("BinaryIonParser.", #function, separator: "")
-        
         return try .init(getFieldName(), valueFieldId)
     }
     
     func getTypeName() throws -> String {
-        Debug.print("BinaryIonParser.", #function, separator: "")
-        
         if annotations.isEmpty {
             return ""
         }
@@ -606,8 +552,6 @@ extension BinaryIonParser {
 // MARK: - Imports
 extension BinaryIonParser {
     private func readImport() throws {
-        Debug.print("BinaryIonParser.", #function, separator: "")
-        
         var version: Int = -1
         var maxId: Int = -1
         var name: String = ""
@@ -666,26 +610,18 @@ extension BinaryIonParser {
 // MARK: - Misc
 extension BinaryIonParser {
     private func push(typeId: Int, nextPosition: Int, nextRemaining: Int) {
-        Debug.print("BinaryIonParser.", #function, separator: "")
-        
         containerStack.append(.init(nextPosition, typeId, nextRemaining))
     }
     
     private func push(_ typeId: Int, _ nextPosition: Int, _ nextRemaining: Int) {
-        Debug.print("BinaryIonParser.", #function, separator: "")
-        
         push(typeId: typeId, nextPosition: nextPosition, nextRemaining: nextRemaining)
     }
     
     func addToCatalog(name: String, version: Int, symbols: [String]) {
-        Debug.print("BinaryIonParser.", #function, separator: "")
-        
         catalog.append(.init(name: name, version: version, symnames: symbols))
     }
     
     private func checkVersionMarker() throws {
-        Debug.print("BinaryIonParser.", #function, separator: "")
-        
         for marker in IonUtils.VERSION_MARKER {
             let data: Data = try read()
             
@@ -703,8 +639,6 @@ extension BinaryIonParser {
     }
     
     private func loadAnnotations() throws {
-        Debug.print("BinaryIonParser.", #function, separator: "")
-        
         let ln: Int = try readVarUInt()
         let maxPos: Int64 = .init(stream.tell() + ln)
         
@@ -716,8 +650,6 @@ extension BinaryIonParser {
     }
     
     private func findCatalogItem(name: String) -> IonCatalogItem? {
-        Debug.print("BinaryIonParser.", #function, separator: "")
-        
         for item in catalog {
             if item.name == name {
                 return item
@@ -728,14 +660,10 @@ extension BinaryIonParser {
     }
     
     private func findCatalogItem(_ name: String) -> IonCatalogItem? {
-        Debug.print("BinaryIonParser.", #function, separator: "")
-        
         return findCatalogItem(name: name)
     }
     
     private func gatherImports() throws {
-        Debug.print("BinaryIonParser.", #function, separator: "")
-        
         try stepIn()
         
         var t: Int = try next()
@@ -752,8 +680,6 @@ extension BinaryIonParser {
     }
     
     private func parseSymbolTable() throws {
-        Debug.print("BinaryIonParser.", #function, separator: "")
-        
         // Advance to the next value (shouldn't do anything meaningful)
         try next()
         

@@ -75,3 +75,11 @@ enum PukallCipher {
         }
     }
 }
+
+
+// MARK: - Convenience Methods
+extension PukallCipher {
+    static func pc1(_ key: Data, _ src: Data, _ decryption: Bool = true) throws -> Data {
+        return try pc1(key: key, src: src, decryption: decryption)
+    }
+}

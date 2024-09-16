@@ -10,8 +10,21 @@ import Foundation
 struct DRMInfo {
     let key: Data?
     let pid: String
+    
+    init(key: Data?, pid: String) {
+        self.key = key
+        self.pid = pid
+    }
 }
 
+// MARK: - Convenience Initialisers/Methods
+extension DRMInfo {
+    init(_ key: Data?, _ pid: String) {
+        self.init(key: key, pid: pid)
+    }
+}
+
+// MARK: - CustomStringConvertible
 extension DRMInfo: CustomStringConvertible {
     var description: String {
         return "(key: \(Util.formatData(data: key)), pid: \(pid))"

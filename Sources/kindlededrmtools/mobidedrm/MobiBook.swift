@@ -28,21 +28,11 @@ final class MobiBook {
     private var mobiCodepage: Int = 1252
     private var mobiVersion: Int = -1
     
-    convenience init(infile: String) throws {
-        let url: URL = .init(filePath: infile)
-        try self.init(url: url)
-    }
-    
-    convenience init(url: URL) throws {
-        let data: Data = try .init(contentsOf: url)
-        try self.init(data: data)
-    }
-    
     init(data: Data) throws {
         print("MobiDeDrm v\(MobiBook.version.description).")
         print("\(Util.copyright).")
         print("Removes protection from Kindle/Mobipocket, Kindle/KF8 and Kindle/Print Replica eBooks.")
-                
+        
         dataFile = data
         
         header = dataFile.prefix(78)
@@ -261,7 +251,13 @@ final class MobiBook {
             let tempKey: Data = try PukallCipher.pc1(key: keyvec1, src: bigPid, decryption: false)
             let tempKeySum: Int = Util.sumBytes(data: tempKey)
             
-            try parseDrmRoutine(data: data, count: count, pid: pid, tempKey: tempKey, tempKeySum: tempKeySum, foundKey: &foundKey, foundPid: &foundPid)
+            try parseDrmRoutine(data: data,
+                                count: count,
+                                pid: pid,
+                                tempKey: tempKey,
+                                tempKeySum: tempKeySum,
+                                foundKey: &foundKey,
+                                foundPid: &foundPid)
             
             if foundKey != nil {
                 break
@@ -273,13 +269,25 @@ final class MobiBook {
             
             let tempKeySum: Int = Util.sumBytes(data: keyvec1)
             
-            try parseDrmRoutine(data: data, count: count, pid: foundPid, tempKey: keyvec1, tempKeySum: tempKeySum, foundKey: &foundKey, foundPid: &foundPid)
+            try parseDrmRoutine(data: data,
+                                count: count,
+                                pid: foundPid,
+                                tempKey: keyvec1,
+                                tempKeySum: tempKeySum,
+                                foundKey: &foundKey,
+                                foundPid: &foundPid)
         }
         
         return .init(key: foundKey, pid: foundPid)
     }
     
-    private static func parseDrmRoutine(data: Data, count: Int, pid: String, tempKey: Data, tempKeySum: Int, foundKey: inout Data?, foundPid: inout String?) throws {
+    private static func parseDrmRoutine(data: Data,
+                                        count: Int,
+                                        pid: String,
+                                        tempKey: Data,
+                                        tempKeySum: Int,
+                                        foundKey: inout Data?,
+                                        foundPid: inout String?) throws {
         for i in 0..<count {
             let startIndex: Int = i * 0x30
             let range: Range<Int> = startIndex..<startIndex + 0x30
@@ -330,9 +338,7 @@ final class MobiBook {
         
         for pid in pidSet {
             if pid.count == 10 {
-                let endIndex: String.Index = pid.endIndex
-                let index: String.Index = pid.index(endIndex, offsetBy: -2)
-                let substring: String.SubSequence = pid[..<index]
+                let substring: String.SubSequence = pid.prefix(pid.count - 2)
                 let string: String = .init(substring)
                 let checksumPid: String = KindleKeyUtils.checksumPid(data: string, charMap: CharMaps.letters)
                 
@@ -352,6 +358,32 @@ final class MobiBook {
     }
 }
 
+// MARK: - Convenience Initialisers/Methods
+extension MobiBook {
+    convenience init(infile: String) throws {
+        let url: URL = .init(filePath: infile)
+        try self.init(url: url)
+    }
+    
+    convenience init(_ infile: String) throws {
+        try self.init(infile: infile)
+    }
+    
+    convenience init(url: URL) throws {
+        let data: Data = try .init(contentsOf: url)
+        try self.init(data: data)
+    }
+    
+    convenience init(_ url: URL) throws {
+        try self.init(url: url)
+    }
+    
+    convenience init(_ data: Data) throws {
+        try self.init(data: data)
+    }
+}
+
+// MARK: - BookManager
 extension MobiBook: BookManager {
     public func getBookTitle() -> String {
         let codecMap: Dictionary<Int, String.Encoding> = [1252: .windowsCP1252, 65001: .utf8]
@@ -550,7 +582,7 @@ extension MobiBook: BookManager {
             }
         }
         
-        return .init(rec209: rec209, token: token)
+        return .init(rec209, token)
     }
     
     public func cleanup() {

@@ -23,10 +23,6 @@ enum CryptoUtils {
         return .init(authenticationCode)
     }
     
-    static func hmacsha256(_ key: Data, _ message: Data) -> Data {
-        return hmacsha256(key: key, message: message)
-    }
-    
     /**
      * Decrypts the given ciphertext using AES/CBC with the provided key and IV.
      * - Parameters:
@@ -37,10 +33,6 @@ enum CryptoUtils {
      */
     static func aescbcdecrypt(key: Data, iv: Data, cipherText: Data) throws -> Data {
         return try .init(QCCAESPadCBCDecrypt(key: .init(key), iv: .init(iv), cipherText: .init(cipherText)))
-    }
-    
-    static func aescbcdecrypt(_ key: Data, _ iv: Data, _ cipherText: Data) throws -> Data {
-        return try aescbcdecrypt(key: key, iv: iv, cipherText: cipherText)
     }
     
     /**
@@ -69,7 +61,7 @@ enum CryptoUtils {
     ///   - plainText: The data to encrypt; the PKCS#7 padding means there are no
     ///     constraints on its length.
     /// - Returns: The encrypted data; it’s length with always be an even multiple of 16.
-    private static func QCCAESPadCBCEncrypt(key: [UInt8], iv: [UInt8], plainText: [UInt8]) throws -> [UInt8] {
+    internal static func QCCAESPadCBCEncrypt(key: [UInt8], iv: [UInt8], plainText: [UInt8]) throws -> [UInt8] {
         // The key size must be 128, 192, or 256.
         //
         // The IV size must match the block size.
@@ -121,7 +113,7 @@ enum CryptoUtils {
     ///   - cipherText: The encrypted data; it’s length must be an even multiple of
     ///     16.
     /// - Returns: The decrypted data.
-    private static func QCCAESPadCBCDecrypt(key: [UInt8], iv: [UInt8], cipherText: [UInt8]) throws -> [UInt8] {
+    internal static func QCCAESPadCBCDecrypt(key: [UInt8], iv: [UInt8], cipherText: [UInt8]) throws -> [UInt8] {
         // The key size must be 128, 192, or 256.
         //
         // The IV size must match the block size.
@@ -159,5 +151,20 @@ enum CryptoUtils {
         plaintext.removeLast(plaintext.count - plaintextCount)
         
         return plaintext
+    }
+}
+
+// MARK: - Convenience Functions
+extension CryptoUtils {
+    static func hmacsha256(_ key: Data, _ message: Data) -> Data {
+        return hmacsha256(key: key, message: message)
+    }
+    
+    static func aescbcdecrypt(_ key: Data, _ iv: Data, _ cipherText: Data) throws -> Data {
+        return try aescbcdecrypt(key: key, iv: iv, cipherText: cipherText)
+    }
+    
+    static func aesctrdecrypt(_ key: Data, _ iv: Data, _ cipherText: Data) throws -> Data {
+        return try aesctrdecrypt(key: key, iv: iv, cipherText: cipherText)
     }
 }

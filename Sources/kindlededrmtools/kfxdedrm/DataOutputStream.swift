@@ -18,7 +18,7 @@ final class DataOutputStream {
     }
     
     func write(byte: UInt8) {
-        data[count] = byte
+        data.append(byte)
         count += 1
     }
     

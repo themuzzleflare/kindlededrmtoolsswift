@@ -76,9 +76,7 @@ enum IonUtils {
                                   "com.amazon.drm.Compressed@1.0", "page_index_table"]
         
         // Add the range-generated entries
-        let numbers: [Int] = [2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 9708, 1031, 2069, 9041, 3646, 6052, 9479, 9888, 4648, 5683]
-        
-        for number in numbers {
+        for number in [2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 9708, 1031, 2069, 9041, 3646, 6052, 9479, 9888, 4648, 5683] {
             symnames.append("com.amazon.drm.VoucherEnvelope@\(number.description).0")
         }
         

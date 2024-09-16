@@ -24,8 +24,6 @@ final class DRMIonVoucher {
     private var secretKey: Data = .init()
     
     init(voucherenv: DataInputStream, dsn: Data, secret: Data) {
-        Debug.print("DRMIonVoucher.", #function, separator: "")
-
         self.dsn = dsn
         self.secret = secret
         envelope = .init(voucherenv)
@@ -34,14 +32,10 @@ final class DRMIonVoucher {
     }
     
     convenience init(_ voucherenv: DataInputStream, _ dsn: Data, _ secret: Data) {
-        Debug.print("DRMIonVoucher.", #function, separator: "")
-
         self.init(voucherenv: voucherenv, dsn: dsn, secret: secret)
     }
     
     convenience init(voucherenv: DataInputStream, dsn: String, secret: String) throws {
-        Debug.print("DRMIonVoucher.", #function, separator: "")
-
         guard let dsnData = dsn.data(using: .ascii) else {
             throw DRMIonVoucherError.dataFromStringFailed(string: dsn)
         }
@@ -54,14 +48,10 @@ final class DRMIonVoucher {
     }
     
     convenience init(_ voucherenv: DataInputStream, _ dsn: String, _ secret: String) throws {
-        Debug.print("DRMIonVoucher.", #function, separator: "")
-
         try self.init(voucherenv: voucherenv, dsn: dsn, secret: secret)
     }
     
     func decryptVoucher() throws {
-        Debug.print("DRMIonVoucher.", #function, separator: "")
-
         guard let encAlgorithmBytes: Data = encAlgorithm.data(using: .ascii) else {
             throw DRMIonVoucherError.dataFromStringFailed(string: encAlgorithm)
         }
@@ -200,8 +190,6 @@ final class DRMIonVoucher {
     }
     
     func parse() throws {
-        Debug.print("DRMIonVoucher.", #function, separator: "")
-
         envelope.reset()
         
         if try !envelope.hasNext() {
@@ -276,8 +264,6 @@ final class DRMIonVoucher {
     }
     
     private func parseVoucher() throws {
-        Debug.print("DRMIonVoucher.", #function, separator: "")
-
         if try !voucher.hasNext() {
             throw DRMIonVoucherError.voucherEmpty
         }

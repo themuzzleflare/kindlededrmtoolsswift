@@ -34,3 +34,10 @@ public enum Debug {
         }
     }
 }
+
+// MARK: - Convenience Methods
+extension Debug {
+    public static func setEnabled(_ enabled: Bool) {
+        setEnabled(enabled: enabled)
+    }
+}

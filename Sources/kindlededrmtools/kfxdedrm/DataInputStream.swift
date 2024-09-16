@@ -15,43 +15,39 @@ final class DataInputStream {
     private var count: Int
     
     init(data: Data) {
-        Debug.print("DataInputStream.", #function, separator: "")
-        
         self.data = data
         pos = 0
         count = data.count
     }
     
+    convenience init(_ data: Data) {
+        self.init(data: data)
+    }
+    
     init(data: Data, offset: Int = 0, length: Int) {
-        Debug.print("DataInputStream.", #function, separator: "")
-        
         self.data = data
         pos = offset
         count = min(offset + length, data.count)
         mark = offset
     }
     
-    convenience init(_ data: Data) {
-        Debug.print("DataInputStream.", #function, separator: "")
-        
-        self.init(data: data)
+    convenience init(_ data: Data, _ offset: Int = 0, _ length: Int) {
+        self.init(data: data, offset: offset, length: length)
     }
     
-    func read() -> Int {
-        Debug.print("DataInputStream.", #function, separator: "")
-        
+    @discardableResult
+    func read() -> UInt8 {
         if pos < count {
+            let result: UInt8 = data[pos]
             pos += 1
-            return .init(data[pos] & 0xff)
+            return result
         } else {
-            return -1
+            return .init(truncatingIfNeeded: -1)
         }
     }
     
     @discardableResult
     func read(data: inout Data, off: Int = 0, len: Int) -> Int {
-        Debug.print("DataInputStream.", #function, separator: "")
-        
         var len: Int = len
         
         if pos >= count {
@@ -77,9 +73,12 @@ final class DataInputStream {
         return len
     }
     
+    @discardableResult
+    func read(_ data: inout Data, _ off: Int = 0, _ len: Int) -> Int {
+        return read(data: &data, off: off, len: len)
+    }
+    
     func readAllBytes() -> Data {
-        Debug.print("DataInputStream.", #function, separator: "")
-        
         let result: Data = data.subdata(in: pos..<count)
         
         pos = count
@@ -89,76 +88,66 @@ final class DataInputStream {
     
     @discardableResult
     func readNBytes(data: inout Data, off: Int = 0, len: Int) -> Int {
-        Debug.print("DataInputStream.", #function, separator: "")
-        
         let n: Int = read(data: &data, off: off, len: len)
+        
         return n == -1 ? 0 : n
     }
     
+    @discardableResult
+    func readNBytes(_ data: inout Data, _ off: Int = 0, _ len: Int) -> Int {
+        return readNBytes(data: &data, off: off, len: len)
+    }
+    
     func readNBytes(len: Int) -> Data {
-        Debug.print("DataInputStream.", #function, separator: "")
-        
         var result: Data = .init(count: len)
         readNBytes(data: &result, off: 0, len: len)
         return result
     }
     
     func readNBytes(_ len: Int) -> Data {
-        Debug.print("DataInputStream.", #function, separator: "")
-        
         return readNBytes(len: len)
     }
     
     @discardableResult
-    func skip(n: Int64) -> Int64 {
-        Debug.print("DataInputStream.", #function, separator: "")
-        
-        var k: Int64 = .init(count - pos)
+    func skip(n: Int) -> Int {
+        var k: Int = count - pos
         
         if n < k {
             k = n < 0 ? 0 : n
         }
         
-        pos += .init(k)
+        pos += k
         
         return k
     }
     
     @discardableResult
     func skip(_ n: Int) -> Int {
-        Debug.print("DataInputStream.", #function, separator: "")
-        
-        return .init(skip(n: .init(n)))
+        return skip(n: n)
     }
     
     func available() -> Int {
-        Debug.print("DataInputStream.", #function, separator: "")
-        
         return count - pos
     }
     
     func markPos() {
-        Debug.print("DataInputStream.", #function, separator: "")
-        
         mark = pos
     }
     
     func reset() {
-        Debug.print("DataInputStream.", #function, separator: "")
-        
         pos = mark
     }
     
     func tell() -> Int {
-        Debug.print("DataInputStream.", #function, separator: "")
-        
         return pos
     }
     
     func seek(position: Int) {
-        Debug.print("BytesIOInputStream.", #function, separator: "")
-        
         reset()
-        skip(n: .init(position))
+        skip(n: position)
+    }
+    
+    func seek(_ position: Int) {
+        seek(position: position)
     }
 }
