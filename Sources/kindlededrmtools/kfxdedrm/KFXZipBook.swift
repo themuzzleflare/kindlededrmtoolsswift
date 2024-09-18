@@ -109,15 +109,7 @@ final class KFXZipBook {
 // MARK: - BookManager
 extension KFXZipBook: BookManager {
     func getBookTitle() -> String {
-        let url: URL
-        
-        if #available(macOS 13.0, *) {
-            url = .init(filePath: infile)
-        } else {
-            // Fallback on earlier versions
-            url = .init(fileURLWithPath: infile)
-        }
-        
+        let url: URL = Util.url(filePath: infile)
         return url.filenameRoot
     }
     

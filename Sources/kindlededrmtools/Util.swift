@@ -169,7 +169,7 @@ final class Util {
     }
     
     static func url(filePath: String) -> URL {
-        if #available(macOS 13.0, *) {
+        if #available(macOS 13.0, iOS 16.0, *) {
             return .init(filePath: filePath)
         } else {
             // Fallback on earlier versions
@@ -178,7 +178,7 @@ final class Util {
     }
     
     static func url(filePath path: String, isDirectory: Bool, relativeTo base: URL? = nil) -> URL {
-        if #available(macOS 13.0, *) {
+        if #available(macOS 13.0, iOS 16.0, *) {
             return .init(
                 filePath: path,
                 directoryHint: isDirectory ? .isDirectory : .inferFromPath,
@@ -194,7 +194,7 @@ final class Util {
     }
     
     static func url(filePath path: String, relativeTo base: URL? = nil) -> URL {
-        if #available(macOS 13.0, *) {
+        if #available(macOS 13.0, iOS 16.0, *) {
             return .init(
                 filePath: path,
                 relativeTo: base
@@ -208,7 +208,7 @@ final class Util {
     }
     
     static func urlPath(url: URL, percentEncoded: Bool = true) -> String {
-        if #available(macOS 13.0, *) {
+        if #available(macOS 13.0, iOS 16.0, *) {
             return url.path(percentEncoded: percentEncoded)
         } else {
             // Fallback on earlier versions
@@ -217,7 +217,7 @@ final class Util {
     }
     
     static func temporaryDirectory() -> URL {
-        if #available(macOS 13.0, *) {
+        if #available(macOS 13.0, iOS 16.0, *) {
             return .temporaryDirectory
         } else {
             // Fallback on earlier versions
@@ -231,7 +231,7 @@ final class Util {
             return false
         }
         
-        if #available(macOS 13.0, *) {
+        if #available(macOS 13.0, iOS 16.0, *) {
             return haystack.contains(needle)
         } else {
             let range: Range<Data.Index>? = haystack.range(of: needle)
@@ -240,7 +240,7 @@ final class Util {
     }
     
     static func dateNow() -> Date {
-        if #available(macOS 12, *) {
+        if #available(macOS 12, iOS 15.0, *) {
             return .now
         } else {
             // Fallback on earlier versions
@@ -249,7 +249,7 @@ final class Util {
     }
     
     static func appending(base: URL, add: String) -> URL {
-        if #available(macOS 13.0, *) {
+        if #available(macOS 13.0, iOS 16.0, *) {
             return base.appending(path: add)
         } else {
             // Fallback on earlier versions
