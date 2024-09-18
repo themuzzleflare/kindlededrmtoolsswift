@@ -30,7 +30,8 @@ final class KFXZipBook {
         var decrypted: Bool = false
         var decryptedVoucher: DRMIonVoucher!
         
-        let url: URL = .init(filePath: infile)
+        let url: URL = Util.url(filePath: infile)
+        
         let archive: Archive = try .init(url: url, accessMode: .read)
         
         var foundVoucher: Bool = false
@@ -46,7 +47,7 @@ final class KFXZipBook {
                 continue
             }
             
-            if data.contains(CharMaps.protectedDataBytes) {
+            if Util.contains(haystack: data, needle: CharMaps.protectedDataBytes) {
                 foundVoucher = true
                 voucherFilename = entry.path
                 voucherData = data
@@ -108,7 +109,15 @@ final class KFXZipBook {
 // MARK: - BookManager
 extension KFXZipBook: BookManager {
     func getBookTitle() -> String {
-        let url: URL = .init(filePath: infile)
+        let url: URL
+        
+        if #available(macOS 13.0, *) {
+            url = .init(filePath: infile)
+        } else {
+            // Fallback on earlier versions
+            url = .init(fileURLWithPath: infile)
+        }
+        
         return url.filenameRoot
     }
     
@@ -124,14 +133,26 @@ extension KFXZipBook: BookManager {
         defer {
             do {
                 try FileManager.default.removeItem(at: .outputTemporaryDirectory)
-                Debug.print("Removed directory:", URL.outputTemporaryDirectory.path(percentEncoded: false))
+                Debug
+                    .print(
+                        "Removed directory:",
+                        Util
+                            .urlPath(
+                                url: .outputTemporaryDirectory,
+                                percentEncoded: false
+                            )
+                    )
             } catch {
-                Debug.print("Failed to remove directory:", URL.outputTemporaryDirectory.path(percentEncoded: false))
+                Debug.print("Failed to remove directory:", Util
+                    .urlPath(
+                        url: .outputTemporaryDirectory,
+                        percentEncoded: false
+                    ))
             }
         }
         
-        let infileUrl: URL = .init(filePath: infile)
-        let outpathUrl: URL = .init(filePath: outpath)
+        let infileUrl: URL = Util.url(filePath: infile)
+        let outpathUrl: URL = Util.url(filePath: outpath)
         
         guard !decrypted.isEmpty else {
             let infileData: Data = try .init(contentsOf: infileUrl)
@@ -144,7 +165,11 @@ extension KFXZipBook: BookManager {
         
         try FileManager.default.createDirectory(at: .outputTemporaryDirectory, withIntermediateDirectories: true)
         
-        Debug.print("Created directory:", URL.outputTemporaryDirectory.path(percentEncoded: false))
+        Debug.print("Created directory:", Util
+            .urlPath(
+                url: .outputTemporaryDirectory,
+                percentEncoded: false
+            ))
         
         for infileEntry in infileArchive {
             Debug.print("infileEntry:", infileEntry.path)
@@ -152,24 +177,22 @@ extension KFXZipBook: BookManager {
             if infileEntry.type == .directory {
                 Debug.print("This entry is a directory.")
                 
-                let url: URL = .init(filePath: infileEntry.path, relativeTo: .outputTemporaryDirectory)
+                let url: URL = Util.url(filePath: infileEntry.path, relativeTo: .outputTemporaryDirectory)
                 
                 try FileManager.default.createDirectory(at: url, withIntermediateDirectories: true)
                 
-                Debug.print("Created directory:", url.path(percentEncoded: false))
+                Debug.print("Created directory:", Util.urlPath(url: url, percentEncoded: false))
                 
                 continue
             }
             
+            let url: URL = Util.url(filePath: infileEntry.path, relativeTo: .outputTemporaryDirectory)
+            
             if let decryptedContent = decrypted[infileEntry.path] {
-                let url: URL = .init(filePath: infileEntry.path, relativeTo: .outputTemporaryDirectory)
-                
                 try decryptedContent.write(to: url)
                 
                 try outfileArchive.addEntry(with: infileEntry.path, fileURL: url)
             } else {
-                let url: URL = .init(filePath: infileEntry.path, relativeTo: .outputTemporaryDirectory)
-                
                 _ = try infileArchive.extract(infileEntry, to: url)
                 
                 try outfileArchive.addEntry(with: infileEntry.path, fileURL: url)
@@ -178,11 +201,11 @@ extension KFXZipBook: BookManager {
         
         try outfileArchive.data?.write(to: outpathUrl)
         
-        Debug.print("Wrote data to URL:", outpathUrl.path(percentEncoded: false))
+        Debug.print("Wrote data to URL:", Util.urlPath(url: outpathUrl, percentEncoded: false))
     }
     
     func processBook(pidSet: OrderedSet<String>) throws {
-        let url: URL = .init(filePath: infile)
+        let url: URL = Util.url(filePath: infile)
         let archive: Archive = try .init(url: url, accessMode: .read)
         
         for entry in archive {

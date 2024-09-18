@@ -38,7 +38,7 @@ extension KindleDatabase {
     private static let proxyHttpUsernameKey: String = "proxy.http.username"
     
     init(infile: String) throws {
-        let url: URL = .init(filePath: infile)
+        let url: URL = Util.url(filePath: infile)
         try self.init(url: url)
     }
     

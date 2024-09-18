@@ -5,8 +5,8 @@ import PackageDescription
 let package = Package(
     name: "kindlededrmtools",
     platforms: [
-        .iOS(.v18),
-        .macOS(.v15)
+        .iOS(.v12),
+        .macOS(.v10_15)
     ],
     products: [
         .library(

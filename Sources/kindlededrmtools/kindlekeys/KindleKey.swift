@@ -21,7 +21,7 @@ final class KindleKey {
         
         // Set up the process to execute the command
         let process: Process = .init()
-        process.executableURL = .init(filePath: "/usr/sbin/networksetup")
+        process.executableURL = Util.url(filePath: "/usr/sbin/networksetup")
         process.arguments = ["-listallhardwareports"]
         
         let pipe: Pipe = .init()

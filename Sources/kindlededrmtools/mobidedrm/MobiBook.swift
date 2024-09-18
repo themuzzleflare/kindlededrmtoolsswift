@@ -415,7 +415,7 @@ extension MobiBook: BookManager {
     }
     
     func getFile(outpath: String) throws {
-        let url: URL = .init(filePath: outpath)
+        let url: URL = Util.url(filePath: outpath)
         
         try mobiData.write(to: url)
     }
@@ -574,7 +574,7 @@ extension MobiBook: BookManager {
 // MARK: - Convenience Initialisers/Methods
 extension MobiBook {
     convenience init(infile: String) throws {
-        let url: URL = .init(filePath: infile)
+        let url: URL = Util.url(filePath: infile)
         try self.init(url: url)
     }
     

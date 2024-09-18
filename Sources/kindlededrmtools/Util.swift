@@ -167,6 +167,95 @@ final class Util {
         
         return data
     }
+    
+    static func url(filePath: String) -> URL {
+        if #available(macOS 13.0, *) {
+            return .init(filePath: filePath)
+        } else {
+            // Fallback on earlier versions
+            return .init(fileURLWithPath: filePath)
+        }
+    }
+    
+    static func url(filePath path: String, isDirectory: Bool, relativeTo base: URL? = nil) -> URL {
+        if #available(macOS 13.0, *) {
+            return .init(
+                filePath: path,
+                directoryHint: isDirectory ? .isDirectory : .inferFromPath,
+                relativeTo: base
+            )
+        } else {
+            return .init(
+                fileURLWithPath: path,
+                isDirectory: isDirectory,
+                relativeTo: base
+            )
+        }
+    }
+    
+    static func url(filePath path: String, relativeTo base: URL? = nil) -> URL {
+        if #available(macOS 13.0, *) {
+            return .init(
+                filePath: path,
+                relativeTo: base
+            )
+        } else {
+            return .init(
+                fileURLWithPath: path,
+                relativeTo: base
+            )
+        }
+    }
+    
+    static func urlPath(url: URL, percentEncoded: Bool = true) -> String {
+        if #available(macOS 13.0, *) {
+            return url.path(percentEncoded: percentEncoded)
+        } else {
+            // Fallback on earlier versions
+            return url.path
+        }
+    }
+    
+    static func temporaryDirectory() -> URL {
+        if #available(macOS 13.0, *) {
+            return .temporaryDirectory
+        } else {
+            // Fallback on earlier versions
+            return .init(fileURLWithPath: NSTemporaryDirectory())
+        }
+    }
+    
+    
+    static func contains(haystack: Data?, needle: Data?) -> Bool {
+        guard let haystack, let needle else {
+            return false
+        }
+        
+        if #available(macOS 13.0, *) {
+            return haystack.contains(needle)
+        } else {
+            let range: Range<Data.Index>? = haystack.range(of: needle)
+            return range != nil
+        }
+    }
+    
+    static func dateNow() -> Date {
+        if #available(macOS 12, *) {
+            return .now
+        } else {
+            // Fallback on earlier versions
+            return Date()
+        }
+    }
+    
+    static func appending(base: URL, add: String) -> URL {
+        if #available(macOS 13.0, *) {
+            return base.appending(path: add)
+        } else {
+            // Fallback on earlier versions
+            return base.appendingPathComponent(add)
+        }
+    }
 }
 
 // MARK: - Convenience Functions
@@ -193,5 +282,25 @@ extension Util {
     
     static func hexStringToData(_ hexString: String?) -> Data? {
         return hexStringToData(hexString: hexString)
+    }
+    
+    static func url(_ filePath: String) -> URL {
+        return url(filePath: filePath)
+    }
+    
+    static func url(_ filePath: String, _ isDirectory: Bool, _ relativeTo: URL? = nil) -> URL {
+        return url(filePath: filePath, isDirectory: isDirectory, relativeTo: relativeTo)
+    }
+    
+    static func url(_ filePath: String, _ relativeTo: URL? = nil) -> URL {
+        return url(filePath: filePath, relativeTo: relativeTo)
+    }
+    
+    static func urlPath(_ url: URL, _ percentEncoded: Bool = true) -> String {
+        return urlPath(url: url, percentEncoded: percentEncoded)
+    }
+    
+    static func contains(_ haystack: Data?, _ needle: Data?) -> Bool {
+        return contains(haystack: haystack, needle: needle)
     }
 }

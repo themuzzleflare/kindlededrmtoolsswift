@@ -110,7 +110,7 @@ public final class DeDRM {
         return kDatabaseRecords
     }
     
-    private static func decryptionRoutine(infile: String, outdir: String, kDatabaseRecords: OrderedSet<KDatabaseRecord>, serials: OrderedSet<String>, pids: OrderedSet<String>, startTime: Date = .now) throws {
+    private static func decryptionRoutine(infile: String, outdir: String, kDatabaseRecords: OrderedSet<KDatabaseRecord>, serials: OrderedSet<String>, pids: OrderedSet<String>, startTime: Date = Util.dateNow()) throws {
         do {
             let book: BookManager = try getDecryptedBook(infile: infile, kDatabaseRecords: kDatabaseRecords, serials: serials, pids: pids)
             
@@ -121,25 +121,32 @@ public final class DeDRM {
             }
             
             let outfilenameWithExtension: String = outfilename + book.getBookExtension()
-            let outpath: String = outdirUrl.appending(path: outfilenameWithExtension).path(percentEncoded: false)
+            let outpath: String = Util.urlPath(url: Util.appending(
+                base: outdirUrl,
+                add: outfilenameWithExtension
+            ), percentEncoded: false)
             
             try book.getFile(outpath: outpath)
             
-            print("Saved decrypted book \(outfilename) after \(Date.now.timeIntervalSince(startTime).oneDecimalPlace) seconds")
+            print(
+                "Saved decrypted book \(outfilename) after \(Util.dateNow().timeIntervalSince(startTime).oneDecimalPlace) seconds"
+            )
             
             book.cleanup()
         } catch {
-            print("Error decrypting book after \(Date.now.timeIntervalSince(startTime).oneDecimalPlace) seconds: \(error.localizedDescription)")
+            print(
+                "Error decrypting book after \(Util.dateNow().timeIntervalSince(startTime).oneDecimalPlace) seconds: \(error.localizedDescription)"
+            )
             throw error
         }
     }
     
-    private static func getDecryptedBook(infile: String, kDatabaseRecords: OrderedSet<KDatabaseRecord>, serials: OrderedSet<String>, pids: OrderedSet<String>, startTime: Date = Date.now) throws -> BookManager {
+    private static func getDecryptedBook(infile: String, kDatabaseRecords: OrderedSet<KDatabaseRecord>, serials: OrderedSet<String>, pids: OrderedSet<String>, startTime: Date = Util.dateNow()) throws -> BookManager {
         let book: BookManager!
         
         var mobi: Bool = true
         
-        let url: URL = .init(filePath: infile)
+        let url: URL = Util.url(filePath: infile)
         
         let magic8: Data = try .init(contentsOf: url).prefix(8)
         let magic3: Data = magic8.prefix(3)
@@ -175,7 +182,9 @@ public final class DeDRM {
         
         totalPids.append(contentsOf: KindlePID.getPidSet(rec209: rec209, token: token, serials: serials, kDatabaseRecords: kDatabaseRecords))
         
-        print("Found \(totalPids.count.description) keys to try after \(Date.now.timeIntervalSince(startTime).oneDecimalPlace) seconds")
+        print(
+            "Found \(totalPids.count.description) keys to try after \(Util.dateNow().timeIntervalSince(startTime).oneDecimalPlace) seconds"
+        )
         
         do {
             try book.processBook(pidSet: totalPids)
@@ -184,12 +193,21 @@ public final class DeDRM {
             throw error
         }
         
-        print("Decryption succeeded after \(Date.now.timeIntervalSince(startTime).oneDecimalPlace) seconds")
+        print(
+            "Decryption succeeded after \(Util.dateNow().timeIntervalSince(startTime).oneDecimalPlace) seconds"
+        )
         
         return book
     }
     
-    public static func decryptBook(infile: String, outdir: String, kDatabaseFiles: OrderedSet<String>, serials: OrderedSet<String>, pids: OrderedSet<String>, startTime: Date = .now) {
+    public static func decryptBook(
+        infile: String,
+        outdir: String,
+        kDatabaseFiles: OrderedSet<String>,
+        serials: OrderedSet<String>,
+        pids: OrderedSet<String>,
+        startTime: Date = .init()
+    ) {
         print("K4MobiDeDrm v\(DeDRM.version).")
         print("\(Util.copyright).")
         print("Removes DRM protection from Mobipocket, Amazon KF8, Amazon Print Replica, and Amazon Topaz eBooks.")
@@ -206,7 +224,7 @@ public final class DeDRM {
         }
     }
     
-    public static func decryptBookThrowing(infile: String, outdir: String, kDatabaseFiles: OrderedSet<String>, serials: OrderedSet<String>, pids: OrderedSet<String>, startTime: Date = .now) throws {
+    public static func decryptBookThrowing(infile: String, outdir: String, kDatabaseFiles: OrderedSet<String>, serials: OrderedSet<String>, pids: OrderedSet<String>, startTime: Date = .init()) throws {
         print("K4MobiDeDrm v\(DeDRM.version).")
         print("\(Util.copyright).")
         print("Removes DRM protection from Mobipocket, Amazon KF8, Amazon Print Replica, and Amazon Topaz eBooks.")
@@ -220,7 +238,14 @@ public final class DeDRM {
         try decryptionRoutine(infile: infile, outdir: outdir, kDatabaseRecords: kDatabaseRecords, serials: serials, pids: pids, startTime: startTime)
     }
     
-    public static func decryptBooks(infiles: OrderedSet<String>, outdir: String, kDatabaseFiles: OrderedSet<String>, serials: OrderedSet<String>, pids: OrderedSet<String>, startTime: Date = .now) {
+    public static func decryptBooks(
+        infiles: OrderedSet<String>,
+        outdir: String,
+        kDatabaseFiles: OrderedSet<String>,
+        serials: OrderedSet<String>,
+        pids: OrderedSet<String>,
+        startTime: Date = .init()
+    ) {
         print("K4MobiDeDrm v\(DeDRM.version).")
         print("\(Util.copyright).")
         print("Removes DRM protection from Mobipocket, Amazon KF8, Amazon Print Replica, and Amazon Topaz eBooks.")
@@ -243,6 +268,8 @@ public final class DeDRM {
             }
         }
         
-        print("Decryption of \(decryptionCounter.description)/\(infiles.count.description) books completed after \(Date.now.timeIntervalSince(startTime).oneDecimalPlace) seconds")
+        print(
+            "Decryption of \(decryptionCounter.description)/\(infiles.count.description) books completed after \(Util.dateNow().timeIntervalSince(startTime).oneDecimalPlace) seconds"
+        )
     }
 }
