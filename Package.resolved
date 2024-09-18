@@ -1,13 +1,13 @@
 {
-  "originHash" : "0ea63a3b324c8971f26eb20889d393f821e2156cd638e1bd1a8b76b0081c01e4",
+  "originHash" : "546c1a4f4a08cecf8a172d15bec363a479f54a0fe69a617b35c954389c97a346",
   "pins" : [
     {
       "identity" : "kfxtablesswift",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/themuzzleflare/kfxtablesswift.git",
       "state" : {
-        "revision" : "f9b7fad53e310c09a8451cbaf6ce1888570f5398",
-        "version" : "1.0.0"
+        "revision" : "5e6c4c11e01decc01858012a0147ff1f21bd5832",
+        "version" : "2.0.0"
       }
     },
     {

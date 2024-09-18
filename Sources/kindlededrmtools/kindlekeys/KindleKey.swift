@@ -5,6 +5,7 @@
 //  Created by Paul Tavitian on 17/9/2024.
 //
 
+#if os(macOS)
 import Foundation
 import Collections
 
@@ -104,3 +105,4 @@ extension KindleKey: KindleKeyManager {
         fatalError()
     }
 }
+#endif

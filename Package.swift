@@ -33,5 +33,6 @@ let package = Package(
             dependencies: ["kindlededrmtools"],
             resources: [
                 .copy("testdata")])
-    ]
+    ],
+    swiftLanguageModes: [.v6]
 )
