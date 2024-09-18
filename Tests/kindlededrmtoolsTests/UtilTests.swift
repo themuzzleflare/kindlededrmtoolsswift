@@ -5,11 +5,13 @@
 //  Created by Paul Tavitian on 8/9/2024.
 //
 
-import XCTest
+import Foundation
+import Testing
 @testable import kindlededrmtools
 
-final class UtilTests: XCTestCase {
-    func testFormatData() {
+@Suite("Util Tests")
+struct UtilTests {
+    @Test("formatData Test") func testFormatData() {
         let bytes1: Data = .init([0xEA, 68, 82, 77, 73, 79, 78, 0xEE])
         let bytes2: Data = .init([84, 80, 90])
         let bytes3: Data = .init([80, 75, 0x03, 0x04])
@@ -22,8 +24,8 @@ final class UtilTests: XCTestCase {
         let result2: String = Util.formatData(data: bytes2)
         let result3: String = Util.formatData(data: bytes3)
         
-        XCTAssertEqual(expected1, result1)
-        XCTAssertEqual(expected2, result2)
-        XCTAssertEqual(expected3, result3)
+        #expect(expected1 == result1)
+        #expect(expected2 == result2)
+        #expect(expected3 == result3)
     }
 }

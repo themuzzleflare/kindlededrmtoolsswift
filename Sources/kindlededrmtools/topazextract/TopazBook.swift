@@ -8,7 +8,7 @@
 import Foundation
 import Collections
 
-public final class TopazBook {
+final class TopazBook {
     private static let version: String = "1.0"
     
     init(infile: String) {
@@ -18,29 +18,30 @@ public final class TopazBook {
     }
 }
 
+// MARK: - BookManager
 extension TopazBook: BookManager {
-    public func getBookTitle() -> String {
+    func getBookTitle() -> String {
         return ""
     }
     
-    public func getBookType() -> String {
+    func getBookType() -> String {
         return "Topaz"
     }
     
-    public func getBookExtension() -> String {
+    func getBookExtension() -> String {
         return ".htmlz"
     }
     
-    public func getFile(outpath: String) throws {
+    func getFile(outpath: String) throws {
     }
     
-    public func processBook(pidSet: OrderedSet<String>) throws {
+    func processBook(pidSet: OrderedSet<String>) throws {
     }
     
-    public func getPidMetaInfo() -> PIDMetaInfo {
-        return .init(rec209: nil, token: nil)
+    func getPidMetaInfo() -> PIDMetaInfo {
+        return .init()
     }
     
-    public func cleanup() {
+    func cleanup() {
     }
 }

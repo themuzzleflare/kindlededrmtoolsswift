@@ -7,6 +7,6 @@
 
 import Foundation
 
-public protocol BookCleanup {
+protocol BookCleanup {
     func cleanup()
 }

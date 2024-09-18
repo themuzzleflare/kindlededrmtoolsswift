@@ -36,24 +36,27 @@ final class SymbolTable {
         }
     }
     
-    func findById(_ sid: Int) throws -> String {
-        return try findById(sid: sid)
-    }
-    
     func importSymbols(catalogItem: IonCatalogItem, maxId: Int) {
         for i in 0..<maxId {
             table.append(catalogItem.symnames[i])
         }
     }
     
-    func importSymbols(_ catalogItem: IonCatalogItem, _ maxId: Int) {
-        importSymbols(catalogItem: catalogItem, maxId: maxId)
-    }
-    
     func importUnknown(name: String, maxId: Int) {
         for i in 0..<maxId {
             table.append("\(name)#\((i + 1).description)")
         }
+    }
+}
+
+// MARK: - Convenience Initialisers/Methods
+extension SymbolTable {
+    func findById(_ sid: Int) throws -> String {
+        return try findById(sid: sid)
+    }
+    
+    func importSymbols(_ catalogItem: IonCatalogItem, _ maxId: Int) {
+        importSymbols(catalogItem: catalogItem, maxId: maxId)
     }
     
     func importUnknown(_ name: String, _ maxId: Int) {

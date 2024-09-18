@@ -7,7 +7,7 @@
 
 import Foundation
 
-public struct PIDMetaInfo {
+struct PIDMetaInfo {
     let rec209: Data?
     let token: Data?
     
@@ -26,7 +26,7 @@ extension PIDMetaInfo {
 
 // MARK: - CustomStringConvertible
 extension PIDMetaInfo: CustomStringConvertible {
-    public var description: String {
+    var description: String {
         return "(rec209: \(Util.formatData(data: rec209)), token: \(Util.formatData(data: token)))"
     }
 }

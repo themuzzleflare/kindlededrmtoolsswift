@@ -5,11 +5,13 @@
 //  Created by Paul Tavitian on 8/9/2024.
 //
 
-import XCTest
+import Foundation
+import Testing
 @testable import kindlededrmtools
 
-final class MobiBookTests: XCTestCase {
-    func testGetPidMetaInfo() throws {
+@Suite("MobiBook Tests")
+struct MobiBookTests {
+    @Test("getPidMetaInfo Test") func testGetPidMetaInfo() throws {
         guard let book1 = Bundle.module.path(forResource: "1", ofType: "azw3", inDirectory: "testdata/einkbookfiles"),
               let book2 = Bundle.module.path(forResource: "2", ofType: "azw3", inDirectory: "testdata/einkbookfiles"),
               let book3 = Bundle.module.path(forResource: "3", ofType: "azw3", inDirectory: "testdata/einkbookfiles"),
@@ -40,14 +42,14 @@ final class MobiBookTests: XCTestCase {
         
         let token5: Data = .init([97, 116, 118, 58, 107, 105, 110, 58, 50, 58, 77, 111, 97, 103, 43, 101, 56, 70, 84, 80, 81, 70, 121, 51, 115, 68, 118, 69, 57, 74, 84, 50, 52, 47, 68, 48, 55, 90, 101, 53, 103, 120, 110, 82, 118, 82, 109, 87, 84, 52, 69, 101, 47, 76, 112, 86, 79, 118, 108, 55, 65, 108, 72, 90, 122, 110, 85, 83, 43, 81, 71, 43, 117, 121, 69, 68, 76, 48, 47, 82, 111, 117, 100, 106, 107, 81, 86, 72, 66, 119, 75, 120, 98, 71, 114, 78, 78, 66, 51, 100, 101, 122, 116, 78, 110, 52, 74, 83, 86, 110, 52, 106, 66, 99, 90, 98, 70, 101, 51, 83, 66, 54, 102, 69, 103, 88, 76, 116, 117, 69, 105, 114, 98, 50, 79, 80, 74, 77, 56, 57, 105, 75, 113, 66, 67, 107, 85, 72, 99, 73, 69, 77, 69, 115, 115, 108, 105, 106, 81, 79, 79, 115, 90, 87, 55, 98, 83, 102, 77, 65, 47, 118, 47, 117, 72, 109, 80, 88, 110, 89, 52, 61, 58, 98, 84, 83, 79, 70, 101, 67, 101, 53, 112, 115, 109, 66, 47, 48, 71, 80, 68, 71, 84, 118, 97, 115, 122, 116, 89, 115, 61, 0, 10, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0])
         
-        XCTAssertEqual(token1, pidMetaInfo1.token)
-        XCTAssertEqual(token2, pidMetaInfo2.token)
-        XCTAssertEqual(token3, pidMetaInfo3.token)
-        XCTAssertEqual(token4, pidMetaInfo4.token)
-        XCTAssertEqual(token5, pidMetaInfo5.token)
+        #expect(token1 == pidMetaInfo1.token)
+        #expect(token2 == pidMetaInfo2.token)
+        #expect(token3 == pidMetaInfo3.token)
+        #expect(token4 == pidMetaInfo4.token)
+        #expect(token5 == pidMetaInfo5.token)
     }
     
-    func testProcessBook() throws {
+    @Test("processBook Test") func testProcessBook() throws {
         guard let nodrmbook1url = Bundle.module.url(forResource: "1", withExtension: "azw3", subdirectory: "testdata/einkbookfilesnodrm"),
               let nodrmbook2url = Bundle.module.url(forResource: "2", withExtension: "azw3", subdirectory: "testdata/einkbookfilesnodrm"),
               let nodrmbook3url = Bundle.module.url(forResource: "3", withExtension: "azw3", subdirectory: "testdata/einkbookfilesnodrm"),
@@ -82,10 +84,10 @@ final class MobiBookTests: XCTestCase {
         try mobiBook4.processBook(pidSet: .init(arrayLiteral: "bEQyy4RzR3"))
         try mobiBook5.processBook(pidSet: .init(arrayLiteral: "EGnqh3QSPS"))
         
-        XCTAssertEqual(nodrmbook1data, mobiBook1.mobiData)
-        XCTAssertEqual(nodrmbook2data, mobiBook2.mobiData)
-        XCTAssertEqual(nodrmbook3data, mobiBook3.mobiData)
-        XCTAssertEqual(nodrmbook4data, mobiBook4.mobiData)
-        XCTAssertEqual(nodrmbook5data, mobiBook5.mobiData)
+        #expect(nodrmbook1data == mobiBook1.mobiData)
+        #expect(nodrmbook2data == mobiBook2.mobiData)
+        #expect(nodrmbook3data == mobiBook3.mobiData)
+        #expect(nodrmbook4data == mobiBook4.mobiData)
+        #expect(nodrmbook5data == mobiBook5.mobiData)
     }
 }

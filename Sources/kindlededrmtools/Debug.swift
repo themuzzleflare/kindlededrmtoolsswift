@@ -7,8 +7,10 @@
 
 import Foundation
 
-public enum Debug {
+public final actor Debug {
     private static var isEnabled: Bool = false
+    
+    private init() {}
     
     public static func enable() {
         isEnabled = true

@@ -8,8 +8,10 @@
 import Foundation
 import Collections
 
-public enum DeDRM {
+public final class DeDRM {
     private static let version: String = "3.0"
+    
+    private init() {}
     
     private static func cleanupName(name: String) -> String {
         // substitute filename-unfriendly characters

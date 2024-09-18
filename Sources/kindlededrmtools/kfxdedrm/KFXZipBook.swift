@@ -9,10 +9,11 @@ import Foundation
 import Collections
 import ZIPFoundation
 
-public final class KFXZipBook {
+final class KFXZipBook {
     private static let version: String = "2.0"
     
     private let infile: String
+    
     private var decrypted: KFXDecryptedDictionary = .init()
     private var voucher: DRMIonVoucher!
     
@@ -61,32 +62,32 @@ public final class KFXZipBook {
         
         Debug.print("PIDs:", pidSet)
         
-    outerLoop: for pid in pidSet + [""] {
-        for (dsnLen, secretLen) in [(0, 0), (16, 0), (16, 40), (32, 0), (32, 40), (40, 0), (40, 40)] {
-            if pid.count == dsnLen + secretLen {
-                // Split the PID into DSN and account secret
-                let dsnSubstr: String.SubSequence = pid.prefix(dsnLen)
-                let accountSecretSubstr: String.SubSequence = pid.suffix(secretLen)
-                
-                let dsn: String = .init(dsnSubstr)
-                let accountSecret: String = .init(accountSecretSubstr)
-                
-                Debug.print("DSN:", dsn)
-                Debug.print("Account Secret:", accountSecret)
-                
-                do {
-                    let voucher: DRMIonVoucher = try .init(.init(voucherData), dsn, accountSecret)
-                    try voucher.parse()
-                    try voucher.decryptVoucher()
+        outerLoop: for pid in pidSet + [""] {
+            for (dsnLen, secretLen) in [(0, 0), (16, 0), (16, 40), (32, 0), (32, 40), (40, 0), (40, 40)] {
+                if pid.count == dsnLen + secretLen {
+                    // Split the PID into DSN and account secret
+                    let dsnSubstr: String.SubSequence = pid.prefix(dsnLen)
+                    let accountSecretSubstr: String.SubSequence = pid.suffix(secretLen)
                     
-                    decrypted = true
-                    decryptedVoucher = voucher
-                    break outerLoop // Break out of both loops if successful
-                } catch {
+                    let dsn: String = .init(dsnSubstr)
+                    let accountSecret: String = .init(accountSecretSubstr)
+                    
+                    Debug.print("DSN:", dsn)
+                    Debug.print("Account Secret:", accountSecret)
+                    
+                    do {
+                        let voucher: DRMIonVoucher = try .init(voucherData, dsn, accountSecret)
+                        try voucher.parse()
+                        try voucher.decryptVoucher()
+                        
+                        decrypted = true
+                        decryptedVoucher = voucher
+                        break outerLoop // Break out of both loops if successful
+                    } catch {
+                    }
                 }
             }
         }
-    }
         
         if !decrypted {
             throw KFXZipBookError.voucherDecryptionFailed
@@ -104,21 +105,22 @@ public final class KFXZipBook {
     }
 }
 
+// MARK: - BookManager
 extension KFXZipBook: BookManager {
-    public func getBookTitle() -> String {
+    func getBookTitle() -> String {
         let url: URL = .init(filePath: infile)
         return url.filenameRoot
     }
     
-    public func getBookType() -> String {
+    func getBookType() -> String {
         return "KFX-ZIP"
     }
     
-    public func getBookExtension() -> String {
+    func getBookExtension() -> String {
         return ".kfx-zip"
     }
     
-    public func getFile(outpath: String) throws {
+    func getFile(outpath: String) throws {
         defer {
             do {
                 try FileManager.default.removeItem(at: .outputTemporaryDirectory)
@@ -179,7 +181,7 @@ extension KFXZipBook: BookManager {
         Debug.print("Wrote data to URL:", outpathUrl.path(percentEncoded: false))
     }
     
-    public func processBook(pidSet: OrderedSet<String>) throws {
+    func processBook(pidSet: OrderedSet<String>) throws {
         let url: URL = .init(filePath: infile)
         let archive: Archive = try .init(url: url, accessMode: .read)
         
@@ -202,7 +204,7 @@ extension KFXZipBook: BookManager {
             
             let outfile: DataOutputStream = .init()
             
-            try DRMIon(.init(data.subdata(in: 8..<data.count - 8)), voucher).parse(outpages: outfile)
+            try DRMIon(data.subdata(in: 8..<data.count - 8), voucher).parse(outpages: outfile)
             
             decrypted[entry.path] = outfile.toData()
         }
@@ -212,10 +214,21 @@ extension KFXZipBook: BookManager {
         }
     }
     
-    public func getPidMetaInfo() -> PIDMetaInfo {
+    func getPidMetaInfo() -> PIDMetaInfo {
         return .init()
     }
     
-    public func cleanup() {
+    func cleanup() {
+    }
+}
+
+// MARK: - Convenience Initialisers/Methods
+extension KFXZipBook {
+    convenience init(_ infile: String) {
+        self.init(infile: infile)
+    }
+    
+    private func decryptVoucher(_ pidSet: OrderedSet<String>) throws {
+        try decryptVoucher(pidSet: pidSet)
     }
 }

@@ -8,7 +8,9 @@
 import Foundation
 import CryptoKit
 
-enum HashUtils {
+final class HashUtils {
+    private init() {}
+    
     /**
      * Computes the SHA-256 hash of the given data.
      * - Parameter data: The data to hash.

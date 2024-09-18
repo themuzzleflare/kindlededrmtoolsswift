@@ -34,10 +34,6 @@ final class BinaryIonParser {
         reset()
     }
     
-    convenience init(_ stream: DataInputStream) {
-        self.init(stream: stream)
-    }
-    
     func reset() {
         needHasNext = true
         localRemaining = -1
@@ -144,10 +140,6 @@ extension BinaryIonParser {
         return result
     }
     
-    private func read(_ count: Int) throws -> Data {
-        return try read(count: count)
-    }
-    
     private func clearValue() {
         valueTid = -1
         value = nil
@@ -166,10 +158,6 @@ extension BinaryIonParser {
         }
         
         stream.skip(count)
-    }
-    
-    private func skip(_ count: Int) throws {
-        try skip(count: count)
     }
     
     private func readFieldId() -> Int {
@@ -613,10 +601,6 @@ extension BinaryIonParser {
         containerStack.append(.init(nextPosition, typeId, nextRemaining))
     }
     
-    private func push(_ typeId: Int, _ nextPosition: Int, _ nextRemaining: Int) {
-        push(typeId: typeId, nextPosition: nextPosition, nextRemaining: nextRemaining)
-    }
-    
     func addToCatalog(name: String, version: Int, symbols: [String]) {
         catalog.append(.init(name: name, version: version, symnames: symbols))
     }
@@ -657,10 +641,6 @@ extension BinaryIonParser {
         }
         
         return nil // Return null if no matching item is found
-    }
-    
-    private func findCatalogItem(_ name: String) -> IonCatalogItem? {
-        return findCatalogItem(name: name)
     }
     
     private func gatherImports() throws {
@@ -711,5 +691,28 @@ extension BinaryIonParser {
         
         try stepOut()
         didImports = true
+    }
+}
+
+// MARK: - Convenience Initialisers/Methods
+extension BinaryIonParser {
+    convenience init(_ stream: DataInputStream) {
+        self.init(stream: stream)
+    }
+    
+    private func push(_ typeId: Int, _ nextPosition: Int, _ nextRemaining: Int) {
+        push(typeId: typeId, nextPosition: nextPosition, nextRemaining: nextRemaining)
+    }
+    
+    private func findCatalogItem(_ name: String) -> IonCatalogItem? {
+        return findCatalogItem(name: name)
+    }
+    
+    private func skip(_ count: Int) throws {
+        try skip(count: count)
+    }
+    
+    private func read(_ count: Int) throws -> Data {
+        return try read(count: count)
     }
 }

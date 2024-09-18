@@ -7,7 +7,9 @@
 
 import Foundation
 
-enum SystemSymbols {
+final class SystemSymbols {
+    private init() {}
+    
     static let ION: String = "$ion"
     static let ION_1_0: String = "$ion_1_0"
     static let ION_SYMBOL_TABLE: String = "$ion_symbol_table"

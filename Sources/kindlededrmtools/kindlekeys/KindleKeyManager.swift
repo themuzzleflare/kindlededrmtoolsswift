@@ -8,7 +8,7 @@
 import Foundation
 import Collections
 
-public protocol KindleKeyManager {
-    func getUsername() -> Data
-    func getKindleInfoFiles() -> OrderedSet<String>
+protocol KindleKeyManager {
+    static func getUsername() -> Data
+    static func getKindleInfoFiles() -> OrderedSet<String>
 }

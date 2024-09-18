@@ -333,14 +333,17 @@ final class MobiBook {
         }
     }
     
-    private static func normalisePids(pidSet: OrderedSet<String>) -> OrderedSet<String> {
+    private static func normalisePids(pidSet: OrderedSet<String>) throws -> OrderedSet<String> {
         var goodPids: OrderedSet<String> = .init()
         
         for pid in pidSet {
             if pid.count == 10 {
                 let substring: String.SubSequence = pid.prefix(pid.count - 2)
                 let string: String = .init(substring)
-                let checksumPid: String = KindleKeyUtils.checksumPid(data: string, charMap: CharMaps.letters)
+                let checksumPid: String = try KindleKeyUtils.checksumPid(
+                    data: string,
+                    charMap: CharMaps.letters
+                )
                 
                 if checksumPid != pid {
                     print("Warning: PID \(pid) has an incorrect checksum, should have been \(checksumPid)")
@@ -358,34 +361,9 @@ final class MobiBook {
     }
 }
 
-// MARK: - Convenience Initialisers/Methods
-extension MobiBook {
-    convenience init(infile: String) throws {
-        let url: URL = .init(filePath: infile)
-        try self.init(url: url)
-    }
-    
-    convenience init(_ infile: String) throws {
-        try self.init(infile: infile)
-    }
-    
-    convenience init(url: URL) throws {
-        let data: Data = try .init(contentsOf: url)
-        try self.init(data: data)
-    }
-    
-    convenience init(_ url: URL) throws {
-        try self.init(url: url)
-    }
-    
-    convenience init(_ data: Data) throws {
-        try self.init(data: data)
-    }
-}
-
 // MARK: - BookManager
 extension MobiBook: BookManager {
-    public func getBookTitle() -> String {
+    func getBookTitle() -> String {
         let codecMap: Dictionary<Int, String.Encoding> = [1252: .windowsCP1252, 65001: .utf8]
         
         var title: Data = .init()
@@ -414,7 +392,7 @@ extension MobiBook: BookManager {
         return .init(data: title, encoding: codec) ?? ""
     }
     
-    public func getBookType() -> String {
+    func getBookType() -> String {
         if printReplica {
             return "Print Replica"
         } else if mobiVersion >= 8 {
@@ -426,7 +404,7 @@ extension MobiBook: BookManager {
         }
     }
     
-    public func getBookExtension() -> String {
+    func getBookExtension() -> String {
         if printReplica {
             return ".azw4"
         } else if mobiVersion >= 8 {
@@ -436,13 +414,13 @@ extension MobiBook: BookManager {
         }
     }
     
-    public func getFile(outpath: String) throws {
+    func getFile(outpath: String) throws {
         let url: URL = .init(filePath: outpath)
         
         try mobiData.write(to: url)
     }
     
-    public func processBook(pidSet: OrderedSet<String>) throws {
+    func processBook(pidSet: OrderedSet<String>) throws {
         cryptoType = .init(sect[0xC..<0xC + 2].withUnsafeBytes { $0.load(as: UInt16.self).bigEndian })
         
         print("Crypto Type is:", cryptoType.description)
@@ -472,7 +450,9 @@ extension MobiBook: BookManager {
             }
         }
         
-        let goodPids: OrderedSet<String> = MobiBook.normalisePids(pidSet: pidSet)
+        let goodPids: OrderedSet<String> = try MobiBook.normalisePids(
+            pidSet: pidSet
+        )
         
         Debug.print("PIDs: \(pidSet)")
         Debug.print("Good PIDs: \(goodPids)")
@@ -521,7 +501,9 @@ extension MobiBook: BookManager {
         if pid == "00000000" {
             print("File has default encryption, no specific key needed.")
         } else {
-            print("File is encoded with PID \(KindleKeyUtils.checksumPid(data: pid, charMap: CharMaps.letters)).")
+            print(
+                "File is encoded with PID \(try KindleKeyUtils.checksumPid(data: pid, charMap: CharMaps.letters))."
+            )
         }
         
         patchSection(section: 0, newContent: .init(count: 2), inOff: 0xC)
@@ -566,7 +548,7 @@ extension MobiBook: BookManager {
         print(" done")
     }
     
-    public func getPidMetaInfo() -> PIDMetaInfo {
+    func getPidMetaInfo() -> PIDMetaInfo {
         var rec209: Data = .init()
         var token: Data = .init()
         
@@ -585,6 +567,31 @@ extension MobiBook: BookManager {
         return .init(rec209, token)
     }
     
-    public func cleanup() {
+    func cleanup() {
+    }
+}
+
+// MARK: - Convenience Initialisers/Methods
+extension MobiBook {
+    convenience init(infile: String) throws {
+        let url: URL = .init(filePath: infile)
+        try self.init(url: url)
+    }
+    
+    convenience init(_ infile: String) throws {
+        try self.init(infile: infile)
+    }
+    
+    convenience init(url: URL) throws {
+        let data: Data = try .init(contentsOf: url)
+        try self.init(data: data)
+    }
+    
+    convenience init(_ url: URL) throws {
+        try self.init(url: url)
+    }
+    
+    convenience init(_ data: Data) throws {
+        try self.init(data: data)
     }
 }

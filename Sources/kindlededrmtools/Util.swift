@@ -8,8 +8,10 @@
 import Foundation
 import Collections
 
-enum Util {
+final class Util {
     static let copyright: String = "Copyright © 2024 Paul Tavitian"
+    
+    private init() {}
     
     static func formatData(data: Data?) -> String {
         guard let data else {

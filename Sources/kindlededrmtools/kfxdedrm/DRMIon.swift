@@ -20,10 +20,6 @@ final class DRMIon {
         self.voucher = voucher
     }
     
-    convenience init(_ ionStream: DataInputStream, _ voucher: DRMIonVoucher) {
-        self.init(ionStream: ionStream, voucher: voucher)
-    }
-    
     func parse(outpages: DataOutputStream) throws {
         ion.reset()
         
@@ -35,8 +31,8 @@ final class DRMIon {
             throw DRMIonError.expectedDoctypeSymbol(string: try ion.getTypeName())
         }
         
-        if try (ion.next() != IonUtils.TID_LIST || (ion.getTypeName() != "com.amazon.drm.Envelope@1.0" &&
-                                                    ion.getTypeName() != "com.amazon.drm.Envelope@2.0")) {
+        if try ((ion.next() != IonUtils.TID_LIST) || (ion.getTypeName() != "com.amazon.drm.Envelope@1.0" &&
+                                                      ion.getTypeName() != "com.amazon.drm.Envelope@2.0")) {
             throw DRMIonError.unknownTypeExpectedEnvelope(string: try ion.getTypeName())
         }
         
@@ -166,10 +162,6 @@ final class DRMIon {
         
         decompressData(msg.subdata(in: 1..<msg.count), outpages)
     }
-    
-    private func processPage(_ ct: Data, _ civ: Data? = nil, _ outpages: DataOutputStream, _ decompress: Bool, _ decrypt: Bool) throws {
-        try processPage(ct: ct, civ: civ, outpages: outpages, decompress: decompress, decrypt: decrypt)
-    }
 }
 
 // MARK: - LZMA
@@ -180,10 +172,6 @@ extension DRMIon {
         if let dataToWrite {
             outputStream.write(dataToWrite)
         }
-    }
-    
-    private func decompressData(_ data: Data, _ outputStream: DataOutputStream) {
-        decompressData(data: data, outputStream: outputStream)
     }
     
     private func decompressLZMA(data: Data) -> Data? {
@@ -227,5 +215,33 @@ extension DRMIon {
         } while status == COMPRESSION_STATUS_OK
         
         return outputData
+    }
+}
+
+// MARK: - Convenience Initialisers/Methods
+extension DRMIon {
+    convenience init(_ ionStream: DataInputStream, _ voucher: DRMIonVoucher) {
+        self.init(ionStream: ionStream, voucher: voucher)
+    }
+    
+    convenience init(ion: Data, voucher: DRMIonVoucher) {
+        let stream: DataInputStream = .init(data: ion)
+        self.init(ionStream: stream, voucher: voucher)
+    }
+    
+    convenience init(_ ion: Data, _ voucher: DRMIonVoucher) {
+        self.init(ion: ion, voucher: voucher)
+    }
+    
+    func parse(_ outpages: DataOutputStream) throws {
+        try parse(outpages: outpages)
+    }
+    
+    private func processPage(_ ct: Data, _ civ: Data? = nil, _ outpages: DataOutputStream, _ decompress: Bool, _ decrypt: Bool) throws {
+        try processPage(ct: ct, civ: civ, outpages: outpages, decompress: decompress, decrypt: decrypt)
+    }
+    
+    private func decompressData(_ data: Data, _ outputStream: DataOutputStream) {
+        decompressData(data: data, outputStream: outputStream)
     }
 }

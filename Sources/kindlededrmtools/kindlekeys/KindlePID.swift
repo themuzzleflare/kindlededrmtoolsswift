@@ -8,7 +8,9 @@
 import Foundation
 import Collections
 
-enum KindlePID {
+final class KindlePID {
+    private init() {}
+    
     // Returns two bits at offset from a bit field
     private static func getTwoBitsFromBitField(bitField: Data, offset: Int) -> Int {
         let byteNumber: Int = offset / 4
@@ -277,7 +279,6 @@ enum KindlePID {
         return pids
     }
 }
-
 
 // MARK: - Convenience Functions
 extension KindlePID {

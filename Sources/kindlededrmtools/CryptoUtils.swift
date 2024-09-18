@@ -9,7 +9,9 @@ import Foundation
 import CryptoKit
 import CommonCrypto
 
-enum CryptoUtils {
+final class CryptoUtils {
+    private init() {}
+    
     /**
      * Computes the HMAC-SHA256 hash of the given message using the provided key.
      * - Parameters:

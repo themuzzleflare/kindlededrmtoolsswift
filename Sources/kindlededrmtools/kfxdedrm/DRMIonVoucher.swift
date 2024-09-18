@@ -31,26 +31,6 @@ final class DRMIonVoucher {
         IonUtils.addProtTable(envelope)
     }
     
-    convenience init(_ voucherenv: DataInputStream, _ dsn: Data, _ secret: Data) {
-        self.init(voucherenv: voucherenv, dsn: dsn, secret: secret)
-    }
-    
-    convenience init(voucherenv: DataInputStream, dsn: String, secret: String) throws {
-        guard let dsnData = dsn.data(using: .ascii) else {
-            throw DRMIonVoucherError.dataFromStringFailed(string: dsn)
-        }
-        
-        guard let secretData = secret.data(using: .ascii) else {
-            throw DRMIonVoucherError.dataFromStringFailed(string: secret)
-        }
-        
-        self.init(voucherenv: voucherenv, dsn: dsnData, secret: secretData)
-    }
-    
-    convenience init(_ voucherenv: DataInputStream, _ dsn: String, _ secret: String) throws {
-        try self.init(voucherenv: voucherenv, dsn: dsn, secret: secret)
-    }
-    
     func decryptVoucher() throws {
         guard let encAlgorithmBytes: Data = encAlgorithm.data(using: .ascii) else {
             throw DRMIonVoucherError.dataFromStringFailed(string: encAlgorithm)
@@ -307,5 +287,46 @@ final class DRMIonVoucher {
     
     func getSecretKey() -> Data {
         return secretKey
+    }
+}
+
+// MARK: - Convenience Initialisers/Methods
+extension DRMIonVoucher {
+    convenience init(_ voucherenv: DataInputStream, _ dsn: Data, _ secret: Data) {
+        self.init(voucherenv: voucherenv, dsn: dsn, secret: secret)
+    }
+    
+    convenience init(voucherenv: DataInputStream, dsn: String, secret: String) throws {
+        guard let dsnData = dsn.data(using: .ascii) else {
+            throw DRMIonVoucherError.dataFromStringFailed(string: dsn)
+        }
+        
+        guard let secretData = secret.data(using: .ascii) else {
+            throw DRMIonVoucherError.dataFromStringFailed(string: secret)
+        }
+        
+        self.init(voucherenv: voucherenv, dsn: dsnData, secret: secretData)
+    }
+    
+    convenience init(_ voucherenv: DataInputStream, _ dsn: String, _ secret: String) throws {
+        try self.init(voucherenv: voucherenv, dsn: dsn, secret: secret)
+    }
+    
+    convenience init(voucherdata: Data, dsn: Data, secret: Data) {
+        let stream: DataInputStream = .init(data: voucherdata)
+        self.init(voucherenv: stream, dsn: dsn, secret: secret)
+    }
+    
+    convenience init(_ voucherdata: Data, _ dsn: Data, _ secret: Data) {
+        self.init(voucherdata: voucherdata, dsn: dsn, secret: secret)
+    }
+    
+    convenience init(voucherdata: Data, dsn: String, secret: String) throws {
+        let stream: DataInputStream = .init(data: voucherdata)
+        try self.init(voucherenv: stream, dsn: dsn, secret: secret)
+    }
+    
+    convenience init(_ voucherdata: Data, _ dsn: String, _ secret: String) throws {
+        try self.init(voucherdata: voucherdata, dsn: dsn, secret: secret)
     }
 }

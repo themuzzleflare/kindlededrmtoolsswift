@@ -8,22 +8,10 @@
 import Foundation
 
 final class Workspace {
-    var work: [Int]
+    private var work: [Int]
     
     init(initialList: [Int]) {
         work = initialList
-    }
-    
-    convenience init(_ initialList: [Int]) {
-        self.init(initialList: initialList)
-    }
-    
-    convenience init(initialList: Int...) {
-        self.init(initialList: initialList)
-    }
-    
-    convenience init(_ initialList: Int...) {
-        self.init(initialList: initialList)
     }
     
     func shuffle(shufList: [Int]) {
@@ -36,16 +24,8 @@ final class Workspace {
         work = rt
     }
     
-    func shuffle(_ shufList: [Int]) {
-        shuffle(shufList: shufList)
-    }
-    
     func shuffle(shufList: Int...) {
         shuffle(shufList: shufList)
-    }
-    
-    func shuffle(_ shufList: Int...) {
-        return shuffle(shufList: shufList)
     }
     
     func sbox(table: [Int], matrix: [Int], skpList: [Int] = .init()) {
@@ -152,15 +132,7 @@ final class Workspace {
         work = nwork
     }
     
-    func sbox(_ table: [Int], _ matrix: [Int], _ skpList: [Int] = .init()) {
-        sbox(table: table, matrix: matrix, skpList: skpList)
-    }
-    
     func sbox(table: [Int], matrix: [Int], skpList: Int...) {
-        sbox(table: table, matrix: matrix, skpList: skpList)
-    }
-    
-    func sbox(_ table: [Int], _ matrix: [Int], _ skpList: Int...) {
         sbox(table: table, matrix: matrix, skpList: skpList)
     }
     
@@ -173,34 +145,65 @@ final class Workspace {
         }
     }
     
-    func exlookup(_ ltable: [Int]) {
-        exlookup(ltable: ltable)
-    }
-    
     func mask(chunk: Data) -> [Int] {
         var out: [Int] = .init()
         
         for a in 0..<chunk.count {
-            work[a] = work[a] ^ .init(chunk[a])
+            work[a] ^= .init(chunk[a])
             out.append(work[a])
         }
         
         return out
     }
     
-    func mask(_ chunk: Data) -> [Int] {
-        return mask(chunk: chunk)
-    }
-    
     func mask(chunk: Data) -> Data {
         var out: Data = .init()
         
         for a in 0..<chunk.count {
-            work[a] = work[a] ^ .init(chunk[a])
+            work[a] ^= .init(chunk[a])
             out.append(.init(work[a]))
         }
         
         return out
+    }
+}
+
+// MARK: - Convenience Initialisers/Methods
+extension Workspace {
+    convenience init(_ initialList: [Int]) {
+        self.init(initialList: initialList)
+    }
+    
+    convenience init(initialList: Int...) {
+        self.init(initialList: initialList)
+    }
+    
+    convenience init(_ initialList: Int...) {
+        self.init(initialList: initialList)
+    }
+    
+    func shuffle(_ shufList: [Int]) {
+        shuffle(shufList: shufList)
+    }
+    
+    func shuffle(_ shufList: Int...) {
+        shuffle(shufList: shufList)
+    }
+    
+    func sbox(_ table: [Int], _ matrix: [Int], _ skpList: [Int] = .init()) {
+        sbox(table: table, matrix: matrix, skpList: skpList)
+    }
+    
+    func sbox(_ table: [Int], _ matrix: [Int], _ skpList: Int...) {
+        sbox(table: table, matrix: matrix, skpList: skpList)
+    }
+    
+    func exlookup(_ ltable: [Int]) {
+        exlookup(ltable: ltable)
+    }
+    
+    func mask(_ chunk: Data) -> [Int] {
+        return mask(chunk: chunk)
     }
     
     func mask(_ chunk: Data) -> Data {

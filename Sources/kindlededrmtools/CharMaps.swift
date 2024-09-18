@@ -7,7 +7,9 @@
 
 import Foundation
 
-enum CharMaps {
+final class CharMaps {
+    private init() {}
+    
     static let charMap1: Data = "n5Pr6St7Uv8Wx9YzAb0Cd1Ef2Gh3Jk4M".data(using: .ascii)!
     static let charMap3: Data = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/".data(using: .ascii)!
     static let charMap4: Data = "ABCDEFGHIJKLMNPQRSTUVWXYZ123456789".data(using: .ascii)!

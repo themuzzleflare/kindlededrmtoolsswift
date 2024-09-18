@@ -8,7 +8,7 @@
 import Foundation
 import kfxtables
 
-enum IonUtils {
+final class IonUtils {
     static let TID_NULL: Int = 0
     static let TID_BOOLEAN: Int = 1
     static let TID_POSINT: Int = 2
@@ -83,12 +83,10 @@ enum IonUtils {
         return symnames
     }()
     
+    private init() {}
+    
     static func addProtTable(ion: BinaryIonParser) {
         ion.addToCatalog(name: "ProtectedData", version: 1, symbols: SYM_NAMES)
-    }
-    
-    static func addProtTable(_ ion: BinaryIonParser) {
-        addProtTable(ion: ion)
     }
     
     static func obfuscate(secret: Data, version: Int) throws -> Data {
@@ -120,10 +118,6 @@ enum IonUtils {
         }
         
         return obfuscated
-    }
-    
-    static func obfuscate(_ secret: Data, _ version: Int) throws -> Data {
-        return try obfuscate(secret: secret, version: version)
     }
     
     static func scramble(st: Data, magic: Int) -> Data {
@@ -167,10 +161,6 @@ enum IonUtils {
         }
         
         return obfuscated
-    }
-    
-    static func obfuscate2(_ secret: Data, _ version: Int) throws -> Data {
-        return try obfuscate2(secret: secret, version: version)
     }
     
     static func scramble3(st: Data, magic: Int) -> Data {
@@ -293,10 +283,6 @@ enum IonUtils {
         return obfuscated
     }
     
-    static func obfuscate3(_ secret: Data, _ version: Int) throws -> Data {
-        return try obfuscate3(secret: secret, version: version)
-    }
-    
     static func processV9708(st: Data) -> Data {
         let len: Int = st.count
         let st: Data = Util.padBytes(data: st, blocklen: 16)
@@ -324,10 +310,6 @@ enum IonUtils {
         }
         
         return out.subdata(in: 0..<len)
-    }
-    
-    static func processV9708(_ st: Data) -> Data {
-        return processV9708(st: st)
     }
     
     static func processV1031(st: Data) -> Data {
@@ -361,10 +343,6 @@ enum IonUtils {
         return out.subdata(in: 0..<len)
     }
     
-    static func processV1031(_ st: Data) -> Data {
-        return processV1031(st: st)
-    }
-    
     static func processV2069(st: Data) -> Data {
         let len: Int = st.count
         let st: Data = Util.padBytes(data: st, blocklen: 16)
@@ -394,10 +372,6 @@ enum IonUtils {
         }
         
         return out.subdata(in: 0..<len)
-    }
-    
-    static func processV2069(_ st: Data) -> Data {
-        return processV2069(st: st)
     }
     
     static func processV9041(st: Data) -> Data {
@@ -432,10 +406,6 @@ enum IonUtils {
         return out.subdata(in: 0..<len)
     }
     
-    static func processV9041(_ st: Data) -> Data {
-        return processV9041(st: st)
-    }
-    
     static func processV3646(st: Data) -> Data {
         let len: Int = st.count
         let st: Data = Util.padBytes(data: st, blocklen: 16)
@@ -468,10 +438,6 @@ enum IonUtils {
         }
         
         return out.subdata(in: 0..<len)
-    }
-    
-    static func processV3646(_ st: Data) -> Data {
-        return processV3646(st: st)
     }
     
     static func processV6052(st: Data) -> Data {
@@ -509,10 +475,6 @@ enum IonUtils {
         return out.subdata(in: 0..<len)
     }
     
-    static func processV6052(_ st: Data) -> Data {
-        return processV6052(st: st)
-    }
-    
     static func processV9479(st: Data) -> Data {
         let len: Int = st.count
         let st: Data = Util.padBytes(data: st, blocklen: 16)
@@ -545,10 +507,6 @@ enum IonUtils {
         }
         
         return out.subdata(in: 0..<len)
-    }
-    
-    static func processV9479(_ st: Data) -> Data {
-        return processV9479(st: st)
     }
     
     static func processV9888(st: Data) -> Data {
@@ -585,10 +543,6 @@ enum IonUtils {
         return out.subdata(in: 0..<len)
     }
     
-    static func processV9888(_ st: Data) -> Data {
-        return processV9888(st: st)
-    }
-    
     static func processV4648(st: Data) -> Data {
         let len: Int = st.count
         let st: Data = Util.padBytes(data: st, blocklen: 16)
@@ -623,10 +577,6 @@ enum IonUtils {
         return out.subdata(in: 0..<len)
     }
     
-    static func processV4648(_ st: Data) -> Data {
-        return processV4648(st: st)
-    }
-    
     static func processV5683(st: Data) -> Data {
         let len: Int = st.count
         let st: Data = Util.padBytes(data: st, blocklen: 16)
@@ -659,6 +609,61 @@ enum IonUtils {
         }
         
         return out.subdata(in: 0..<len)
+    }
+}
+
+// MARK: - Convenience Methods
+extension IonUtils {
+    static func addProtTable(_ ion: BinaryIonParser) {
+        addProtTable(ion: ion)
+    }
+    
+    static func obfuscate(_ secret: Data, _ version: Int) throws -> Data {
+        return try obfuscate(secret: secret, version: version)
+    }
+    
+    static func obfuscate2(_ secret: Data, _ version: Int) throws -> Data {
+        return try obfuscate2(secret: secret, version: version)
+    }
+    
+    static func obfuscate3(_ secret: Data, _ version: Int) throws -> Data {
+        return try obfuscate3(secret: secret, version: version)
+    }
+    
+    static func processV9708(_ st: Data) -> Data {
+        return processV9708(st: st)
+    }
+    
+    static func processV1031(_ st: Data) -> Data {
+        return processV1031(st: st)
+    }
+    
+    static func processV2069(_ st: Data) -> Data {
+        return processV2069(st: st)
+    }
+    
+    static func processV9041(_ st: Data) -> Data {
+        return processV9041(st: st)
+    }
+    
+    static func processV3646(_ st: Data) -> Data {
+        return processV3646(st: st)
+    }
+    
+    static func processV6052(_ st: Data) -> Data {
+        return processV6052(st: st)
+    }
+    
+    static func processV9479(_ st: Data) -> Data {
+        return processV9479(st: st)
+    }
+    
+    static func processV9888(_ st: Data) -> Data {
+        return processV9888(st: st)
+    }
+    
+    static func processV4648(_ st: Data) -> Data {
+        return processV4648(st: st)
     }
     
     static func processV5683(_ st: Data) -> Data {

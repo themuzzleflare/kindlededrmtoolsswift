@@ -20,19 +20,11 @@ final class DataInputStream {
         count = data.count
     }
     
-    convenience init(_ data: Data) {
-        self.init(data: data)
-    }
-    
     init(data: Data, offset: Int = 0, length: Int) {
         self.data = data
         pos = offset
         count = min(offset + length, data.count)
         mark = offset
-    }
-    
-    convenience init(_ data: Data, _ offset: Int = 0, _ length: Int) {
-        self.init(data: data, offset: offset, length: length)
     }
     
     @discardableResult
@@ -73,11 +65,6 @@ final class DataInputStream {
         return len
     }
     
-    @discardableResult
-    func read(_ data: inout Data, _ off: Int = 0, _ len: Int) -> Int {
-        return read(data: &data, off: off, len: len)
-    }
-    
     func readAllBytes() -> Data {
         let result: Data = data.subdata(in: pos..<count)
         
@@ -93,19 +80,10 @@ final class DataInputStream {
         return n == -1 ? 0 : n
     }
     
-    @discardableResult
-    func readNBytes(_ data: inout Data, _ off: Int = 0, _ len: Int) -> Int {
-        return readNBytes(data: &data, off: off, len: len)
-    }
-    
     func readNBytes(len: Int) -> Data {
         var result: Data = .init(count: len)
         readNBytes(data: &result, off: 0, len: len)
         return result
-    }
-    
-    func readNBytes(_ len: Int) -> Data {
-        return readNBytes(len: len)
     }
     
     @discardableResult
@@ -145,6 +123,31 @@ final class DataInputStream {
     func seek(position: Int) {
         reset()
         skip(n: position)
+    }
+}
+
+// MARK: - Convenience Initialisers/Methods
+extension DataInputStream {
+    convenience init(_ data: Data) {
+        self.init(data: data)
+    }
+    
+    convenience init(_ data: Data, _ offset: Int = 0, _ length: Int) {
+        self.init(data: data, offset: offset, length: length)
+    }
+    
+    @discardableResult
+    func read(_ data: inout Data, _ off: Int = 0, _ len: Int) -> Int {
+        return read(data: &data, off: off, len: len)
+    }
+    
+    @discardableResult
+    func readNBytes(_ data: inout Data, _ off: Int = 0, _ len: Int) -> Int {
+        return readNBytes(data: &data, off: off, len: len)
+    }
+    
+    func readNBytes(_ len: Int) -> Data {
+        return readNBytes(len: len)
     }
     
     func seek(_ position: Int) {

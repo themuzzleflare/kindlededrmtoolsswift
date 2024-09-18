@@ -22,16 +22,8 @@ final class DataOutputStream {
         count += 1
     }
     
-    func write(_ byte: UInt8){
-        write(byte: byte)
-    }
-    
     func write(int: Int) {
         write(byte: UInt8(int))
-    }
-    
-    func write(_ int: Int) {
-        write(int: int)
     }
     
     func write(data: Data, off: Int = 0, len: Int) {
@@ -39,23 +31,11 @@ final class DataOutputStream {
         count += len
     }
     
-    func write(_ data: Data, _ off: Int = 0, _ len: Int) {
-        write(data: data, off: off, len: len)
-    }
-    
     func writeBytes(data: Data) {
         write(data, 0, data.count)
     }
     
-    func writeBytes(_ data: Data) {
-        writeBytes(data: data)
-    }
-    
     func write(data: Data) {
-        writeBytes(data: data)
-    }
-    
-    func write(_ data: Data) {
         writeBytes(data: data)
     }
     
@@ -69,5 +49,28 @@ final class DataOutputStream {
     
     func size() -> Int {
         return count
+    }
+}
+
+// MARK: - Convenience Initialisers/Methods
+extension DataOutputStream {
+    func write(_ byte: UInt8){
+        write(byte: byte)
+    }
+    
+    func write(_ int: Int) {
+        write(int: int)
+    }
+    
+    func write(_ data: Data, _ off: Int = 0, _ len: Int) {
+        write(data: data, off: off, len: len)
+    }
+    
+    func writeBytes(_ data: Data) {
+        writeBytes(data: data)
+    }
+    
+    func write(_ data: Data) {
+        write(data: data)
     }
 }

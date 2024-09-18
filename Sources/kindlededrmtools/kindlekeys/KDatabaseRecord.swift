@@ -7,7 +7,7 @@
 
 import Foundation
 
-public struct KDatabaseRecord: Hashable {
+struct KDatabaseRecord: Hashable {
     let dbFile: String
     let kindleDatabase: KindleDatabase
     
@@ -15,7 +15,10 @@ public struct KDatabaseRecord: Hashable {
         self.dbFile = dbFile
         self.kindleDatabase = kindleDatabase
     }
-    
+}
+
+// MARK: - Convenience Initialisers
+extension KDatabaseRecord {
     init(_ dbFile: String, _ kindleDatabase: KindleDatabase) {
         self.init(dbFile: dbFile, kindleDatabase: kindleDatabase)
     }

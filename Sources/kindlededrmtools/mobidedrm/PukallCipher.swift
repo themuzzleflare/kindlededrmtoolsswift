@@ -7,7 +7,9 @@
 
 import Foundation
 
-enum PukallCipher {
+final class PukallCipher {
+    private init() {}
+    
     static func pc1(key: Data, src: Data, decryption: Bool = true) throws -> Data {
         try validateKeyLength(key: key)
         
@@ -75,7 +77,6 @@ enum PukallCipher {
         }
     }
 }
-
 
 // MARK: - Convenience Methods
 extension PukallCipher {

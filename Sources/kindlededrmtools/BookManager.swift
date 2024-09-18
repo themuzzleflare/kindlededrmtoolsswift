@@ -8,7 +8,7 @@
 import Foundation
 import Collections
 
-public protocol BookManager: BookCleanup {
+protocol BookManager: BookCleanup {
     func getBookTitle() -> String
     func getBookType() -> String
     func getBookExtension() -> String

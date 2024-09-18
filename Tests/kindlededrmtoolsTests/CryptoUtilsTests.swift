@@ -5,11 +5,12 @@
 //  Created by Paul Tavitian on 16/9/2024.
 //
 
-import XCTest
+import Testing
 @testable import kindlededrmtools
 
-final class CryptoUtilsTests: XCTestCase {
-    func testQCCAESPadCBCEncryptDecrypt() throws {
+@Suite("CryptoUtils Tests")
+struct CryptoUtilsTests {
+    @Test("QCC AES/Pad/CBC Encrypt/Decrypt Test") func testQCCAESPadCBCEncryptDecrypt() throws {
         // This test case was taken from the CryptoCompatibility sample code, and
         // specifically the `-testAES256PadCBCEncryption` methods and
         // `-testAES256PadCBCDecryption` methods.
@@ -120,11 +121,11 @@ final class CryptoUtilsTests: XCTestCase {
         
         let ciphertext = try CryptoUtils.QCCAESPadCBCEncrypt(key: key, iv: iv, plainText: plaintext332)
         
-        XCTAssertEqual(ciphertextAES256CBC332, ciphertext)
+        #expect(ciphertextAES256CBC332 == ciphertext)
         
         let plaintext = try CryptoUtils.QCCAESPadCBCDecrypt(key: key, iv: iv, cipherText: ciphertext)
         
-        XCTAssertEqual(plaintext332, plaintext)
+        #expect(plaintext332 == plaintext)
         
         print("Success!")
     }

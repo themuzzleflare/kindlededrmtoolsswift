@@ -15,7 +15,10 @@ struct ObfuscationValue {
         self.magicNumber = magicNumber
         self.word = word
     }
-    
+}
+
+// MARK: - Convenience Initialisers
+extension ObfuscationValue {
     init(_ magicNumber: Int, _ word: Data? = nil) {
         self.init(magicNumber: magicNumber, word: word)
     }
