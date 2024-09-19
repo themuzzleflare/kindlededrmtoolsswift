@@ -99,11 +99,6 @@ final class DataInputStream {
         return k
     }
     
-    @discardableResult
-    func skip(_ n: Int) -> Int {
-        return skip(n: n)
-    }
-    
     func available() -> Int {
         return count - pos
     }
@@ -148,6 +143,11 @@ extension DataInputStream {
     
     func readNBytes(_ len: Int) -> Data {
         return readNBytes(len: len)
+    }
+    
+    @discardableResult
+    func skip(_ n: Int) -> Int {
+        return skip(n: n)
     }
     
     func seek(_ position: Int) {

@@ -176,26 +176,40 @@ extension DRMIon {
     
     private func decompressLZMA(data: Data) -> Data? {
         // Create a buffer to hold the decompressed data
-        let bufferSize = 64 * 1024
-        var outputData = Data()
+        let bufferSize: Int = 64 * 1024
         
-        // Initialize the compression stream
-        var stream = UnsafeMutablePointer<compression_stream>.allocate(capacity: 1).pointee
+        var outputData: Data = .init()
+        
+        // Initialise the compression stream
+        var stream: compression_stream = UnsafeMutablePointer.allocate(capacity: 1).pointee
+        
         defer {
             compression_stream_destroy(&stream)
         }
-        var status = compression_stream_init(&stream, COMPRESSION_STREAM_DECODE, COMPRESSION_LZMA)
-        guard status != COMPRESSION_STATUS_ERROR else { return nil }
+        
+        var status: compression_status = compression_stream_init(
+            &stream,
+            COMPRESSION_STREAM_DECODE,
+            COMPRESSION_LZMA
+        )
+        
+        guard status != COMPRESSION_STATUS_ERROR else {
+            return nil
+        }
         
         // Set the source data
-        data.withUnsafeBytes { (inputPtr: UnsafeRawBufferPointer) in
-            guard let baseAddress = inputPtr.baseAddress else { return }
+        data.withUnsafeBytes { inputPtr in
+            guard let baseAddress: UnsafeRawPointer = inputPtr.baseAddress else {
+                return
+            }
+            
             stream.src_ptr = baseAddress.assumingMemoryBound(to: UInt8.self)
             stream.src_size = data.count
         }
         
         // Allocate destination buffer
-        let dstBuffer = UnsafeMutablePointer<UInt8>.allocate(capacity: bufferSize)
+        let dstBuffer: UnsafeMutablePointer<UInt8> = .allocate(capacity: bufferSize)
+        
         defer {
             dstBuffer.deallocate()
         }
@@ -205,12 +219,14 @@ extension DRMIon {
             stream.dst_ptr = dstBuffer
             stream.dst_size = bufferSize
             
-            status = compression_stream_process(&stream, Int32(0))
+            status = compression_stream_process(&stream, 0)
+            
             if status == COMPRESSION_STATUS_ERROR {
                 return nil
             }
             
-            let outputSize = bufferSize - stream.dst_size
+            let outputSize: Int = bufferSize - stream.dst_size
+            
             outputData.append(dstBuffer, count: outputSize)
         } while status == COMPRESSION_STATUS_OK
         

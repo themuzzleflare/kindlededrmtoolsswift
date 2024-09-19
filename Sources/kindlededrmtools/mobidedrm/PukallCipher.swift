@@ -31,8 +31,8 @@ final class PukallCipher {
         var wkey: [UInt16] = .init()
         
         for i in 0..<8 {
-            let upper = UInt16(key[i * 2]) << 8
-            let lower = UInt16(key[i * 2 + 1])
+            let upper: UInt16 = .init(key[i * 2]) << 8
+            let lower: UInt16 = .init(key[i * 2 + 1])
             wkey.append(upper | lower)
         }
         
@@ -49,24 +49,24 @@ final class PukallCipher {
             var byteXorVal: UInt16 = 0
             
             for j in 0..<8 {
-                temp1 ^= UInt32(wkey[j])
-                sum2 = (sum2 + UInt32(j)) * 20021 + sum1
+                temp1 ^= .init(wkey[j])
+                sum2 = (sum2 + .init(j)) * 20021 + sum1
                 sum1 = (temp1 * 346) & 0xFFFF
                 sum2 = (sum2 + sum1) & 0xFFFF
                 temp1 = (temp1 * 20021 + 1) & 0xFFFF
-                byteXorVal ^= UInt16(temp1 ^ sum2)
+                byteXorVal ^= .init(temp1 ^ sum2)
             }
             
             var curByte: UInt8 = src[i]
             
             if !decryption {
-                keyXorVal = UInt16(curByte) * 257
+                keyXorVal = .init(curByte) * 257
             }
             
-            curByte = UInt8(((UInt16(curByte) ^ (byteXorVal >> 8)) ^ byteXorVal) & 0xFF)
+            curByte = .init(((.init(curByte) ^ (byteXorVal >> 8)) ^ byteXorVal) & 0xFF)
             
             if decryption {
-                keyXorVal = UInt16(curByte) * 257
+                keyXorVal = .init(curByte) * 257
             }
             
             for j in 0..<8 {

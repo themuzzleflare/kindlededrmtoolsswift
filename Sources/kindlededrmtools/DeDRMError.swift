@@ -12,6 +12,7 @@ enum DeDRMError {
     case noVoucher
 }
 
+// MARK: - LocalizedError
 extension DeDRMError: LocalizedError {
     var errorDescription: String? {
         switch self {

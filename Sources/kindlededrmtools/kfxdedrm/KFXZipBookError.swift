@@ -13,6 +13,7 @@ enum KFXZipBookError {
     case voucherDecryptionFailed
 }
 
+// MARK: - LocalizedError
 extension KFXZipBookError: LocalizedError {
     var errorDescription: String? {
         switch self {

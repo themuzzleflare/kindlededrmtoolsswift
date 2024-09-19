@@ -8,14 +8,8 @@
 import Foundation
 
 final class DataOutputStream {
-    private var data: Data
-    
-    private var count: Int
-    
-    init() {
-        data = .init()
-        count = 0
-    }
+    private var data: Data = .init()
+    private var count: Int = 0
     
     func write(byte: UInt8) {
         data.append(byte)
@@ -54,7 +48,7 @@ final class DataOutputStream {
 
 // MARK: - Convenience Initialisers/Methods
 extension DataOutputStream {
-    func write(_ byte: UInt8){
+    func write(_ byte: UInt8) {
         write(byte: byte)
     }
     

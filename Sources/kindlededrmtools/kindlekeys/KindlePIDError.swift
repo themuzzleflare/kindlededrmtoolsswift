@@ -12,6 +12,7 @@ enum KindlePIDError {
     case dataFromStringFailed(string: String)
 }
 
+// MARK: - LocalizedError
 extension KindlePIDError: LocalizedError {
     var errorDescription: String? {
         switch self {

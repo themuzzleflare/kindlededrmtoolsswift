@@ -15,6 +15,7 @@ enum MobiBookError {
     case noKeyFound(pidsSize: Int)
 }
 
+// MARK: - LocalizedError
 extension MobiBookError: LocalizedError {
     var errorDescription: String? {
         switch self {

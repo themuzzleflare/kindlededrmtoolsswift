@@ -17,6 +17,7 @@ enum DRMIonError {
     case keyNull
 }
 
+// MARK: - LocalizedError
 extension DRMIonError: LocalizedError {
     var errorDescription: String? {
         switch self {

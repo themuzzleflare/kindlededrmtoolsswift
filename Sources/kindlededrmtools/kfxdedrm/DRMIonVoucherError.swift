@@ -27,6 +27,7 @@ enum DRMIonVoucherError {
     case cipherivNull
 }
 
+// MARK: - LocalizedError
 extension DRMIonVoucherError: LocalizedError {
     var errorDescription: String? {
         switch self {

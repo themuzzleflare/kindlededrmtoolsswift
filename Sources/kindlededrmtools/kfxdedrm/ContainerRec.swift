@@ -19,7 +19,7 @@ struct ContainerRec {
     }
 }
 
-// MARK: - Convenience Methods
+// MARK: - Convenience Initialisers/Methods
 extension ContainerRec {
     init(_ nextPos: Int, _ tid: Int, _ remaining: Int) {
         self.init(nextPos: nextPos, tid: tid, remaining: remaining)

@@ -34,6 +34,7 @@ enum BinaryIonParserError {
     case expectedTidStruct(found: Int)
 }
 
+// MARK: - LocalizedError
 extension BinaryIonParserError: LocalizedError {
     var errorDescription: String? {
         switch self {

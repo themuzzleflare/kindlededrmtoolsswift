@@ -11,6 +11,7 @@ enum PC1Error {
     case badKeyLength(length: Int)
 }
 
+// MARK: - LocalizedError
 extension PC1Error: LocalizedError {
     var errorDescription: String? {
         switch self {

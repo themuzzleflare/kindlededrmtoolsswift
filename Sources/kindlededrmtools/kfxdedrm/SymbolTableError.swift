@@ -11,6 +11,7 @@ enum SymbolTableError {
     case invalidSymbolId(id: Int)
 }
 
+// MARK: - LocalizedError
 extension SymbolTableError: LocalizedError {
     var errorDescription: String? {
         switch self {

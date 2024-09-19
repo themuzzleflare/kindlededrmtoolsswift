@@ -12,6 +12,7 @@ enum TestError {
     case dataFromStringFailed
 }
 
+// MARK: - LocalizedError
 extension TestError: LocalizedError {
     var errorDescription: String? {
         switch self {

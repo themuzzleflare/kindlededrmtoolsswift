@@ -11,6 +11,7 @@ enum SymbolTokenError {
     case missingTextAndSid
 }
 
+// MARK: - LocalizedError
 extension SymbolTokenError: LocalizedError {
     var errorDescription: String? {
         switch self {
