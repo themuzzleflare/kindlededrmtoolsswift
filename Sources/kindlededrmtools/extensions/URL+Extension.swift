@@ -9,21 +9,11 @@ import Foundation
 
 extension URL {
     static var inputTemporaryDirectory: URL {
-        return Util
-            .url(
-                filePath: "input",
-                isDirectory: true,
-                relativeTo: Util.temporaryDirectory()
-            )
+        return Util.appending(base: Util.temporaryDirectory(), add: "input", isDirectory: true)
     }
     
     static var outputTemporaryDirectory: URL {
-        return Util
-            .url(
-                filePath: "output",
-                isDirectory: true,
-                relativeTo: Util.temporaryDirectory()
-            )
+        return Util.appending(base: Util.temporaryDirectory(), add: "output", isDirectory: true)
     }
     
     var filename: String {

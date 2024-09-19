@@ -39,10 +39,10 @@ final class KindleKeyUtils {
         var i: Int = 0
         
         while i < data.count - 1 {
-            let high: Data.Index = map.firstIndex(of: data[i]) ?? -1
-            let low: Data.Index = map.firstIndex(of: data[i + 1]) ?? -1
+            let high: Data.Index? = map.firstIndex(of: data[i])
+            let low: Data.Index? = map.firstIndex(of: data[i + 1])
             
-            if high == -1 || low == -1 {
+            guard let high, let low else {
                 break
             }
             
@@ -66,7 +66,7 @@ final class KindleKeyUtils {
     static func checksumPid(data: Data, charMap: Data) -> Data {
         var crc: Int = .init(crc32(data: data))
         
-        crc = crc ^ (crc >> 16)
+        crc ^= (crc >> 16)
         
         var output: Data = data
         

@@ -219,7 +219,11 @@ extension KFXZipBook: BookManager {
             
             let outfile: DataOutputStream = .init()
             
-            try DRMIon(data.subdata(in: 8..<data.count - 8), voucher).parse(outpages: outfile)
+            try DRMIon(
+                ion: data.subdata(in: 8..<data.count - 8),
+                voucher: voucher
+            )
+            .parse(outpages: outfile)
             
             decrypted[entry.path] = outfile.toData()
         }
@@ -234,6 +238,7 @@ extension KFXZipBook: BookManager {
     }
     
     func cleanup() {
+        // no-op
     }
 }
 

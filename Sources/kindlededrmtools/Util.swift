@@ -256,6 +256,16 @@ final class Util {
             return base.appendingPathComponent(add)
         }
     }
+    
+    static func appending(base: URL, add: String, isDirectory: Bool) -> URL {
+        if #available(macOS 13.0, iOS 16.0, *) {
+            return base
+                .appending(path: add, directoryHint: isDirectory ? .isDirectory : .inferFromPath)
+        } else {
+            // Fallback on earlier versions
+            return base.appendingPathComponent(add, isDirectory: isDirectory)
+        }
+    }
 }
 
 // MARK: - Convenience Functions
@@ -306,5 +316,9 @@ extension Util {
     
     static func appending(_ base: URL, _ add: String) -> URL {
         return appending(base: base, add: add)
+    }
+    
+    static func appending(_ base: URL, _ add: String, _ isDirectory: Bool) -> URL {
+        return appending(base: base, add: add, isDirectory: isDirectory)
     }
 }

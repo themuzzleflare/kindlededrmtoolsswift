@@ -69,7 +69,7 @@ final class KindlePID {
         
         // Apply rolling operation using DSN and nbRoll
         for counter in 0..<nbRoll {
-            pid[index] = pid[index] ^ .init(dsn[counter] & 0xFF) // XOR with DSN
+            pid[index] ^= .init(dsn[counter] & 0xFF) // XOR with DSN
             index = (index + 1) % 8
         }
         
@@ -91,10 +91,10 @@ final class KindlePID {
             
             for _ in 0..<8 {
                 if (value & 1) == 0 {
-                    value = value >> 1 // Logical right shift (unsigned shift)
+                    value >>= 1 // Logical right shift (unsigned shift)
                 } else {
-                    value = value >> 1 // Logical right shift (unsigned shift)
-                    value = value ^ 0xEDB88320
+                    value >>= 1 // Logical right shift (unsigned shift)
+                    value ^= 0xEDB88320
                 }
             }
             
@@ -166,7 +166,7 @@ final class KindlePID {
         // Compute the device PID
         let table: [Int] = generatePidEncryptionTable()
         var devicePid: Data = generateDevicePid(table: table, dsn: dsn, nbRoll: 4)
-        devicePid = KindleKeyUtils.checksumPid(devicePid, CharMaps.charMap4)
+        devicePid = KindleKeyUtils.checksumPid(data: devicePid, charMap: CharMaps.charMap4)
         
         guard let string: String = .init(data: devicePid, encoding: .utf8) else {
             throw KindlePIDError.stringFromDataFailed(data: devicePid)
@@ -178,8 +178,8 @@ final class KindlePID {
         
         // Book PID
         var pidHash: Data = HashUtils.sha1(dsn, kindleAccountToken, rec209, token)
-        var bookPid: Data = encodePid(pidHash)
-        bookPid = KindleKeyUtils.checksumPid(bookPid, CharMaps.charMap4)
+        var bookPid: Data = encodePid(hashVal: pidHash)
+        bookPid = KindleKeyUtils.checksumPid(data: bookPid, charMap: CharMaps.charMap4)
         
         guard let string: String = .init(data: bookPid, encoding: .utf8) else {
             throw KindlePIDError.stringFromDataFailed(data: bookPid)
@@ -189,8 +189,8 @@ final class KindlePID {
         
         // Variant 1
         pidHash = HashUtils.sha1(kindleAccountToken, rec209, token)
-        bookPid = encodePid(pidHash)
-        bookPid = KindleKeyUtils.checksumPid(bookPid, CharMaps.charMap4)
+        bookPid = encodePid(hashVal: pidHash)
+        bookPid = KindleKeyUtils.checksumPid(data: bookPid, charMap: CharMaps.charMap4)
         
         guard let string: String = .init(data: bookPid, encoding: .utf8) else {
             throw KindlePIDError.stringFromDataFailed(data: bookPid)
@@ -200,8 +200,8 @@ final class KindlePID {
         
         // Variant 2
         pidHash = HashUtils.sha1(dsn, rec209, token)
-        bookPid = encodePid(pidHash)
-        bookPid = KindleKeyUtils.checksumPid(bookPid, CharMaps.charMap4)
+        bookPid = encodePid(hashVal: pidHash)
+        bookPid = KindleKeyUtils.checksumPid(data: bookPid, charMap: CharMaps.charMap4)
         
         guard let string: String = .init(data: bookPid, encoding: .utf8) else {
             throw KindlePIDError.stringFromDataFailed(data: bookPid)
@@ -232,7 +232,7 @@ final class KindlePID {
             return pids
         }
         
-        let bookPidHash: Data = HashUtils.sha1(data: serialnum, rec209, token)
+        let bookPidHash: Data = HashUtils.sha1(serialnum, rec209, token)
         var bookPid: Data = encodePid(hashVal: bookPidHash)
         bookPid = KindleKeyUtils.checksumPid(data: bookPid, charMap: CharMaps.charMap4)
         

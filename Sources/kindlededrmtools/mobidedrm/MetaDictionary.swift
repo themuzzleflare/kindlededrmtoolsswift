@@ -13,7 +13,7 @@ typealias MetaDictionary = OrderedDictionary<Int, Data>
 extension MetaDictionary {
     var description: String {
         return map { key, value in
-            return "\(key): \(Util.formatData(data: value))"
+            return "\(key.description): \(Util.formatData(data: value))"
         }.joined(separator: "\n")
     }
 }
