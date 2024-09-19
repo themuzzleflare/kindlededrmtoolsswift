@@ -6,7 +6,7 @@
 //
 
 import Foundation
-import Collections
+import OrderedCollections
 import ZIPFoundation
 
 final class KFXZipBook {

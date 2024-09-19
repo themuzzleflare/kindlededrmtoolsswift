@@ -7,7 +7,7 @@
 
 #if os(macOS)
 import Foundation
-import Collections
+import OrderedCollections
 
 protocol KindleKeyManager {
     static func getUsername() -> Data

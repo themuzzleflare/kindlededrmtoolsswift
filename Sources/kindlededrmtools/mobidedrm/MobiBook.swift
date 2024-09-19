@@ -6,7 +6,7 @@
 //
 
 import Foundation
-import Collections
+import OrderedCollections
 
 final class MobiBook {
     private static let version: String = "3.0.0"

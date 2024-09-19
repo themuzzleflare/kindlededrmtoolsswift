@@ -6,7 +6,7 @@
 //
 
 import Foundation
-import Collections
+import OrderedCollections
 
 final class KindlePID {
     private init() {}

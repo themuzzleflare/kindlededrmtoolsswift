@@ -22,7 +22,7 @@ let package = Package(
         .target(
             name: "kindlededrmtools",
             dependencies: [
-                .product(name: "Collections", package: "swift-collections"),
+                .product(name: "OrderedCollections", package: "swift-collections"),
                 .product(name: "kfxtables", package: "kfxtablesswift"),
                 "ZIPFoundation"
             ]),

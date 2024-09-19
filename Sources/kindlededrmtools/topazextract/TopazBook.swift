@@ -6,7 +6,7 @@
 //
 
 import Foundation
-import Collections
+import OrderedCollections
 
 final class TopazBook {
     private static let version: String = "1.0"

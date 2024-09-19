@@ -6,7 +6,7 @@
 //
 
 import Foundation
-import Collections
+import OrderedCollections
 
 final class Util {
     static let copyright: String = "Copyright © 2024 Paul Tavitian"

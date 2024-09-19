@@ -6,7 +6,7 @@
 //
 
 import Foundation
-import Collections
+import OrderedCollections
 
 protocol BookManager: BookCleanup {
     func getBookTitle() -> String

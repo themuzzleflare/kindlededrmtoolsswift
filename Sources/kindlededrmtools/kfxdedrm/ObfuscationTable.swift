@@ -6,7 +6,6 @@
 //
 
 import Foundation
-import Collections
 
 typealias ObfuscationTable = Dictionary<String, ObfuscationValue>
 

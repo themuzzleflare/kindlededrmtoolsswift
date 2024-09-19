@@ -8,7 +8,7 @@
 #if os(macOS)
 import Foundation
 import Testing
-import Collections
+import OrderedCollections
 @testable import kindlededrmtools
 
 @Suite("KindleKey Tests")

@@ -6,7 +6,7 @@
 //
 
 import Foundation
-import Collections
+import OrderedCollections
 
 public final class DeDRM {
     private static let version: String = "3.0"

@@ -7,7 +7,7 @@
 
 #if os(macOS)
 import Foundation
-import Collections
+import OrderedCollections
 
 final class KindleKey {
     static func getMacAddressesMunged() -> OrderedSet<Data> {

@@ -6,7 +6,7 @@
 //
 
 import Foundation
-import Collections
+import OrderedCollections
 
 typealias MetaDictionary = OrderedDictionary<Int, Data>
 
