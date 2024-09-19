@@ -240,7 +240,7 @@ final class Util {
     }
     
     static func dateNow() -> Date {
-        if #available(macOS 12, iOS 15.0, *) {
+        if #available(macOS 12, iOS 15, *) {
             return .now
         } else {
             // Fallback on earlier versions
@@ -302,5 +302,9 @@ extension Util {
     
     static func contains(_ haystack: Data?, _ needle: Data?) -> Bool {
         return contains(haystack: haystack, needle: needle)
+    }
+    
+    static func appending(_ base: URL, _ add: String) -> URL {
+        return appending(base: base, add: add)
     }
 }

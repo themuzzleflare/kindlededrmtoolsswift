@@ -564,10 +564,11 @@ extension MobiBook: BookManager {
             }
         }
         
-        return .init(rec209, token)
+        return .init(rec209: rec209, token: token)
     }
     
     func cleanup() {
+        // no-op
     }
 }
 

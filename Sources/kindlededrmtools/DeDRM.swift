@@ -93,14 +93,14 @@ public final class DeDRM {
     private static func loadKDatabaseRecords(kDatabaseFiles: OrderedSet<String>) -> OrderedSet<KDatabaseRecord> {
         var kDatabaseRecords: OrderedSet<KDatabaseRecord> = .init()
         
-        if Util.practicalIsEmpty(kDatabaseFiles) {
+        if Util.practicalIsEmpty(set: kDatabaseFiles) {
             return kDatabaseRecords
         }
         
         for kDatabaseFile in kDatabaseFiles {
             do {
-                let kindleDatabase: KindleDatabase = try .init(kDatabaseFile)
-                let kDatabaseRecord: KDatabaseRecord = .init(kDatabaseFile, kindleDatabase)
+                let kindleDatabase: KindleDatabase = try .init(infile: kDatabaseFile)
+                let kDatabaseRecord: KDatabaseRecord = .init(dbFile: kDatabaseFile, kindleDatabase: kindleDatabase)
                 kDatabaseRecords.append(kDatabaseRecord)
             } catch {
                 print("Error getting database from file \(kDatabaseFile): \(error.localizedDescription)")
@@ -212,9 +212,9 @@ public final class DeDRM {
         print("\(Util.copyright).")
         print("Removes DRM protection from Mobipocket, Amazon KF8, Amazon Print Replica, and Amazon Topaz eBooks.")
         
-        let kDatabaseFiles: OrderedSet<String> = Util.sanitiseSet(kDatabaseFiles)
-        let serials: OrderedSet<String> = Util.sanitiseSet(serials)
-        let pids: OrderedSet<String> = Util.sanitiseSet(pids)
+        let kDatabaseFiles: OrderedSet<String> = Util.sanitiseSet(set: kDatabaseFiles)
+        let serials: OrderedSet<String> = Util.sanitiseSet(set: serials)
+        let pids: OrderedSet<String> = Util.sanitiseSet(set: pids)
         
         let kDatabaseRecords: OrderedSet<KDatabaseRecord> = loadKDatabaseRecords(kDatabaseFiles: kDatabaseFiles)
         
@@ -229,9 +229,9 @@ public final class DeDRM {
         print("\(Util.copyright).")
         print("Removes DRM protection from Mobipocket, Amazon KF8, Amazon Print Replica, and Amazon Topaz eBooks.")
         
-        let kDatabaseFiles: OrderedSet<String> = Util.sanitiseSet(kDatabaseFiles)
-        let serials: OrderedSet<String> = Util.sanitiseSet(serials)
-        let pids: OrderedSet<String> = Util.sanitiseSet(pids)
+        let kDatabaseFiles: OrderedSet<String> = Util.sanitiseSet(set: kDatabaseFiles)
+        let serials: OrderedSet<String> = Util.sanitiseSet(set: serials)
+        let pids: OrderedSet<String> = Util.sanitiseSet(set: pids)
         
         let kDatabaseRecords: OrderedSet<KDatabaseRecord> = loadKDatabaseRecords(kDatabaseFiles: kDatabaseFiles)
         
@@ -250,9 +250,9 @@ public final class DeDRM {
         print("\(Util.copyright).")
         print("Removes DRM protection from Mobipocket, Amazon KF8, Amazon Print Replica, and Amazon Topaz eBooks.")
         
-        let kDatabaseFiles: OrderedSet<String> = Util.sanitiseSet(kDatabaseFiles)
-        let serials: OrderedSet<String> = Util.sanitiseSet(serials)
-        let pids: OrderedSet<String> = Util.sanitiseSet(pids)
+        let kDatabaseFiles: OrderedSet<String> = Util.sanitiseSet(set: kDatabaseFiles)
+        let serials: OrderedSet<String> = Util.sanitiseSet(set: serials)
+        let pids: OrderedSet<String> = Util.sanitiseSet(set: pids)
         
         let kDatabaseRecords: OrderedSet<KDatabaseRecord> = loadKDatabaseRecords(kDatabaseFiles: kDatabaseFiles)
         
