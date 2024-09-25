@@ -15,8 +15,8 @@ final class DRMIon {
     private var key: Data?
     
     init(ionStream: DataInputStream, voucher: DRMIonVoucher) {
-        ion = .init(ionStream)
-        IonUtils.addProtTable(ion)
+        ion = .init(stream: ionStream)
+        IonUtils.addProtTable(ion: ion)
         self.voucher = voucher
     }
     
@@ -94,7 +94,13 @@ final class DRMIon {
                     }
                     
                     if let ct, let civ {
-                        try processPage(ct, civ, outpages, decompress, decrypt)
+                        try processPage(
+                            ct: ct,
+                            civ: civ,
+                            outpages: outpages,
+                            decompress: decompress,
+                            decrypt: decrypt
+                        )
                     }
                     
                     try ion.stepOut()
@@ -118,7 +124,13 @@ final class DRMIon {
                     }
                     
                     if let plaintext {
-                        try processPage(plaintext, nil, outpages, decompress, decrypt)
+                        try processPage(
+                            ct: plaintext,
+                            civ: nil,
+                            outpages: outpages,
+                            decompress: decompress,
+                            decrypt: decrypt
+                        )
                     }
                     
                     try ion.stepOut()
@@ -146,13 +158,14 @@ final class DRMIon {
             let keyRange: Data = .init(key.prefix(16))
             let civRange: Data = civ != nil ? .init(civ!.prefix(16)) : .init()
             
-            msg = try CryptoUtils.aescbcdecrypt(keyRange, civRange, ct)
+            msg = try CryptoUtils
+                .aescbcdecrypt(key: keyRange, iv: civRange, cipherText: ct)
         } else {
             msg = ct
         }
         
         if !decompress {
-            outpages.write(msg)
+            outpages.write(data: msg)
             return
         }
         
@@ -160,7 +173,7 @@ final class DRMIon {
             throw DRMIonError.lzmaUseFilterNotSupported
         }
         
-        decompressData(msg.subdata(in: 1..<msg.count), outpages)
+        decompressData(data: msg.subdata(in: 1..<msg.count), outputStream: outpages)
     }
 }
 

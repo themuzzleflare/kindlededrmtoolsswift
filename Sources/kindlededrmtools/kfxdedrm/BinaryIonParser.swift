@@ -399,7 +399,7 @@ extension BinaryIonParser {
     }
     
     private func intValue() throws -> Int {
-        if valueTid !=  IonUtils.TID_POSINT && valueTid != IonUtils.TID_NEGINT {
+        if valueTid != IonUtils.TID_POSINT && valueTid != IonUtils.TID_NEGINT {
             throw BinaryIonParserError.notInt
         }
         
@@ -413,7 +413,7 @@ extension BinaryIonParser {
         }
     }
     
-    public func stringValue() throws -> String {
+    func stringValue() throws -> String {
         if valueTid != IonUtils.TID_STRING {
             throw BinaryIonParserError.notString
         }
@@ -451,7 +451,7 @@ extension BinaryIonParser {
         }
     }
     
-    public func lobValue() throws -> Data? {
+    func lobValue() throws -> Data? {
         if valueTid != IonUtils.TID_CLOB && valueTid != IonUtils.TID_BLOB {
             throw BinaryIonParserError.notLobType(found: try getFieldName())
         }

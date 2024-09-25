@@ -14,7 +14,7 @@ let package = Package(
             targets: ["kindlededrmtools"])
     ],
     dependencies: [
-        .package(url: "https://github.com/apple/swift-collections.git", .upToNextMajor(from: "1.1.3")),
+        .package(url: "https://github.com/apple/swift-collections.git", .upToNextMajor(from: "1.1.4")),
         .package(url: "https://github.com/themuzzleflare/kfxtablesswift.git", from: "2.0.0"),
         .package(url: "https://github.com/weichsel/ZIPFoundation.git", .upToNextMajor(from: "0.9.19"))
     ],

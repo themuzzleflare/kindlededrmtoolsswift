@@ -58,12 +58,6 @@ struct MobiBookTests {
             throw TestError.pathNotFound
         }
         
-        let nodrmbook1data: Data = try .init(contentsOf: nodrmbook1url)
-        let nodrmbook2data: Data = try .init(contentsOf: nodrmbook2url)
-        let nodrmbook3data: Data = try .init(contentsOf: nodrmbook3url)
-        let nodrmbook4data: Data = try .init(contentsOf: nodrmbook4url)
-        let nodrmbook5data: Data = try .init(contentsOf: nodrmbook5url)
-        
         guard let book1 = Bundle.module.path(forResource: "1", ofType: "azw3", inDirectory: "testdata/einkbookfiles"),
               let book2 = Bundle.module.path(forResource: "2", ofType: "azw3", inDirectory: "testdata/einkbookfiles"),
               let book3 = Bundle.module.path(forResource: "3", ofType: "azw3", inDirectory: "testdata/einkbookfiles"),
@@ -71,6 +65,12 @@ struct MobiBookTests {
               let book5 = Bundle.module.path(forResource: "5", ofType: "azw3", inDirectory: "testdata/einkbookfiles") else {
             throw TestError.pathNotFound
         }
+        
+        let nodrmbook1data: Data = try .init(contentsOf: nodrmbook1url)
+        let nodrmbook2data: Data = try .init(contentsOf: nodrmbook2url)
+        let nodrmbook3data: Data = try .init(contentsOf: nodrmbook3url)
+        let nodrmbook4data: Data = try .init(contentsOf: nodrmbook4url)
+        let nodrmbook5data: Data = try .init(contentsOf: nodrmbook5url)
         
         let mobiBook1: MobiBook = try .init(infile: book1)
         let mobiBook2: MobiBook = try .init(infile: book2)

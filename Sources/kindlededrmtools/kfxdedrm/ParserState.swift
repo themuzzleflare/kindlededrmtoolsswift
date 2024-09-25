@@ -16,6 +16,7 @@ enum ParserState: Int {
     case eof
 }
 
+// MARK: - CustomStringConvertible
 extension ParserState: CustomStringConvertible {
     var description: String {
         switch self {

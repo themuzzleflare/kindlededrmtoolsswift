@@ -126,7 +126,5 @@ struct CryptoUtilsTests {
         let plaintext = try CryptoUtils.QCCAESPadCBCDecrypt(key: key, iv: iv, cipherText: ciphertext)
         
         #expect(plaintext332 == plaintext)
-        
-        print("Success!")
     }
 }

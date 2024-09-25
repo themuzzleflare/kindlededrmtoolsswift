@@ -215,7 +215,7 @@ extension KindleDatabase {
     
     func genDSN() throws -> Data {
         let derivedDSN: Data = getDSNBytesOrDefault(defaultValue: try genAltDSN())
-        Debug.print("Derived DSN:", Util.formatData(derivedDSN))
+        Debug.print("Derived DSN:", Util.formatData(data: derivedDSN))
         return derivedDSN
     }
     
