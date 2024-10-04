@@ -21,27 +21,20 @@ final class CryptoUtils {
      * - Returns: The HMAC-SHA256 hash of the message as `Data`.
      */
     static func hmacsha256(key: Data, message: Data) throws -> Data {
-        if #available(macOS 10.15, *) {
-            return try cryptoswiftHmacsha256(key: key, message: message)
-        } else {
-            return try cryptoswiftHmacsha256(key: key, message: message)
-        }
+        return try cryptoswiftHmacsha256(key: key, message: message)
     }
     
     @available(macOS 10.15, *)
     private static func cryptokitHmacsha256(key: Data, message: Data) -> Data {
         let symmetricKey: SymmetricKey = .init(data: key)
-        let authenticationCode: HashedAuthenticationCode<SHA256> = HMAC<SHA256>.authenticationCode(for: message, using: symmetricKey)
+        let authenticationCode: HashedAuthenticationCode<SHA256> = HMAC.authenticationCode(for: message, using: symmetricKey)
         return .init(authenticationCode)
     }
     
     private static func cryptoswiftHmacsha256(key: Data, message: Data) throws -> Data {
-        let hmac: CryptoSwift.HMAC = .init(
-            key: key.bytes,
-            variant: .sha2(.sha256)
-        )
-        let hash: Data = try .init(hmac.authenticate(message.bytes))
-        return hash
+        let hmac: CryptoSwift.HMAC = .init(key: key.bytes, variant: .sha2(.sha256))
+        let authenticationCode: [UInt8] = try hmac.authenticate(message.bytes)
+        return .init(authenticationCode)
     }
     
     /**
@@ -53,27 +46,47 @@ final class CryptoUtils {
      * - Returns: The decrypted data as `Data`.
      */
     static func aescbcdecrypt(key: Data, iv: Data, cipherText: Data) throws -> Data {
+        return try cryptoswiftAescbcdecrypt(key: key, iv: iv, cipherText: cipherText)
+    }
+    
+    private static func commoncryptoAescbcdecrypt(key: Data, iv: Data, cipherText: Data) throws -> Data {
         return try .init(QCCAESPadCBCDecrypt(key: .init(key), iv: .init(iv), cipherText: .init(cipherText)))
     }
     
-    /**
-     * Decrypts the given ciphertext using AES/CTR with the provided key and IV.
-     * - Parameters:
-     *   - key: The key to use for AES/CTR decryption.
-     *   - iv: The initialization vector.
-     *   - cipherText: The encrypted data.
-     * - Returns: The decrypted data as `Data`.
-     */
+    private static func cryptoswiftAescbcdecrypt(key: Data, iv: Data, cipherText: Data) throws -> Data {
+        let aes = try AES(
+            key: key.bytes,
+            blockMode: CBC(iv: iv.bytes),
+            padding: .pkcs5
+        )
+        
+        let decrypted: [UInt8] = try aes.decrypt(cipherText.bytes)
+        return .init(decrypted)
+    }
+    
     static func aesctrdecrypt(key: Data, iv: Data, cipherText: Data) throws -> Data {
-        if #available(macOS 10.15, *) {
-            let symmetricKey: SymmetricKey = .init(data: key)
-            let nonce: CryptoKit.AES.GCM.Nonce = try .init(data: iv)
-            let sealedBox: CryptoKit.AES.GCM.SealedBox = try .init(nonce: nonce, ciphertext: cipherText, tag: Data())
-            let decryptedData: Data = try AES.GCM.open(sealedBox, using: symmetricKey)
-            return decryptedData
-        } else {
-            return .init()
-        }
+        return try cryptoswiftAesctrdecrypt(key: key, iv: iv, cipherText: cipherText)
+    }
+    
+    private static func cryptoswiftAesctrdecrypt(key: Data, iv: Data, cipherText: Data) throws -> Data {
+        let aes = try AES(
+            key: key.bytes,
+            blockMode: CTR(iv: iv.bytes),
+            padding: .noPadding
+        )
+        
+        let decrypted: [UInt8] = try aes.decrypt(cipherText.bytes)
+        return .init(decrypted)
+    }
+    
+    static func pbkdf2hmacsha1(password: Data, salt: Data, iterationCount: Int, keyLength: Int) throws -> Data {
+        return try cryptoswiftPbkdf2hmacsha1(password: password, salt: salt, iterationCount: iterationCount, keyLength: keyLength)
+    }
+    
+    private static func cryptoswiftPbkdf2hmacsha1(password: Data, salt: Data, iterationCount: Int, keyLength: Int) throws -> Data {
+        let pbkdf2: PKCS5.PBKDF2 = try .init(password: password.bytes, salt: salt.bytes, iterations: iterationCount, keyLength: keyLength, variant: .sha1)
+        let key: [UInt8] = try pbkdf2.calculate()
+        return .init(key)
     }
     
     /// Encrypts data using AES with PKCS#7 padding in CBC mode.
@@ -191,5 +204,9 @@ extension CryptoUtils {
     
     static func aesctrdecrypt(_ key: Data, _ iv: Data, _ cipherText: Data) throws -> Data {
         return try aesctrdecrypt(key: key, iv: iv, cipherText: cipherText)
+    }
+    
+    static func pbkdf2hmacsha1(_ password: Data, _ salt: Data, _ iterationCount: Int, _ keyLength: Int) throws -> Data {
+        return try pbkdf2hmacsha1(password: password, salt: salt, iterationCount: iterationCount, keyLength: keyLength)
     }
 }

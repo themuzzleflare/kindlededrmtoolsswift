@@ -7,6 +7,7 @@
 
 import Foundation
 import OrderedCollections
+import CryptoSwift
 
 final class Util {
     static let copyright: String = "Copyright © 2024 Paul Tavitian"
@@ -138,6 +139,10 @@ final class Util {
     }
     
     static func hexStringToData(hexString: String?) -> Data? {
+        return cryptoswiftHexStringToData(hexString: hexString)
+    }
+    
+    private static func manualHexStringToData(hexString: String?) -> Data? {
         guard let hexString else {
             return nil
         }
@@ -166,6 +171,14 @@ final class Util {
         }
         
         return data
+    }
+    
+    private static func cryptoswiftHexStringToData(hexString: String?) -> Data? {
+        guard let hexString else {
+            return nil
+        }
+        
+        return .init(hex: hexString)
     }
     
     static func url(filePath: String) -> URL {
