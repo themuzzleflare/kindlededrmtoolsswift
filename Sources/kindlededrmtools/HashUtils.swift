@@ -21,7 +21,7 @@ final class HashUtils {
         return cryptoswiftSha256(data: data)
     }
     
-    @available(macOS 10.15, *)
+    @available(macOS 10.15, iOS 13.0, *)
     private static func cryptokitSha256(data: [Data?]) -> Data {
         var hasher: SHA256 = .init()
         
@@ -54,7 +54,7 @@ final class HashUtils {
         return cryptoswiftMd5(data: data)
     }
     
-    @available(macOS 10.15, *)
+    @available(macOS 10.15, iOS 13.0, *)
     private static func cryptokitMd5(data: [Data?]) -> Data {
         var hasher: Insecure.MD5 = .init()
         
@@ -87,7 +87,7 @@ final class HashUtils {
         return cryptoswiftSha1(data: data)
     }
     
-    @available(macOS 10.15, *)
+    @available(macOS 10.15, iOS 13.0, *)
     private static func cryptokitSha1(data: [Data?]) -> Data {
         var hasher: Insecure.SHA1 = .init()
         

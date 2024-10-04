@@ -7,8 +7,8 @@
 
 import Foundation
 
-public final actor Debug {
-    private static var isEnabled: Bool = false
+public final class Debug {
+    nonisolated(unsafe) private static var isEnabled: Bool = false
     
     private init() {}
     

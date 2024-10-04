@@ -24,7 +24,7 @@ final class CryptoUtils {
         return try cryptoswiftHmacsha256(key: key, message: message)
     }
     
-    @available(macOS 10.15, *)
+    @available(macOS 10.15, iOS 13.0, *)
     private static func cryptokitHmacsha256(key: Data, message: Data) -> Data {
         let symmetricKey: SymmetricKey = .init(data: key)
         let authenticationCode: HashedAuthenticationCode<SHA256> = HMAC.authenticationCode(for: message, using: symmetricKey)
