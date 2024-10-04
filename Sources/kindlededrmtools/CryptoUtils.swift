@@ -8,6 +8,7 @@
 import Foundation
 import CryptoKit
 import CommonCrypto
+import CryptoSwift
 
 final class CryptoUtils {
     private init() {}
@@ -19,10 +20,28 @@ final class CryptoUtils {
      *   - message: The message to hash.
      * - Returns: The HMAC-SHA256 hash of the message as `Data`.
      */
-    static func hmacsha256(key: Data, message: Data) -> Data {
+    static func hmacsha256(key: Data, message: Data) throws -> Data {
+        if #available(macOS 10.15, *) {
+            return try cryptoswiftHmacsha256(key: key, message: message)
+        } else {
+            return try cryptoswiftHmacsha256(key: key, message: message)
+        }
+    }
+    
+    @available(macOS 10.15, *)
+    private static func cryptokitHmacsha256(key: Data, message: Data) -> Data {
         let symmetricKey: SymmetricKey = .init(data: key)
         let authenticationCode: HashedAuthenticationCode<SHA256> = HMAC<SHA256>.authenticationCode(for: message, using: symmetricKey)
         return .init(authenticationCode)
+    }
+    
+    private static func cryptoswiftHmacsha256(key: Data, message: Data) throws -> Data {
+        let hmac: CryptoSwift.HMAC = .init(
+            key: key.bytes,
+            variant: .sha2(.sha256)
+        )
+        let hash: Data = try .init(hmac.authenticate(message.bytes))
+        return hash
     }
     
     /**
@@ -46,11 +65,15 @@ final class CryptoUtils {
      * - Returns: The decrypted data as `Data`.
      */
     static func aesctrdecrypt(key: Data, iv: Data, cipherText: Data) throws -> Data {
-        let symmetricKey: SymmetricKey = .init(data: key)
-        let nonce: AES.GCM.Nonce = try .init(data: iv)
-        let sealedBox: AES.GCM.SealedBox = try .init(nonce: nonce, ciphertext: cipherText, tag: Data())
-        let decryptedData: Data = try AES.GCM.open(sealedBox, using: symmetricKey)
-        return decryptedData
+        if #available(macOS 10.15, *) {
+            let symmetricKey: SymmetricKey = .init(data: key)
+            let nonce: CryptoKit.AES.GCM.Nonce = try .init(data: iv)
+            let sealedBox: CryptoKit.AES.GCM.SealedBox = try .init(nonce: nonce, ciphertext: cipherText, tag: Data())
+            let decryptedData: Data = try AES.GCM.open(sealedBox, using: symmetricKey)
+            return decryptedData
+        } else {
+            return .init()
+        }
     }
     
     /// Encrypts data using AES with PKCS#7 padding in CBC mode.
@@ -158,8 +181,8 @@ final class CryptoUtils {
 
 // MARK: - Convenience Functions
 extension CryptoUtils {
-    static func hmacsha256(_ key: Data, _ message: Data) -> Data {
-        return hmacsha256(key: key, message: message)
+    static func hmacsha256(_ key: Data, _ message: Data) throws -> Data {
+        return try hmacsha256(key: key, message: message)
     }
     
     static func aescbcdecrypt(_ key: Data, _ iv: Data, _ cipherText: Data) throws -> Data {

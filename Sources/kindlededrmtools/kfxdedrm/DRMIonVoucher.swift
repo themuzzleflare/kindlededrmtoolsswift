@@ -92,7 +92,7 @@ final class DRMIonVoucher {
             do {
                 // Generate the key using HMAC-SHA256
                 // Step 1: HMAC-SHA256 to generate the key
-                let key: Data = CryptoUtils.hmacsha256(sharedSecret, CharMaps.pidv3Bytes)
+                let key: Data = try CryptoUtils.hmacsha256(sharedSecret, CharMaps.pidv3Bytes)
                 
                 guard let cipherText else {
                     throw DRMIonVoucherError.ciphertextNull
