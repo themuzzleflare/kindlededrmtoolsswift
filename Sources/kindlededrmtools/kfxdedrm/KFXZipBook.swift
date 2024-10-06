@@ -166,20 +166,18 @@ extension KFXZipBook: BookManager {
         for infileEntry in infileArchive {
             Debug.print("infileEntry:", infileEntry.path)
             
+            let url: URL = Util.url(filePath: infileEntry.path, relativeTo: .outputTemporaryDirectory)
+            
             if infileEntry.type == .directory {
                 Debug.print("This entry is a directory.")
-                
-                let url: URL = Util.url(filePath: infileEntry.path, relativeTo: .outputTemporaryDirectory)
-                
+                                
                 try FileManager.default.createDirectory(at: url, withIntermediateDirectories: true)
                 
                 Debug.print("Created directory:", Util.urlPath(url: url, percentEncoded: false))
                 
                 continue
             }
-            
-            let url: URL = Util.url(filePath: infileEntry.path, relativeTo: .outputTemporaryDirectory)
-            
+                        
             if let decryptedContent = decrypted[infileEntry.path] {
                 try decryptedContent.write(to: url)
                 

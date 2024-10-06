@@ -177,6 +177,7 @@ final class MobiBook {
     private func loadSection(section: Int) -> Data {
         let endoff: Int = section + 1 == numSections ? dataFile.count : sections[section + 1].offset
         let off: Int = sections[section].offset
+        
         return dataFile.subdata(in: off..<endoff)
     }
     
@@ -212,8 +213,8 @@ final class MobiBook {
         
         while true {
             let v: UInt8 = ptr[size - 1]
-            result |= .init(v & 0x7F) << bitpos
             
+            result |= .init(v & 0x7F) << bitpos
             bitpos += 7
             size -= 1
             

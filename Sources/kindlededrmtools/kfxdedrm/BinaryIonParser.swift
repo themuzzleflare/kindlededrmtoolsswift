@@ -249,7 +249,6 @@ extension BinaryIonParser {
         
         while (b & 0x80) == 0 && i < 4 {
             b = Util.ord(try read())
-            
             result = (result << 7) | (b & 0x7F)
             i += 1
         }
@@ -577,7 +576,6 @@ extension BinaryIonParser {
         if maxId < 0 {
             guard let table, version != table.version else {
                 throw BinaryIonParserError.importLacksMaxId(name: name)
-                
             }
             
             maxId = table.symnames.count
