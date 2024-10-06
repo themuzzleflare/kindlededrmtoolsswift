@@ -1,13 +1,9 @@
-// swift-tools-version: 6.0
+// swift-tools-version:4.0
 
 import PackageDescription
 
 let package = Package(
     name: "kindlededrmtools",
-    platforms: [
-        .iOS(.v12),
-        .macOS(.v10_13)
-    ],
     products: [
         .library(
             name: "kindlededrmtools",
@@ -28,12 +24,7 @@ let package = Package(
                 "ZIPFoundation",
                 "CryptoSwift"
             ]
-        ),
-        .testTarget(
-            name: "kindlededrmtoolsTests",
-            dependencies: ["kindlededrmtools"],
-            resources: [
-                .copy("testdata")])
+        )
     ],
-    swiftLanguageModes: [.v4, .v4_2, .v5, .v6]
+    swiftLanguageVersions: [4]
 )
