@@ -51,7 +51,7 @@ extension BinaryIonParserError: LocalizedError {
         case let .invalidBooleanLength(length):
             return "Invalid boolean length: \(length.description)"
         case let .unknownVersionMarker(data):
-            return "Unknown version marker: \(Util.formatData(data: data))"
+            return "Unknown version marker: \(data.formattedForOutput)"
         case let .unexpectedFieldId(id):
             return "Unexpected field ID: \(id.description)"
         case let .unexpectedState(state):

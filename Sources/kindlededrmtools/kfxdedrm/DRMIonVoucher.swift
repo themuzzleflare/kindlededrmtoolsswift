@@ -104,7 +104,7 @@ final class DRMIonVoucher {
                 
                 let decryptedData: Data = try CryptoUtils.aescbcdecrypt(.init(key.prefix(32)), .init(cipherIv.prefix(16)), cipherText)
                 
-                Debug.print("decryptedVoucher:", Util.formatData(data: decryptedData))
+                Debug.print("decryptedVoucher:", decryptedData.formattedForOutput)
                 
                 // Parse the decrypted data as a BinaryIonParser
                 drmKey = .init(.init(decryptedData))

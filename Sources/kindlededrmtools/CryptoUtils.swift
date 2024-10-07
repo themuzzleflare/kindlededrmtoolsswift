@@ -21,7 +21,11 @@ final class CryptoUtils {
      * - Returns: The HMAC-SHA256 hash of the message as `Data`.
      */
     static func hmacsha256(key: Data, message: Data) throws -> Data {
-        return try cryptoswiftHmacsha256(key: key, message: message)
+        if !Util.preferCryptoSwift, Util.usePlatformChecks, #available(macOS 10.15, iOS 13.0, *) {
+            return cryptokitHmacsha256(key: key, message: message)
+        } else {
+            return try cryptoswiftHmacsha256(key: key, message: message)
+        }
     }
     
     @available(macOS 10.15, iOS 13.0, *)
@@ -46,7 +50,11 @@ final class CryptoUtils {
      * - Returns: The decrypted data as `Data`.
      */
     static func aescbcdecrypt(key: Data, iv: Data, cipherText: Data) throws -> Data {
-        return try cryptoswiftAescbcdecrypt(key: key, iv: iv, cipherText: cipherText)
+        if Util.preferCryptoSwift {
+            return try cryptoswiftAescbcdecrypt(key: key, iv: iv, cipherText: cipherText)
+        } else {
+            return try commoncryptoAescbcdecrypt(key: key, iv: iv, cipherText: cipherText)
+        }
     }
     
     private static func commoncryptoAescbcdecrypt(key: Data, iv: Data, cipherText: Data) throws -> Data {
@@ -99,7 +107,7 @@ final class CryptoUtils {
     ///   - plainText: The data to encrypt; the PKCS#7 padding means there are no
     ///     constraints on its length.
     /// - Returns: The encrypted data; it’s length with always be an even multiple of 16.
-    internal static func QCCAESPadCBCEncrypt(key: [UInt8], iv: [UInt8], plainText: [UInt8]) throws -> [UInt8] {
+    static func QCCAESPadCBCEncrypt(key: [UInt8], iv: [UInt8], plainText: [UInt8]) throws -> [UInt8] {
         // The key size must be 128, 192, or 256.
         //
         // The IV size must match the block size.
@@ -151,7 +159,7 @@ final class CryptoUtils {
     ///   - cipherText: The encrypted data; it’s length must be an even multiple of
     ///     16.
     /// - Returns: The decrypted data.
-    internal static func QCCAESPadCBCDecrypt(key: [UInt8], iv: [UInt8], cipherText: [UInt8]) throws -> [UInt8] {
+    static func QCCAESPadCBCDecrypt(key: [UInt8], iv: [UInt8], cipherText: [UInt8]) throws -> [UInt8] {
         // The key size must be 128, 192, or 256.
         //
         // The IV size must match the block size.

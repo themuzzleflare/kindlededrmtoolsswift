@@ -17,7 +17,7 @@ extension KindlePIDError: LocalizedError {
     var errorDescription: String? {
         switch self {
         case let .stringFromDataFailed(data):
-            return "Failed to convert data to string: \(Util.formatData(data: data))"
+            return "Failed to convert data to string: \(data.formattedForOutput)"
         case let .dataFromStringFailed(string):
             return "Failed to convert string to data: \(string)"
         }

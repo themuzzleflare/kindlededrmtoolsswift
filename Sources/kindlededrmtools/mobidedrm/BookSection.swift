@@ -24,6 +24,14 @@ extension BookSection {
     init(_ offset: Int, _ flags: Int, _ val: Int) {
         self.init(offset: offset, flags: flags, val: val)
     }
+    
+    init(offset: Int, flags: UInt8, val: Int) {
+        self.init(offset: offset, flags: Int(flags), val: val)
+    }
+    
+    init(_ offset: Int, _ flags: UInt8, _ val: Int) {
+        self.init(offset: offset, flags: flags, val: val)
+    }
 }
 
 // MARK: - CustomStringConvertible

@@ -20,9 +20,9 @@ struct UtilTests {
         let expected2: String = "b'TPZ'"
         let expected3: String = "b'PK\\x03\\x04'"
         
-        let result1: String = Util.formatData(data: bytes1)
-        let result2: String = Util.formatData(data: bytes2)
-        let result3: String = Util.formatData(data: bytes3)
+        let result1: String = bytes1.formattedForOutput
+        let result2: String = bytes2.formattedForOutput
+        let result3: String = bytes3.formattedForOutput
         
         #expect(expected1 == result1)
         #expect(expected2 == result2)

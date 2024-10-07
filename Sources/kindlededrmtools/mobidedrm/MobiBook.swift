@@ -37,11 +37,11 @@ final class MobiBook {
         
         header = dataFile.prefix(78)
         
-        Debug.print("header:", Util.formatData(data: header))
+        Debug.print("header:", header.formattedForOutput)
         
         magic = header[0x3C..<0x3C + 8]
         
-        Debug.print("magic:", Util.formatData(data: magic))
+        Debug.print("magic:", magic.formattedForOutput)
         
         if magic != CharMaps.bookmobiBytes && magic != CharMaps.textreadBytes {
             throw MobiBookError.invalidFileFormat(data: magic)
@@ -72,7 +72,7 @@ final class MobiBook {
             let val: Int = Int(a2) << 16 | Int(a3) << 8 | Int(a4)
             
             // Create BookSection and add to the array
-            let bookSection: BookSection = .init(offset: offset, flags: .init(flags), val: val)
+            let bookSection: BookSection = .init(offset: offset, flags: flags, val: val)
             
             sections.append(bookSection)
         }
@@ -81,7 +81,7 @@ final class MobiBook {
         
         sect = loadSection(section: 0)
         
-        Debug.print("sect:", Util.formatData(data: sect))
+        Debug.print("sect:", sect.formattedForOutput)
         
         records = .init(sect[0x8..<0x8 + 2].withUnsafeBytes { $0.load(as: UInt16.self).bigEndian })
         compression = .init(sect[0x0..<0x0 + 2].withUnsafeBytes { $0.load(as: UInt16.self).bigEndian })
@@ -124,7 +124,7 @@ final class MobiBook {
             exth = sect.subdata(in: range)
         }
         
-        Debug.print("exth:", Util.formatData(data: exth))
+        Debug.print("exth:", exth.formattedForOutput)
         
         if exth.count >= 12 && exth[..<4] == CharMaps.exthBytes {
             let nItems: Int = .init(exth[8..<12].withUnsafeBytes { $0.load(as: UInt32.self).bigEndian })
@@ -146,9 +146,9 @@ final class MobiBook {
                 
                 let content: Data = exth.subdata(in: contentRange)
                 
-                Debug.print("content:", Util.formatData(data: content))
+                Debug.print("content:", content.formattedForOutput)
                 
-                metaArray.updateValue(content, forKey: type)
+                metaArray[type] = content
                 
                 if type == 401 && size == 9 {
                     let newContent: Data = .init([100])
@@ -305,7 +305,7 @@ final class MobiBook {
             Debug.print("size:", size.description)
             Debug.print("type:", type.description)
             Debug.print("cksum:", cksum.description)
-            Debug.print("cookie:", Util.formatData(data: cookie))
+            Debug.print("cookie:", cookie.formattedForOutput)
             
             if cksum == tempKeySum {
                 cookie = try PukallCipher.pc1(key: tempKey, src: cookie)
@@ -318,10 +318,10 @@ final class MobiBook {
                 let expiry1: Int = .init(cookie.withUnsafeBytes { $0.load(fromByteOffset: 24, as: UInt32.self).bigEndian })
                 let expiry2: Int = .init(cookie.withUnsafeBytes { $0.load(fromByteOffset: 28, as: UInt32.self).bigEndian })
                 
-                Debug.print("cookie:", Util.formatData(data: cookie))
+                Debug.print("cookie:", cookie.formattedForOutput)
                 Debug.print("ver:", ver.description)
                 Debug.print("flags:", flags.description)
-                Debug.print("finalKey:", Util.formatData(data: finalKey))
+                Debug.print("finalKey:", finalKey.formattedForOutput)
                 Debug.print("expiry1:", expiry1.description)
                 Debug.print("expiry2:", expiry2.description)
                 
@@ -339,22 +339,21 @@ final class MobiBook {
         
         for pid in pidSet {
             if pid.count == 10 {
-                let substring: String.SubSequence = pid.prefix(pid.count - 2)
-                let string: String = .init(substring)
+                let string: String = .init(pid.prefix(pid.count - 2))
                 let checksumPid: String = try KindleKeyUtils.checksumPid(
                     data: string,
                     charMap: CharMaps.letters
                 )
                 
                 if checksumPid != pid {
-                    print("Warning: PID \(pid) has an incorrect checksum, should have been \(checksumPid)")
+                    print("Warning: PID", pid, "has an incorrect checksum, should have been", checksumPid)
                 }
                 
                 goodPids.append(string)
             } else if pid.count == 8 {
                 goodPids.append(pid)
             } else {
-                print("Warning: PID \(pid) has the wrong number of digits")
+                print("Warning: PID", pid, "has the wrong number of digits")
             }
         }
         
@@ -455,8 +454,8 @@ extension MobiBook: BookManager {
             pidSet: pidSet
         )
         
-        Debug.print("PIDs: \(pidSet)")
-        Debug.print("Good PIDs: \(goodPids)")
+        Debug.print("PIDs:", pidSet)
+        Debug.print("Good PIDs:", goodPids)
         
         let foundKey: Data!
         let pid: String!
@@ -496,7 +495,7 @@ extension MobiBook: BookManager {
             }
             
             patchSection(section: 0, newContent: .init(count: drmSize), inOff: drmPtr)
-            patchSection(section: 0, newContent: .init([0xFF, 0xFF, 0xFF, 0xFF, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]), inOff: 0xA8)
+            patchSection(section: 0, newContent: .init(Data(repeating: 0xFF, count: 4) + Data(count: 12)), inOff: 0xA8)
         }
         
         if pid == "00000000" {

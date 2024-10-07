@@ -22,7 +22,7 @@ extension MobiBookError: LocalizedError {
         case let .urlCreationFiled(string):
             return "Failed to create URL representing path: \(string)"
         case let .invalidFileFormat(data):
-            return "Invalid file format: \(Util.formatData(data: data))"
+            return "Invalid file format: \(data.formattedForOutput)"
         case let .unknownEncryptionType(type):
             return "Cannot decode unknown Mobipocket encryption type: \(type.description)"
         case .encryptionNotInitialised:

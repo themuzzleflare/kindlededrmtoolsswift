@@ -27,6 +27,6 @@ extension PIDMetaInfo {
 // MARK: - CustomStringConvertible
 extension PIDMetaInfo: CustomStringConvertible {
     var description: String {
-        return "(rec209: \(Util.formatData(data: rec209)), token: \(Util.formatData(data: token)))"
+        return "(rec209: \(rec209.formattedForOutput), token: \(token.formattedForOutput))"
     }
 }

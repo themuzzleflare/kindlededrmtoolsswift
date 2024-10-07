@@ -27,6 +27,6 @@ extension DRMInfo {
 // MARK: - CustomStringConvertible
 extension DRMInfo: CustomStringConvertible {
     var description: String {
-        return "(key: \(Util.formatData(data: key)), pid: \(pid))"
+        return "(key: \(key.formattedForOutput), pid: \(pid))"
     }
 }
