@@ -112,7 +112,7 @@ extension KindleDatabase {
         }
         
         Debug.print("Got Kindle Account Token:", token)
-        return Util.hexStringToData(getKindleAccountToken())
+        return token.hexToData
     }
     
     func getDSNBytes() -> Data? {
@@ -121,7 +121,7 @@ extension KindleDatabase {
         }
         
         Debug.print("Got DSN:", dsn)
-        return Util.hexStringToData(getDSN())
+        return dsn.hexToData
     }
     
     func getMazamaRandomNumberBytes() -> Data? {
@@ -130,7 +130,7 @@ extension KindleDatabase {
         }
         
         Debug.print("Got MazamaRandomNumber:", mazama)
-        return Util.hexStringToData(getMazamaRandomNumber())
+        return mazama.hexToData
     }
     
     func getSerialNumberBytes() -> Data? {
@@ -139,7 +139,7 @@ extension KindleDatabase {
         }
         
         Debug.print("Got SerialNumber:", serialnum)
-        return Util.hexStringToData(getSerialNumber())
+        return serialnum.hexToData
     }
     
     func getIDStringBytes() -> Data? {
@@ -148,7 +148,7 @@ extension KindleDatabase {
         }
         
         Debug.print("Got IDString:", idString)
-        return Util.hexStringToData(getIDString())
+        return idString.hexToData
     }
     
     func getUsernameHashBytes() -> Data? {
@@ -157,7 +157,7 @@ extension KindleDatabase {
         }
         
         Debug.print("Got UsernameHash:", hash)
-        return Util.hexStringToData(getUsernameHash())
+        return hash.hexToData
     }
     
     func getUserNameBytes() -> Data? {
@@ -166,7 +166,7 @@ extension KindleDatabase {
         }
         
         Debug.print("Got UserName:", username)
-        return Util.hexStringToData(getUserName())
+        return username.hexToData
     }
     
     func getKindleAccountTokenBytesOrDefault(defaultValue: Data) -> Data {

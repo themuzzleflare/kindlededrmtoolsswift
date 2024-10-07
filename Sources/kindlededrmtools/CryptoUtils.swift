@@ -21,7 +21,7 @@ final class CryptoUtils {
      * - Returns: The HMAC-SHA256 hash of the message as `Data`.
      */
     static func hmacsha256(key: Data, message: Data) throws -> Data {
-        if !Util.preferCryptoSwift, Util.usePlatformChecks, #available(macOS 10.15, iOS 13.0, *) {
+        if !preferCryptoSwift, usePlatformChecks, #available(macOS 10.15, iOS 13.0, *) {
             return cryptokitHmacsha256(key: key, message: message)
         } else {
             return try cryptoswiftHmacsha256(key: key, message: message)
@@ -50,7 +50,7 @@ final class CryptoUtils {
      * - Returns: The decrypted data as `Data`.
      */
     static func aescbcdecrypt(key: Data, iv: Data, cipherText: Data) throws -> Data {
-        if Util.preferCryptoSwift {
+        if preferCryptoSwift {
             return try cryptoswiftAescbcdecrypt(key: key, iv: iv, cipherText: cipherText)
         } else {
             return try commoncryptoAescbcdecrypt(key: key, iv: iv, cipherText: cipherText)

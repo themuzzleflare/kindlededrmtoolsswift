@@ -11,8 +11,6 @@ import CryptoSwift
 
 final class Util {
     static let copyright: String = "Copyright © 2024 Paul Tavitian"
-    static let usePlatformChecks: Bool = false
-    static let preferCryptoSwift: Bool = false
     
     private init() {}
     

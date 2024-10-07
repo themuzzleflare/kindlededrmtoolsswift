@@ -18,7 +18,7 @@ final class HashUtils {
      * - Returns: The SHA-256 hash of the data.
      */
     static func sha256(data: [Data?]) -> Data {
-        if !Util.preferCryptoSwift, Util.usePlatformChecks, #available(macOS 10.15, iOS 13.0, *) {
+        if !preferCryptoSwift, usePlatformChecks, #available(macOS 10.15, iOS 13.0, *) {
             return cryptokitSha256(data: data)
         } else {
             return cryptoswiftSha256(data: data)
@@ -55,7 +55,7 @@ final class HashUtils {
      * - Returns: The MD5 hash of the data.
      */
     static func md5(data: [Data?]) -> Data {
-        if !Util.preferCryptoSwift, Util.usePlatformChecks, #available(macOS 10.15, iOS 13.0, *) {
+        if !preferCryptoSwift, usePlatformChecks, #available(macOS 10.15, iOS 13.0, *) {
             return cryptokitMd5(data: data)
         } else {
             return cryptoswiftMd5(data: data)
@@ -92,7 +92,7 @@ final class HashUtils {
      * - Returns: The SHA-1 hash of the data.
      */
     static func sha1(data: [Data?]) -> Data {
-        if !Util.preferCryptoSwift, Util.usePlatformChecks, #available(macOS 10.15, iOS 13.0, *) {
+        if !preferCryptoSwift, usePlatformChecks, #available(macOS 10.15, iOS 13.0, *) {
             return cryptokitSha1(data: data)
         } else {
             return cryptoswiftSha1(data: data)
