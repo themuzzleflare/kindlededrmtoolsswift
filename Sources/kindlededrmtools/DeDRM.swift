@@ -200,6 +200,7 @@ public final class DeDRM {
         return book
     }
     
+    #if os(macOS)
     public static func generateKeyfileThrowing(outpath: String) throws {
         try KindleKey.getInstance().getKeyThrowing(outpath: outpath)
     }
@@ -213,6 +214,7 @@ public final class DeDRM {
         let jsonData: Data = try JSONEncoder().encode(kindleDatabase)
         return jsonData
     }
+    #endif
     
     public static func decryptBook(
         infile: String,
