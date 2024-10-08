@@ -185,6 +185,26 @@ final class Util {
         return .init(hex: hexString)
     }
     
+    static func dataToHexString(data: Data?) -> String {
+        if preferCryptoSwift {
+            return cryptoSwiftDataToHexString(data: data)
+        } else {
+            return manualDataToHexString(data: data)
+        }
+    }
+    
+    private static func manualDataToHexString(data: Data?) -> String {
+        guard let data else {
+            return ""
+        }
+        
+        return data.map { String(format: "%02hhx", $0) }.joined()
+    }
+    
+    private static func cryptoSwiftDataToHexString(data: Data?) -> String {
+        return data?.toHexString() ?? ""
+    }
+    
     static func url(filePath: String) -> URL {
         if usePlatformChecks, #available(macOS 13.0, iOS 16.0, *) {
             return .init(filePath: filePath)

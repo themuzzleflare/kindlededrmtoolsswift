@@ -36,6 +36,31 @@ extension KindleDatabase {
     private static let proxyHttpPasswordKey: String = "proxy.http.password"
     private static let proxyHttpUsernameKey: String = "proxy.http.username"
     
+    static let keyBytesList: [Data] = [
+        kindleAccountTokensKey.data(using: .ascii)!,
+        kindleCookieItemKey.data(using: .ascii)!,
+        eulaVersionAcceptedKey.data(using: .ascii)!,
+        loginDateKey.data(using: .ascii)!,
+        kindleTokenItemKey.data(using: .ascii)!,
+        loginKey.data(using: .ascii)!,
+        kindleKeyItemKey.data(using: .ascii)!,
+        kindleNameInfoKey.data(using: .ascii)!,
+        kindleDeviceInfoKey.data(using: .ascii)!,
+        mazamaRandomNumberKey.data(using: .ascii)!,
+        maxDateKey.data(using: .ascii)!,
+        sigVerifKey.data(using: .ascii)!,
+        buildVersionKey.data(using: .ascii)!,
+        serialNumberKey.data(using: .ascii)!,
+        usernameHashKey.data(using: .ascii)!,
+        kindleDirectedIDInfoKey.data(using: .ascii)!,
+        dsnKey.data(using: .ascii)!,
+        kindleAccountTypeInfoKey.data(using: .ascii)!,
+        flashcardsPluginDataEncryptionKeyKey.data(using: .ascii)!,
+        notebookExportPluginDataEncryptionKeyKey.data(using: .ascii)!,
+        proxyHttpPasswordKey.data(using: .ascii)!,
+        proxyHttpUsernameKey.data(using: .ascii)!
+    ]
+    
     init(infile: String) throws {
         let url: URL = Util.url(filePath: infile)
         try self.init(url: url)
@@ -252,6 +277,19 @@ extension KindleDatabase {
     
     func containsUserName() -> Bool {
         return keys.contains(KindleDatabase.userNameKey)
+    }
+}
+
+// MARK: - Writing
+extension KindleDatabase {
+    func writeToFile(filename: String) throws {
+        let url: URL = Util.url(filePath: filename)
+        try writeToFile(url: url)
+    }
+    
+    func writeToFile(url: URL) throws {
+        let data: Data = try JSONEncoder().encode(self)
+        try data.write(to: url)
     }
 }
 

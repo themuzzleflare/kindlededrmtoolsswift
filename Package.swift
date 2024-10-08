@@ -27,6 +27,9 @@ let package = Package(
                 .product(name: "kfxtables", package: "kfxtablesswift"),
                 "ZIPFoundation",
                 "CryptoSwift"
+            ],
+            swiftSettings: [
+                .unsafeFlags(["-enable-testing"], .when(configuration: .release))
             ]
         ),
         .testTarget(

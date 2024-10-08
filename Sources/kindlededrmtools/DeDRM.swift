@@ -200,6 +200,20 @@ public final class DeDRM {
         return book
     }
     
+    public static func generateKeyfileThrowing(outpath: String) throws {
+        try KindleKey.getInstance().getKeyThrowing(outpath: outpath)
+    }
+    
+    public static func generateKeyFileThrowingData() throws -> Data {
+        let instance: KindleKey = .getInstance()
+        guard let kindleDatabase: KindleDatabase = try instance.kindleKeys(files: []).first else {
+            throw KindleKeyError.noKeysFound
+        }
+        
+        let jsonData: Data = try JSONEncoder().encode(kindleDatabase)
+        return jsonData
+    }
+    
     public static func decryptBook(
         infile: String,
         outdir: String,

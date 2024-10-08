@@ -26,7 +26,7 @@ struct KindleKeyMacOSTests {
         
         let result: OrderedSet<Data> = KindleKeyMacOS.getMacAddressesMunged()
         
-        #expect(expectedMacs == result)
+        #expect(expectedMacs.isEqualSet(to: result))
     }
     
     @Test("getVolumeSerialNumbers Test") func testGetVolumeSerialNumbers() {
@@ -36,7 +36,7 @@ struct KindleKeyMacOSTests {
         
         let result: OrderedSet<Data> = KindleKeyMacOS.getVolumeSerialNumbers()
         
-        #expect(expectedSerialNums == result)
+        #expect(expectedSerialNums.isEqualSet(to: result))
     }
     
     @Test("getDiskPartitionNames Test") func testGetDiskPartitionNames() {
@@ -56,7 +56,7 @@ struct KindleKeyMacOSTests {
         
         let result: OrderedSet<Data> = KindleKeyMacOS.getDiskPartitionNames()
         
-        #expect(expectedNames == result)
+        #expect(expectedNames.isEqualSet(to: result))
     }
     
     @Test("getDiskPartitionUUIDs Test") func testGetDiskPartitionUUIDs() {
@@ -88,13 +88,13 @@ struct KindleKeyMacOSTests {
         
         let result: OrderedSet<Data> = KindleKeyMacOS.getDiskPartitionUUIDs()
         
-        #expect(expectedUUIDs == result)
+        #expect(expectedUUIDs.isEqualSet(to: result))
     }
     
     @Test("getUsername Test") func testGetUsername() {
         let expected: Data = .init([112, 97, 117, 108, 116, 97, 118, 105, 116, 105, 97, 110])
         
-        let result: Data = KindleKeyMacOS.getUsername()
+        let result: Data = KindleKeyMacOS().getUsername()
         
         #expect(expected == result)
     }

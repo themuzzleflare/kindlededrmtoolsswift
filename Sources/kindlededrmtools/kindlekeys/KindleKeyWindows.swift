@@ -9,21 +9,16 @@
 import Foundation
 import OrderedCollections
 
-final class KindleKeyWindows {
-    
-}
-
-// MARK: - KindleKeyManager
-extension KindleKeyWindows: KindleKeyManager {
-    static func getUsername() -> Data {
+final class KindleKeyWindows: KindleKey {
+    override class func getUsername() -> Data {
         fatalError()
     }
     
-    static func getKindleInfoFiles() -> OrderedSet<String> {
+    override class func getKindleInfoFiles() -> OrderedSet<String> {
         fatalError()
     }
     
-    static func getDbFromFile(kinfoFile: String) -> OrderedDictionary<String, Data> {
+    override class func getDbFromFile(kinfoFile: String) throws -> OrderedDictionary<String, Data> {
         fatalError()
     }
 }

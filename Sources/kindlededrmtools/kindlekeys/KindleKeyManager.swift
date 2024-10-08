@@ -10,8 +10,8 @@ import Foundation
 import OrderedCollections
 
 protocol KindleKeyManager {
-    static func getUsername() -> Data
-    static func getKindleInfoFiles() -> OrderedSet<String>
-    static func getDbFromFile(kinfoFile: String) -> OrderedDictionary<String, Data>
+    func getUsername() -> Data
+    func getKindleInfoFiles() -> OrderedSet<String>
+    func getDbFromFile(kinfoFile: String) throws -> OrderedDictionary<String, Data>
 }
 #endif

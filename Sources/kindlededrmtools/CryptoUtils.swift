@@ -88,7 +88,38 @@ final class CryptoUtils {
     }
     
     static func pbkdf2hmacsha1(password: Data, salt: Data, iterationCount: Int, keyLength: Int) throws -> Data {
-        return try cryptoswiftPbkdf2hmacsha1(password: password, salt: salt, iterationCount: iterationCount, keyLength: keyLength)
+        if preferCryptoSwift {
+            return try cryptoswiftPbkdf2hmacsha1(password: password, salt: salt, iterationCount: iterationCount, keyLength: keyLength)
+        } else {
+            return try commoncryptoPbkdf2hmacsha1(password: password, salt: salt, iterationCount: iterationCount, keyLength: keyLength)
+        }
+    }
+    
+    private static func commoncryptoPbkdf2hmacsha1(password: Data, salt: Data, iterationCount: Int, keyLength: Int) throws -> Data {
+        var derivedKey = Data(count: keyLength)
+        let status = derivedKey.withUnsafeMutableBytes { derivedKeyBytes in
+            password.withUnsafeBytes { passwordBytes in
+                salt.withUnsafeBytes { saltBytes in
+                    CCKeyDerivationPBKDF(
+                        CCPBKDFAlgorithm(kCCPBKDF2),
+                        passwordBytes.bindMemory(to: Int8.self).baseAddress,
+                        password.count,
+                        saltBytes.bindMemory(to: UInt8.self).baseAddress,
+                        salt.count,
+                        CCPseudoRandomAlgorithm(kCCPRFHmacAlgSHA1),
+                        UInt32(iterationCount),
+                        derivedKeyBytes.bindMemory(to: UInt8.self).baseAddress,
+                        keyLength
+                    )
+                }
+            }
+        }
+        
+        guard status == kCCSuccess else {
+            throw QCCError(code: status)
+        }
+        
+        return derivedKey
     }
     
     private static func cryptoswiftPbkdf2hmacsha1(password: Data, salt: Data, iterationCount: Int, keyLength: Int) throws -> Data {
