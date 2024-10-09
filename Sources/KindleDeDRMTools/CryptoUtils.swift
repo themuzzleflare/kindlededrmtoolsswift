@@ -232,7 +232,7 @@ final class CryptoUtils {
     }
 }
 
-// MARK: - Convenience Functions
+// MARK: - Convenience Methods
 extension CryptoUtils {
     static func hmacsha256(_ key: Data, _ message: Data) throws -> Data {
         return try hmacsha256(key: key, message: message)

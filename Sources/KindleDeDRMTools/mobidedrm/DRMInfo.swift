@@ -17,16 +17,16 @@ struct DRMInfo {
     }
 }
 
-// MARK: - Convenience Initialisers/Methods
-extension DRMInfo {
-    init(_ key: Data?, _ pid: String) {
-        self.init(key: key, pid: pid)
-    }
-}
-
 // MARK: - CustomStringConvertible
 extension DRMInfo: CustomStringConvertible {
     var description: String {
         return "(key: \(key.formattedForOutput), pid: \(pid))"
+    }
+}
+
+// MARK: - Convenience Initialisers
+extension DRMInfo {
+    init(_ key: Data?, _ pid: String) {
+        self.init(key: key, pid: pid)
     }
 }

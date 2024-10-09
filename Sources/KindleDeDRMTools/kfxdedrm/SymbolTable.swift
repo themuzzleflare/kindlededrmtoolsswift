@@ -49,7 +49,7 @@ final class SymbolTable {
     }
 }
 
-// MARK: - Convenience Initialisers/Methods
+// MARK: - Convenience Methods
 extension SymbolTable {
     func findById(_ sid: Int) throws -> String {
         return try findById(sid: sid)

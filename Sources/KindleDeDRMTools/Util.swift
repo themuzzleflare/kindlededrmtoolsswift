@@ -7,9 +7,7 @@
 
 import Foundation
 import OrderedCollections
-#if canImport(CryptoSwift)
 import CryptoSwift
-#endif
 
 final class Util {
     static let copyright: String = "Copyright © 2024 Paul Tavitian"
@@ -142,11 +140,7 @@ final class Util {
     
     static func hexStringToData(hexString: String?) -> Data? {
         if preferCryptoSwift {
-#if canImport(CryptoSwift)
             return cryptoswiftHexStringToData(hexString: hexString)
-#else
-            return manualHexStringToData(hexString: hexString)
-#endif
         } else {
             return manualHexStringToData(hexString: hexString)
         }
@@ -183,7 +177,6 @@ final class Util {
         return data
     }
     
-#if canImport(CryptoSwift)
     private static func cryptoswiftHexStringToData(hexString: String?) -> Data? {
         guard let hexString else {
             return nil
@@ -191,15 +184,10 @@ final class Util {
         
         return .init(hex: hexString)
     }
-#endif
     
     static func dataToHexString(data: Data?) -> String {
         if preferCryptoSwift {
-#if canImport(CryptoSwift)
             return cryptoSwiftDataToHexString(data: data)
-#else
-            return manualDataToHexString(data: data)
-#endif
         } else {
             return manualDataToHexString(data: data)
         }
@@ -213,11 +201,9 @@ final class Util {
         return data.map { String(format: "%02hhx", $0) }.joined()
     }
     
-#if canImport(CryptoSwift)
     private static func cryptoSwiftDataToHexString(data: Data?) -> String {
         return data?.toHexString() ?? ""
     }
-#endif
     
     static func url(filePath: String) -> URL {
         if usePlatformChecks, #available(macOS 13.0, iOS 16.0, *) {
@@ -319,7 +305,7 @@ final class Util {
     }
 }
 
-// MARK: - Convenience Functions
+// MARK: - Convenience Methods
 extension Util {
     static func formatData(_ data: Data?) -> String {
         return formatData(data: data)

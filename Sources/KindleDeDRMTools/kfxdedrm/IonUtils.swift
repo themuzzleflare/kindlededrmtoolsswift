@@ -97,7 +97,7 @@ final class IonUtils {
         }
         
         let key: String = "V\(version.description)"
-        guard let obfuscationData: ObfuscationValue = ObfuscationTable.get[key] else {
+        guard let obfuscationData: ObfuscationValue = ObfuscationTable.shared[key] else {
             throw IonUtilsError.obfuscationValueNotFound(key: key)
         }
         
@@ -140,7 +140,7 @@ final class IonUtils {
         }
         
         let key: String = "V\(version.description)"
-        guard let obfuscationData: ObfuscationValue = ObfuscationTable.get[key] else {
+        guard let obfuscationData: ObfuscationValue = ObfuscationTable.shared[key] else {
             throw IonUtilsError.obfuscationValueNotFound(key: key)
         }
         
@@ -260,7 +260,7 @@ final class IonUtils {
         }
         
         let key: String = "V\(version.description)"
-        guard let obfuscationData: ObfuscationValue = ObfuscationTable.get[key] else {
+        guard let obfuscationData: ObfuscationValue = ObfuscationTable.shared[key] else {
             throw IonUtilsError.obfuscationValueNotFound(key: key)
         }
         

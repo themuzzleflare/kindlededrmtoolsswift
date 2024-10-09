@@ -10,4 +10,11 @@ enum SystemProfilerStorageDriveDataTypes: String, CaseIterable {
     case spSerialATADataType = "SPSerialATADataType"
     case spNVMeDataType = "SPNVMeDataType"
 }
+
+// MARK: - CustomStringConvertible
+extension SystemProfilerStorageDriveDataTypes: CustomStringConvertible {
+    var description: String {
+        return rawValue
+    }
+}
 #endif

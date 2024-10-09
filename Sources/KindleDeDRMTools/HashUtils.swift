@@ -155,7 +155,7 @@ final class HashUtils {
     }
 }
 
-// MARK: - Convenience Functions
+// MARK: - Convenience Methods
 extension HashUtils {
     static func sha256(_ data: [Data?]) -> Data {
         return sha256(data: data)

@@ -23,7 +23,7 @@ struct SymbolToken {
 
 // MARK: - Convenience Initialisers
 extension SymbolToken {
-    init(_ text: String = "", _ sid: Int = 0) throws {
+    init(_ text: String, _ sid: Int) throws {
         try self.init(text: text, sid: sid)
     }
 }

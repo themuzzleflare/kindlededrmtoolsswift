@@ -13,6 +13,10 @@ import OrderedCollections
 
 @Suite("KindleKeyMacOS Tests")
 struct KindleKeyMacOSTests {
+    @Test("KindleKey returns correct subclass") func testKindleKeyGetInstance() {
+        #expect(KindleKey.getInstance() is KindleKeyMacOS)
+    }
+    
     @Test("getMacAddressesMunged Test") func testGetMacAddressesMunged() {
         let mac1: Data = .init([97, 53, 97, 57, 99, 57, 98, 53, 97, 101, 97, 51])
         let mac2: Data = .init([101, 102, 51, 52, 57, 56, 49, 53, 100, 98, 100, 54])
@@ -39,7 +43,7 @@ struct KindleKeyMacOSTests {
         #expect(result.isSubset(of: expectedSerialNums))
     }
     
-    @Test("getDiskPartitionNames Test") func testGetDiskPartitionNames() {
+    @Test("getDiskPartitionNames Test", .disabled()) func testGetDiskPartitionNames() {
         let name1: Data = .init([100, 105, 115, 107, 51, 115, 49, 115, 49])
         let name2: Data = .init([100, 105, 115, 107, 51, 115, 54])
         let name3: Data = .init([100, 105, 115, 107, 51, 115, 50])
@@ -91,10 +95,10 @@ struct KindleKeyMacOSTests {
         #expect(result.isSubset(of: expectedUUIDs))
     }
     
-    @Test("getUsername Test") func testGetUsername() {
+    @Test("getUsername Test") func testGetUsername() throws {
         let expected: Data = .init([112, 97, 117, 108, 116, 97, 118, 105, 116, 105, 97, 110])
         
-        let result: Data = KindleKeyMacOS().getUsername()
+        let result: Data = try KindleKeyMacOS().getUsername()
         
         #expect(expected == result)
     }

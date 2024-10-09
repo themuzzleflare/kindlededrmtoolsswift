@@ -17,16 +17,16 @@ struct PIDMetaInfo {
     }
 }
 
-// MARK: - Convenience Initialisers/Methods
-extension PIDMetaInfo {
-    init(_ rec209: Data?, _ token: Data?) {
-        self.init(rec209: rec209, token: token)
-    }
-}
-
 // MARK: - CustomStringConvertible
 extension PIDMetaInfo: CustomStringConvertible {
     var description: String {
         return "(rec209: \(rec209.formattedForOutput), token: \(token.formattedForOutput))"
+    }
+}
+
+// MARK: - Convenience Initialisers
+extension PIDMetaInfo {
+    init(_ rec209: Data?, _ token: Data?) {
+        self.init(rec209: rec209, token: token)
     }
 }

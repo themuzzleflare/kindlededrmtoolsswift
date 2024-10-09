@@ -16,7 +16,7 @@ extension SymbolTokenError: LocalizedError {
     var errorDescription: String? {
         switch self {
         case .missingTextAndSid:
-            return "Symbol token must have Text or SID"
+            return "Symbol token must have either Text or SID"
         }
     }
 }

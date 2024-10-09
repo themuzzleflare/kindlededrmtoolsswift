@@ -7,4 +7,9 @@
 
 import Foundation
 
-typealias KFXDecryptedDictionary = Dictionary<String, Data>
+#if canImport(OrderedCollections)
+import OrderedCollections
+typealias KFXDecryptedDictionary = OrderedDictionary<String, Data>
+#else
+typealias KFXDecryptedDictionary = [String: Data]
+#endif

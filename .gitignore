@@ -8,4 +8,5 @@ DerivedData/
 .netrc
 
 **/KindleKeyMacOSTests.swift
+**/KindleKeyWindowsTests.swift
 **/DeDRMTests.swift

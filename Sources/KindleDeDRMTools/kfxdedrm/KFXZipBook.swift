@@ -10,7 +10,7 @@ import OrderedCollections
 import ZIPFoundation
 
 final class KFXZipBook {
-    private static let version: String = "2.0"
+    private static let version: String = "3.0"
     
     private let infile: String
     
@@ -77,7 +77,7 @@ final class KFXZipBook {
                     Debug.print("Account Secret:", accountSecret)
                     
                     do {
-                        let voucher: DRMIonVoucher = try .init(voucherData, dsn, accountSecret)
+                        let voucher: DRMIonVoucher = try .init(voucherdata: voucherData, dsn: dsn, secret: accountSecret)
                         try voucher.parse()
                         try voucher.decryptVoucher()
                         
@@ -170,14 +170,14 @@ extension KFXZipBook: BookManager {
             
             if infileEntry.type == .directory {
                 Debug.print("This entry is a directory.")
-                                
+                
                 try FileManager.default.createDirectory(at: url, withIntermediateDirectories: true)
                 
                 Debug.print("Created directory:", Util.urlPath(url: url, percentEncoded: false))
                 
                 continue
             }
-                        
+            
             if let decryptedContent = decrypted[infileEntry.path] {
                 try decryptedContent.write(to: url)
                 

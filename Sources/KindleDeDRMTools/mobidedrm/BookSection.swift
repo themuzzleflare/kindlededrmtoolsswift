@@ -19,7 +19,14 @@ struct BookSection {
     }
 }
 
-// MARK: - Convenience Initialisers/Methods
+// MARK: - CustomStringConvertible
+extension BookSection: CustomStringConvertible {
+    var description: String {
+        return "(offset: \(offset.description), flags: \(flags.description), val: \(val.description))"
+    }
+}
+
+// MARK: - Convenience Initialisers
 extension BookSection {
     init(_ offset: Int, _ flags: Int, _ val: Int) {
         self.init(offset: offset, flags: flags, val: val)
@@ -31,12 +38,5 @@ extension BookSection {
     
     init(_ offset: Int, _ flags: UInt8, _ val: Int) {
         self.init(offset: offset, flags: flags, val: val)
-    }
-}
-
-// MARK: - CustomStringConvertible
-extension BookSection: CustomStringConvertible {
-    var description: String {
-        return "(offset: \(offset.description), flags: \(flags.description), val: \(val.description))"
     }
 }

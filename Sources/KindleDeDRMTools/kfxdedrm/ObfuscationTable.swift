@@ -6,11 +6,18 @@
 //
 
 import Foundation
+#if canImport(OrderedCollections)
+import OrderedCollections
+#endif
 
-typealias ObfuscationTable = Dictionary<String, ObfuscationValue>
+#if canImport(OrderedCollections)
+typealias ObfuscationTable = OrderedDictionary<String, ObfuscationValue>
+#else
+typealias ObfuscationTable = [String: ObfuscationValue]
+#endif
 
 extension ObfuscationTable {
-    static let get: ObfuscationTable = {
+    static let shared: ObfuscationTable = {
         var table: ObfuscationTable = .init()
         
         table["V1"] = .init(0x00)

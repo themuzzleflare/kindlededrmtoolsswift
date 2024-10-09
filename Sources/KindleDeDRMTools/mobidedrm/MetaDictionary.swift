@@ -6,9 +6,12 @@
 //
 
 import Foundation
+#if canImport(OrderedCollections)
 import OrderedCollections
-
 typealias MetaDictionary = OrderedDictionary<Int, Data>
+#else
+typealias MetaDictionary = [Int: Data]
+#endif
 
 extension MetaDictionary {
     var description: String {

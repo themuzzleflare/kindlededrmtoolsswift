@@ -17,6 +17,13 @@ struct ObfuscationValue {
     }
 }
 
+// MARK: - CustomStringConvertible
+extension ObfuscationValue: CustomStringConvertible {
+    var description: String {
+        return "(magicNumber: \(magicNumber.description), word: \(word.formattedForOutput))"
+    }
+}
+
 // MARK: - Convenience Initialisers
 extension ObfuscationValue {
     init(_ magicNumber: Int, _ word: Data? = nil) {

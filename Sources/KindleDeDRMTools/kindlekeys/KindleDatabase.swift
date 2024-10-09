@@ -6,9 +6,8 @@
 //
 
 import Foundation
-import OrderedCollections
 
-typealias KindleDatabase = Dictionary<String, String>
+typealias KindleDatabase = [String: String]
 
 extension KindleDatabase {
     private static let kindleAccountTokensKey: String = "kindle.account.tokens"

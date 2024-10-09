@@ -5,7 +5,6 @@
 //  Created by Paul Tavitian on 7/9/2024.
 //
 
-import Foundation
 import CommonCrypto
 
 /// Wraps `CCCryptorStatus` for use in Swift.

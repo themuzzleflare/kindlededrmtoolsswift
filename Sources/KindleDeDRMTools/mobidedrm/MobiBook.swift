@@ -9,7 +9,7 @@ import Foundation
 import OrderedCollections
 
 final class MobiBook {
-    private static let version: String = "3.0.0"
+    private static let version: String = "4.0.0"
     
     private var dataFile: Data
     private var header: Data

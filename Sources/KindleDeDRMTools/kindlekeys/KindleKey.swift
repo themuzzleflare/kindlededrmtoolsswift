@@ -16,14 +16,16 @@ class KindleKey: KindleKeyManager {
         return KindleKeyMacOS()
 #elseif os(Windows)
         return KindleKeyWindows()
+#else
+        return .init()
 #endif
     }
     
-    func getUsername() -> Data {
+    func getUsername() throws -> Data {
         fatalError("Must be overridden")
     }
     
-    func getKindleInfoFiles() -> OrderedSet<String> {
+    func getKindleInfoFiles() throws -> OrderedSet<String> {
         fatalError("Must be overridden")
     }
     
@@ -34,12 +36,14 @@ class KindleKey: KindleKeyManager {
     static func unprotectHeaderData(encryptedData: Data) throws -> Data {
         Debug.print("Encrypted data:", encryptedData.formattedForOutput)
         
-        guard let passwdData: Data = "header_key_data".data(using: .ascii) else {
-            throw KindleKeyError.dataFromStringFailed(string: "header_key_data")
+        let headerKeyDataStr: String = "header_key_data"
+        guard let passwdData: Data = headerKeyDataStr.data(using: .ascii) else {
+            throw KindleKeyError.dataFromStringFailed(string: headerKeyDataStr)
         }
         
-        guard let salt: Data = "HEADER.2011".data(using: .ascii) else {
-            throw KindleKeyError.dataFromStringFailed(string: "HEADER.2011")
+        let header2011Str: String = "HEADER.2011"
+        guard let salt: Data = header2011Str.data(using: .ascii) else {
+            throw KindleKeyError.dataFromStringFailed(string: header2011Str)
         }
         
         let keyIv: Data = try CryptoUtils.pbkdf2hmacsha1(password: passwdData, salt: salt, iterationCount: 128, keyLength: 256)
@@ -62,13 +66,13 @@ class KindleKey: KindleKeyManager {
         if n == 2 {
             return [2]
         } else if n < 2 {
-            return []
+            return .init()
         }
         
         var primeList: [Int] = [2]
         
         for potentialPrime in stride(from: 3, through: n, by: 2) {
-            var isItPrime = true
+            var isItPrime: Bool = true
             
             for prime in primeList {
                 if potentialPrime % prime == 0 {
@@ -85,17 +89,18 @@ class KindleKey: KindleKeyManager {
         return primeList
     }
     
-    func kindleKeys(files: OrderedSet<String>) throws -> OrderedSet<KindleDatabase> {
+    final func kindleKeys(files: OrderedSet<String>) throws -> OrderedSet<KindleDatabase> {
         var files: OrderedSet<String> = files
         
         if Util.practicalIsEmpty(set: files) {
-            files = getKindleInfoFiles()
+            files = try getKindleInfoFiles()
         }
         
         var keys: OrderedSet<KindleDatabase> = .init()
         
         for file in files {
             let key: OrderedDictionary<String, Data> = try getDbFromFile(kinfoFile: file)
+            
             if !key.isEmpty {
                 var nKey: KindleDatabase = .init()
                 
@@ -113,7 +118,7 @@ class KindleKey: KindleKeyManager {
         return keys
     }
     
-    func getKeyThrowing(outpath: String, files: OrderedSet<String>? = nil) throws {
+    final func getKeyThrowing(outpath: String, files: OrderedSet<String>? = nil) throws {
         // Check if files list is null, and initialise it if necessary
         let files: OrderedSet<String> = Util.sanitiseSet(files)
         

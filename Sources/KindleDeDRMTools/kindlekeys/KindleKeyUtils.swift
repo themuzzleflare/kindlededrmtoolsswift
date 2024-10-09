@@ -91,7 +91,7 @@ final class KindleKeyUtils {
     }
 }
 
-// MARK: - Convenience Functions
+// MARK: - Convenience Methods
 extension KindleKeyUtils {
     static func encode(_ data: Data, _ charMap: Data) -> Data {
         return encode(data: data, charMap: charMap)

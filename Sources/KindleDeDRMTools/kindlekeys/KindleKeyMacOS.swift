@@ -24,7 +24,9 @@ final class KindleKeyMacOS: KindleKey {
         var items: [String] = .init()
         let idStrings: OrderedSet<Data> = KindleKeyMacOS.getIdStrings()
         
-        print("trying username", getUsername().formattedForOutput, "on file", kinfoFile)
+        let username: Data = try getUsername()
+        
+        print("trying username", username.formattedForOutput, "on file", kinfoFile)
         
         var foundIdString: Data?
         
@@ -58,7 +60,7 @@ final class KindleKeyMacOS: KindleKey {
                 let regex: NSRegularExpression = try .init(pattern: pattern, options: .caseInsensitive)
                 
                 let range: NSRange = .init(cleartextString.startIndex..., in: cleartextString)
-                let matches: [NSTextCheckingResult] = regex.matches(in: cleartextString, options: [], range: range)
+                let matches: [NSTextCheckingResult] = regex.matches(in: cleartextString, range: range)
                 
                 // Initialize variables
                 var version: Int = 0
@@ -83,11 +85,13 @@ final class KindleKeyMacOS: KindleKey {
                     }
                 }
                 
-                var cud: CryptUnprotectData! = nil
-                var key: Data! = nil
+                let cud: CryptUnprotectData!
+                let key: Data!
                 
                 if version == 5 {
                     Debug.print("version 5")
+                    
+                    key = nil
                     
                     guard let buildInt: Int = .init(build) else {
                         throw KindleKeyError.stringToIntFailed(string: build)
@@ -109,9 +113,11 @@ final class KindleKeyMacOS: KindleKey {
                         throw KindleKeyError.dataFromStringFailed(string: concatenatedString)
                     }
                     
-                    cud = try .init(entropy: entropy, idString: idString, username: getUsername())
+                    cud = try .init(entropy: entropy, idString: idString, username: username)
                 } else if version == 6 {
                     Debug.print("version 6")
+                    
+                    cud = nil
                     
                     guard let buildInt: Int = .init(build) else {
                         throw KindleKeyError.stringToIntFailed(string: build)
@@ -128,16 +134,18 @@ final class KindleKeyMacOS: KindleKey {
                         throw KindleKeyError.dataFromStringFailed(string: concatenatedString)
                     }
                     
-                    let sp: Data = getUsername() + "+@#$%+".data(using: .utf8)! + idString
-                    let passwd: Data = KindleKeyUtils.encode(HashUtils.sha256(sp), KindleKeyMacOS.charMap5)
+                    let sp: Data = username + "+@#$%+".data(using: .utf8)! + idString
+                    let passwd: Data = KindleKeyUtils.encode(data: HashUtils.sha256(sp), charMap: KindleKeyMacOS.charMap5)
                     
-                    let localKey: Data = try CryptoUtils.pbkdf2hmacsha1(passwd, salt, 10000, 0x400)
+                    let localKey: Data = try CryptoUtils.pbkdf2hmacsha1(password: passwd, salt: salt, iterationCount: 10000, keyLength: 0x400)
                     key = .init(localKey.prefix(32))
                     
                     Debug.print("salt:", salt.formattedForOutput)
                     Debug.print("sp:", sp.formattedForOutput)
                     Debug.print("passwd:", passwd.formattedForOutput)
                     Debug.print("key:", key.formattedForOutput)
+                } else {
+                    throw KindleKeyError.unknownVersion(version: version)
                 }
                 
                 while !items.isEmpty {
@@ -148,14 +156,14 @@ final class KindleKeyMacOS: KindleKey {
                         throw KindleKeyError.dataFromStringFailed(string: itemStr)
                     }
                     
-                    let srcntItemSubstringStartingIndex = item.index(item.startIndex, offsetBy: 34)
+                    let srcntItemSubstringStartingIndex: String.Index = item.index(item.startIndex, offsetBy: 34)
                     let srcntItemSubstring: String = .init(item[srcntItemSubstringStartingIndex...])
                     
                     guard let srcntItemSubstrData: Data = srcntItemSubstring.data(using: .utf8) else {
                         throw KindleKeyError.dataFromStringFailed(string: srcntItemSubstring)
                     }
                     
-                    let srcnt: Data = KindleKeyUtils.decode(srcntItemSubstrData, KindleKeyMacOS.charMap5)
+                    let srcnt: Data = KindleKeyUtils.decode(data: srcntItemSubstrData, map: KindleKeyMacOS.charMap5)
                     
                     guard let srcntString: String = String(data: srcnt, encoding: .utf8) else {
                         throw KindleKeyError.stringFromDataFailed(data: srcnt)
@@ -169,7 +177,7 @@ final class KindleKeyMacOS: KindleKey {
                     Debug.print("srcnt:", srcnt.formattedForOutput)
                     Debug.print("rcnt:", rcnt.description)
                     
-                    var edlst: Data = .init()
+                    var encdata: Data = .init()
                     
                     for _ in 0..<rcnt {
                         let record: String = items.removeFirst()
@@ -178,10 +186,10 @@ final class KindleKeyMacOS: KindleKey {
                             throw KindleKeyError.dataFromStringFailed(string: record)
                         }
                         
-                        edlst.append(recordData)
+                        encdata.append(recordData)
                     }
                     
-                    var keyname: String = "unknown"
+                    var keyName: String = "unknown"
                     
                     for name in KindleDatabase.keyBytesList {
                         let encodedHash: Data = KindleKeyUtils.encodeHash(data: name, charMap: CharMaps.testMap8)
@@ -191,27 +199,24 @@ final class KindleKeyMacOS: KindleKey {
                                 throw KindleKeyError.stringFromDataFailed(data: name)
                             }
                             
-                            keyname = keynameStr
+                            keyName = keynameStr
                             break
                         }
                     }
                     
-                    if keyname == "unknown" {
+                    if keyName == "unknown" {
                         guard let keynameStr: String = .init(data: keyHash, encoding: .utf8) else {
                             throw KindleKeyError.stringFromDataFailed(data: keyHash)
                         }
                         
-                        keyname = keynameStr
+                        keyName = keynameStr
                     }
                     
-                    Debug.print("keyName:", keyname)
-                    
-                    var encdata: Data = edlst
-                    
+                    Debug.print("keyName:", keyName)
                     Debug.print("encdata:", encdata.formattedForOutput)
                     
                     let primesList: [Int] = KindleKey.primes(n: encdata.count / 3)
-                    let noffset: Int = encdata.count - primesList.last!
+                    let noffset: Int = encdata.count - (primesList.last ?? 0)
                     
                     let pfx: Data = .init(encdata.prefix(noffset))
                     let suffix: Data = encdata.subdata(in: noffset..<encdata.count)
@@ -220,17 +225,17 @@ final class KindleKeyMacOS: KindleKey {
                     
                     Debug.print("encdata:", encdata.formattedForOutput)
                     
-                    var clearText: Data?
+                    let clearText: Data!
                     
                     if version == 5 {
                         Debug.print("version 5")
                         
-                        encryptedValue = KindleKeyUtils.decode(encdata, CharMaps.testMap8)
-                        clearText = try cud.decrypt(encryptedValue)
-                    } else if version == 6 {
+                        encryptedValue = KindleKeyUtils.decode(data: encdata, map: CharMaps.testMap8)
+                        clearText = try cud.decrypt(encryptedData: encryptedValue)
+                    } else {
                         Debug.print("version 6")
                         
-                        let ivCiphertext: Data = KindleKeyUtils.decode(encdata, CharMaps.testMap8)
+                        let ivCiphertext: Data = KindleKeyUtils.decode(data: encdata, map: CharMaps.testMap8)
                         let iv: Data = Data(ivCiphertext.prefix(12)) + Data([0x00, 0x00, 0x00, 0x02])
                         let ciphertext: Data = ivCiphertext.subdata(in: 12..<ivCiphertext.count)
                         
@@ -238,17 +243,17 @@ final class KindleKeyMacOS: KindleKey {
                         Debug.print("iv:", iv.formattedForOutput)
                         Debug.print("ciphertext:", ciphertext.formattedForOutput)
                         
-                        let decrypted: Data = try CryptoUtils.aesctrdecrypt(key, iv, ciphertext)
+                        let decrypted: Data = try CryptoUtils.aesctrdecrypt(key: key, iv: iv, cipherText: ciphertext)
                         
                         Debug.print("decrypted:", decrypted.formattedForOutput)
                         
-                        clearText = KindleKeyUtils.decode(decrypted, KindleKeyMacOS.charMap5)
+                        clearText = KindleKeyUtils.decode(data: decrypted, map: KindleKeyMacOS.charMap5)
                         
                         Debug.print("clearText:", clearText.formattedForOutput)
                     }
                     
                     if let clearText, !clearText.isEmpty {
-                        db[keyname] = clearText
+                        db[keyName] = clearText
                     }
                 }
                 
@@ -257,26 +262,47 @@ final class KindleKeyMacOS: KindleKey {
                     break
                 }
             } catch {
-                print("Error occurred while decrypting key file '\(kinfoFile)' with IDString '\(idString.formattedForOutput)' and UserName '\(getUsername().formattedForOutput)': \(error.localizedDescription)")
+                print("Error occurred while decrypting key file '\(kinfoFile)' with IDString '\(idString.formattedForOutput)' and UserName '\(username.formattedForOutput)': \(error.localizedDescription)")
             }
         }
         
         if let foundIdString {
             db["IDString"] = foundIdString
-            db["UserName"] = getUsername()
+            db["UserName"] = username
             
-            print("Decrypted key file using IDString '\(foundIdString.formattedForOutput)' and UserName '\(getUsername().formattedForOutput)'")
+            print("Decrypted key file using IDString '\(foundIdString.formattedForOutput)' and UserName '\(username.formattedForOutput)'")
         } else {
+            db.removeAll()
             
+            print("Couldn't decrypt file.")
         }
         
         return db
     }
     
-    override func getUsername() -> Data {
-        guard let username: String = ProcessInfo.processInfo.environment["USER"],
-              let usernameData = username.data(using: .utf8) else {
-            return .init()
+    override func getUsername() throws -> Data {
+        return try getUsernameViaFileManager()
+    }
+    
+    private func getUsernameViaFileManager() throws -> Data {
+        let username: String = NSUserName()
+        
+        guard let usernameData = username.data(using: .utf8) else {
+            throw KindleKeyError.dataFromStringFailed(string: username)
+        }
+        
+        return usernameData
+    }
+    
+    private func getUsernameViaEnvironment() throws -> Data {
+        let envKey: String = "USER"
+        
+        guard let username: String = ProcessInfo.processInfo.environment[envKey] else {
+            throw KindleKeyError.environmentVariableNotSet(string: envKey)
+        }
+        
+        guard let usernameData: Data = username.data(using: .utf8) else {
+            throw KindleKeyError.dataFromStringFailed(string: username)
         }
         
         Debug.print("Username:", usernameData.formattedForOutput)
@@ -284,12 +310,24 @@ final class KindleKeyMacOS: KindleKey {
         return usernameData
     }
     
-    override func getKindleInfoFiles() -> OrderedSet<String> {
+    private func getHomeDirectoryViaFileManager() -> String {
+        return NSHomeDirectory()
+    }
+    
+    private func getHomeDirectoryViaEnvironment() throws -> String {
+        let envKey: String = "HOME"
+        
+        guard let home: String = ProcessInfo.processInfo.environment[envKey] else {
+            throw KindleKeyError.environmentVariableNotSet(string: envKey)
+        }
+        
+        return home
+    }
+    
+    override func getKindleInfoFiles() throws -> OrderedSet<String> {
         var kInfoFiles: OrderedSet<String> = .init()
         
-        guard let home: String = ProcessInfo.processInfo.environment["HOME"] else {
-            return kInfoFiles
-        }
+        let home: String = getHomeDirectoryViaFileManager()
         
         let pathsToCheck: OrderedSet<KindlePath> = KindlePath.getKindlePaths(homeDir: home)
         
@@ -603,30 +641,30 @@ extension KindleKeyMacOS {
         
         init(entropy: Data, idString: Data, username: Data) throws {
             // Step 1: Concatenate username, "+@#$%+", and idString
-            let usernameData = username
-            let separator = "+@#$%+".data(using: .utf8)!
-            let sp = usernameData + separator + idString
+            let usernameData: Data = username
+            let separator: Data = "+@#$%+".data(using: .utf8)!
+            let sp: Data = usernameData + separator + idString
             
             // Step 2: Compute SHA-256 hash of the concatenated data
-            let sha256Hash = HashUtils.sha256(data: sp)
+            let sha256Hash: Data = HashUtils.sha256(data: sp)
             
             // Step 3: Encode the hash using a custom method and character map
-            let passwdData = KindleKeyUtils.encode(data: sha256Hash, charMap: charMap2)
+            let passwdData: Data = KindleKeyUtils.encode(data: sha256Hash, charMap: charMap2)
             
             // Step 4: Use PBKDF2 with HMAC SHA-1 to derive the key and IV
-            let salt = entropy
-            let keyLength = 48 // 32 bytes for key + 16 bytes for IV
-            let iterations = 0x800 // 2048 iterations
-            let keyIv = try CryptoUtils.pbkdf2hmacsha1(password: passwdData, salt: salt, iterationCount: iterations, keyLength: keyLength)
+            let salt: Data = entropy
+            let keyLength: Int = 48 // 32 bytes for key + 16 bytes for IV
+            let iterations: Int = 0x800 // 2048 iterations
+            let keyIv: Data = try CryptoUtils.pbkdf2hmacsha1(password: passwdData, salt: salt, iterationCount: iterations, keyLength: keyLength)
             
             // Step 5: Split the derived key into the AES key and IV
-            self.key = keyIv.subdata(in: 0..<32)
-            self.iv = keyIv.subdata(in: 32..<48)
+            key = keyIv.subdata(in: 0..<32)
+            iv = keyIv.subdata(in: 32..<48)
         }
         
-        func decrypt(_ encryptedData: Data) throws -> Data {
+        func decrypt(encryptedData: Data) throws -> Data {
             // Step 6: Decrypt the data using AES/CBC/PKCS5Padding
-            let decryptedData = try CryptoUtils.aescbcdecrypt(key: self.key, iv: self.iv, cipherText: encryptedData)
+            let decryptedData: Data = try CryptoUtils.aescbcdecrypt(key: key, iv: iv, cipherText: encryptedData)
             
             // Step 7: Decode the decrypted data using a custom method and character map
             return KindleKeyUtils.decode(data: decryptedData, map: charMap2)

@@ -280,7 +280,7 @@ final class KindlePID {
     }
 }
 
-// MARK: - Convenience Functions
+// MARK: - Convenience Methods
 extension KindlePID {
     private static func getTwoBitsFromBitField(_ bitField: Data, _ offset: Int) -> Int {
         return getTwoBitsFromBitField(bitField: bitField, offset: offset)

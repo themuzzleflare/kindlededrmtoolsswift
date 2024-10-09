@@ -46,7 +46,7 @@ final class DataOutputStream {
     }
 }
 
-// MARK: - Convenience Initialisers/Methods
+// MARK: - Convenience Methods
 extension DataOutputStream {
     func write(_ byte: UInt8) {
         write(byte: byte)

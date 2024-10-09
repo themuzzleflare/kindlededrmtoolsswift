@@ -17,7 +17,8 @@ let package = Package(
         .package(url: "https://github.com/apple/swift-collections.git", .upToNextMajor(from: "1.1.4")),
         .package(url: "https://github.com/themuzzleflare/kfxtablesswift.git", branch: "main"),
         .package(url: "https://github.com/weichsel/ZIPFoundation.git", .upToNextMajor(from: "0.9.19")),
-        .package(url: "https://github.com/krzyzanowskim/CryptoSwift.git", .upToNextMajor(from: "1.8.3"))
+        .package(url: "https://github.com/krzyzanowskim/CryptoSwift.git", .upToNextMajor(from: "1.8.3")),
+        .package(url: "https://github.com/themuzzleflare/OSInfo.git", .upToNextMajor(from: "1.0.0"))
     ],
     targets: [
         .target(
@@ -26,7 +27,8 @@ let package = Package(
                 .product(name: "OrderedCollections", package: "swift-collections"),
                 .product(name: "KFXTables", package: "kfxtablesswift"),
                 "ZIPFoundation",
-                "CryptoSwift"
+                "CryptoSwift",
+                "OSInfo"
             ]
         ),
         .testTarget(

@@ -10,16 +10,16 @@ import Foundation
 import OrderedCollections
 
 final class KindleKeyWindows: KindleKey {
-    override class func getUsername() -> Data {
-        fatalError()
+    override func getUsername() throws -> Data {
+        fatalError("Not implemented")
     }
     
-    override class func getKindleInfoFiles() -> OrderedSet<String> {
-        fatalError()
+    override func getKindleInfoFiles() throws -> OrderedSet<String> {
+        fatalError("Not implemented")
     }
     
-    override class func getDbFromFile(kinfoFile: String) throws -> OrderedDictionary<String, Data> {
-        fatalError()
+    override func getDbFromFile(kinfoFile: String) throws -> OrderedDictionary<String, Data> {
+        fatalError("Not implemented")
     }
 }
 #endif
