@@ -8,9 +8,6 @@
 import Foundation
 #if canImport(OrderedCollections)
 import OrderedCollections
-#endif
-
-#if canImport(OrderedCollections)
 typealias ObfuscationTable = OrderedDictionary<String, ObfuscationValue>
 #else
 typealias ObfuscationTable = [String: ObfuscationValue]
