@@ -293,7 +293,7 @@ extension KindleDatabase {
     }
 }
 
-// MARK: - Convenience Initialisers/Methods
+// MARK: - Convenience Initialisers
 extension KindleDatabase {
     init(_ infile: String) throws {
         try self.init(infile: infile)

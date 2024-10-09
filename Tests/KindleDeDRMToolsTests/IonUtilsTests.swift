@@ -49,7 +49,9 @@ struct IonUtilsTests {
         
         let returnValue: Data = .init(returnBytes.map({ .init(bitPattern: $0) }))
         
-        #expect(returnValue == IonUtils.processV9708(st: IonUtilsTests.bytes))
+        let result: Data = IonUtils.processV9708(st: IonUtilsTests.bytes)
+        
+        #expect(returnValue == result)
     }
     
     @Test func testProcessV1031() {
@@ -57,7 +59,9 @@ struct IonUtilsTests {
         
         let returnValue: Data = .init(returnBytes.map({ .init(bitPattern: $0) }))
         
-        #expect(returnValue == IonUtils.processV1031(st: IonUtilsTests.bytes))
+        let result: Data = IonUtils.processV1031(st: IonUtilsTests.bytes)
+        
+        #expect(returnValue == result)
     }
     
     @Test func testProcessV2069() {
@@ -65,7 +69,9 @@ struct IonUtilsTests {
         
         let returnValue: Data = .init(returnBytes.map({ .init(bitPattern: $0) }))
         
-        #expect(returnValue == IonUtils.processV2069(st: IonUtilsTests.bytes))
+        let result: Data = IonUtils.processV2069(st: IonUtilsTests.bytes)
+        
+        #expect(returnValue == result)
     }
     
     @Test func testProcessV9041() {
@@ -73,7 +79,9 @@ struct IonUtilsTests {
         
         let returnValue: Data = .init(returnBytes.map({ .init(bitPattern: $0) }))
         
-        #expect(returnValue == IonUtils.processV9041(st: IonUtilsTests.bytes))
+        let result: Data = IonUtils.processV9041(st: IonUtilsTests.bytes)
+        
+        #expect(returnValue == result)
     }
     
     @Test func testProcessV3646() {
@@ -81,7 +89,9 @@ struct IonUtilsTests {
         
         let returnValue: Data = .init(returnBytes.map({ .init(bitPattern: $0) }))
         
-        #expect(returnValue == IonUtils.processV3646(st: IonUtilsTests.bytes))
+        let result: Data = IonUtils.processV3646(st: IonUtilsTests.bytes)
+        
+        #expect(returnValue == result)
     }
     
     @Test func testProcessV6052() {
@@ -89,7 +99,9 @@ struct IonUtilsTests {
         
         let returnValue: Data = .init(returnBytes.map({ .init(bitPattern: $0) }))
         
-        #expect(returnValue == IonUtils.processV6052(st: IonUtilsTests.bytes))
+        let result: Data = IonUtils.processV6052(st: IonUtilsTests.bytes)
+        
+        #expect(returnValue == result)
     }
     
     @Test func testProcessV9479() {
@@ -97,7 +109,9 @@ struct IonUtilsTests {
         
         let returnValue: Data = .init(returnBytes.map({ .init(bitPattern: $0) }))
         
-        #expect(returnValue == IonUtils.processV9479(st: IonUtilsTests.bytes))
+        let result: Data = IonUtils.processV9479(st: IonUtilsTests.bytes)
+        
+        #expect(returnValue == result)
     }
     
     @Test func testProcessV9888() {
@@ -105,7 +119,9 @@ struct IonUtilsTests {
         
         let returnValue: Data = .init(returnBytes.map({ .init(bitPattern: $0) }))
         
-        #expect(returnValue == IonUtils.processV9888(st: IonUtilsTests.bytes))
+        let result: Data = IonUtils.processV9888(st: IonUtilsTests.bytes)
+        
+        #expect(returnValue == result)
     }
     
     @Test func testProcessV4648() {
@@ -113,7 +129,9 @@ struct IonUtilsTests {
         
         let returnValue: Data = .init(returnBytes.map({ .init(bitPattern: $0) }))
         
-        #expect(returnValue == IonUtils.processV4648(st: IonUtilsTests.bytes))
+        let result: Data = IonUtils.processV4648(st: IonUtilsTests.bytes)
+        
+        #expect(returnValue == result)
     }
     
     @Test func testProcessV5683() {
@@ -121,6 +139,8 @@ struct IonUtilsTests {
         
         let returnValue: Data = .init(returnBytes.map({ .init(bitPattern: $0) }))
         
-        #expect(returnValue == IonUtils.processV5683(st: IonUtilsTests.bytes))
+        let result: Data = IonUtils.processV5683(st: IonUtilsTests.bytes)
+        
+        #expect(returnValue == result)
     }
 }

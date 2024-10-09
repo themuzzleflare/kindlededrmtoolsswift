@@ -13,8 +13,9 @@ import OrderedCollections
 
 @Suite("KindleKeyMacOS Tests")
 struct KindleKeyMacOSTests {
-    @Test("KindleKey returns correct subclass") func testKindleKeyGetInstance() {
-        #expect(KindleKey.getInstance() is KindleKeyMacOS)
+    @Test("KindleKey getManager Test") func testKindleKeyGetManager() throws {
+        let instance: some KindleKeyManager = try KindleKey.getManager()
+        #expect(instance is KindleKeyMacOS)
     }
     
     @Test("getMacAddressesMunged Test") func testGetMacAddressesMunged() {
@@ -26,7 +27,7 @@ struct KindleKeyMacOSTests {
         let mac6: Data = .init([57, 51, 97, 100, 56, 102, 49, 48, 55, 56, 101, 53])
         let mac7: Data = .init([57, 51, 97, 100, 56, 102, 49, 48, 55, 56, 101, 49])
         
-        let expectedMacs: OrderedSet<Data> = [mac1, mac2, mac3, mac4, mac5, mac6, mac7]
+        let expectedMacs: Set<Data> = [mac1, mac2, mac3, mac4, mac5, mac6, mac7]
         
         let result: OrderedSet<Data> = KindleKeyMacOS.getMacAddressesMunged()
         
@@ -36,7 +37,7 @@ struct KindleKeyMacOSTests {
     @Test("getVolumeSerialNumbers Test") func testGetVolumeSerialNumbers() {
         let serialNum1: Data = .init([48, 98, 97, 48, 49, 101, 48, 49, 54, 48, 54, 53, 53, 97, 50, 97])
         
-        let expectedSerialNums: OrderedSet<Data> = [serialNum1]
+        let expectedSerialNums: Set<Data> = [serialNum1]
         
         let result: OrderedSet<Data> = KindleKeyMacOS.getVolumeSerialNumbers()
         
@@ -56,7 +57,7 @@ struct KindleKeyMacOSTests {
         let name10: Data = .init([100, 105, 115, 107, 53, 115, 49])
         let name11: Data = .init([100, 105, 115, 107, 57, 115, 49])
         
-        let expectedNames: OrderedSet<Data> = [name1, name2, name3, name4, name5, name6, name7, name8, name9, name10, name11]
+        let expectedNames: Set<Data> = [name1, name2, name3, name4, name5, name6, name7, name8, name9, name10, name11]
         
         let result: OrderedSet<Data> = KindleKeyMacOS.getDiskPartitionNames()
         
@@ -88,7 +89,7 @@ struct KindleKeyMacOSTests {
         let uuid22: Data = .init([53, 70, 65, 48, 54, 51, 50, 56, 45, 49, 70, 50, 65, 45, 52, 55, 54, 51, 45, 57, 51, 50, 51, 45, 67, 52, 52, 52, 57, 66, 53, 49, 51, 55, 57, 68])
         let uuid23: Data = .init([69, 50, 65, 69, 56, 51, 51, 67, 45, 67, 52, 70, 70, 45, 52, 50, 54, 56, 45, 65, 55, 66, 54, 45, 54, 67, 50, 50, 67, 55, 53, 54, 48, 54, 50, 66])
         
-        let expectedUUIDs: OrderedSet<Data> = [uuid1, uuid2, uuid3, uuid4, uuid5, uuid6, uuid7, uuid8, uuid9, uuid10, uuid11, uuid12, uuid13, uuid14, uuid15, uuid16, uuid17, uuid18, uuid19, uuid20, uuid21, uuid22, uuid23]
+        let expectedUUIDs: Set<Data> = [uuid1, uuid2, uuid3, uuid4, uuid5, uuid6, uuid7, uuid8, uuid9, uuid10, uuid11, uuid12, uuid13, uuid14, uuid15, uuid16, uuid17, uuid18, uuid19, uuid20, uuid21, uuid22, uuid23]
         
         let result: OrderedSet<Data> = KindleKeyMacOS.getDiskPartitionUUIDs()
         

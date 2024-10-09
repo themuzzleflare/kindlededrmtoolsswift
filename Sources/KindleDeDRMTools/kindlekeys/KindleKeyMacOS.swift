@@ -22,7 +22,7 @@ final class KindleKeyMacOS: KindleKey {
         let data: Data = .init(fileData.prefix(fileData.count - 1))
         
         var items: [String] = .init()
-        let idStrings: OrderedSet<Data> = KindleKeyMacOS.getIdStrings()
+        let idStrings: OrderedSet<Data> = Self.getIdStrings()
         
         let username: Data = try getUsername()
         
@@ -49,7 +49,7 @@ final class KindleKeyMacOS: KindleKey {
                 }
                 
                 var encryptedValue: Data = KindleKeyUtils.decode(data: headerblobData, map: CharMaps.charMap1)
-                let cleartext: Data = try KindleKey.unprotectHeaderData(encryptedData: encryptedValue)
+                let cleartext: Data = try Self.unprotectHeaderData(encryptedData: encryptedValue)
                 
                 guard let cleartextString: String = .init(data: cleartext, encoding: .utf8) else {
                     throw KindleKeyError.stringFromDataFailed(data: cleartext)
@@ -215,7 +215,7 @@ final class KindleKeyMacOS: KindleKey {
                     Debug.print("keyName:", keyName)
                     Debug.print("encdata:", encdata.formattedForOutput)
                     
-                    let primesList: [Int] = KindleKey.primes(n: encdata.count / 3)
+                    let primesList: [Int] = Self.primes(n: encdata.count / 3)
                     let noffset: Int = encdata.count - (primesList.last ?? 0)
                     
                     let pfx: Data = .init(encdata.prefix(noffset))
@@ -287,7 +287,7 @@ final class KindleKeyMacOS: KindleKey {
     private func getUsernameViaFileManager() throws -> Data {
         let username: String = NSUserName()
         
-        guard let usernameData = username.data(using: .utf8) else {
+        guard let usernameData: Data = username.data(using: .utf8) else {
             throw KindleKeyError.dataFromStringFailed(string: username)
         }
         
@@ -332,7 +332,7 @@ final class KindleKeyMacOS: KindleKey {
         let pathsToCheck: OrderedSet<KindlePath> = KindlePath.getKindlePaths(homeDir: home)
         
         for testPath in pathsToCheck {
-            KindleKeyMacOS.checkAndAddFile(testPath: testPath, kInfoFiles: &kInfoFiles)
+            Self.checkAndAddFile(testPath: testPath, kInfoFiles: &kInfoFiles)
         }
         
         if kInfoFiles.isEmpty {

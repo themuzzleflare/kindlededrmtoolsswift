@@ -202,11 +202,11 @@ public final class DeDRM {
     
 #if os(macOS)
     public static func generateKeyfileThrowing(outpath: String) throws {
-        try KindleKey.getInstance().getKeyThrowing(outpath: outpath)
+        try KindleKey.getManager().getKeyThrowing(outpath: outpath, files: nil)
     }
     
     public static func generateKeyFileThrowingData() throws -> Data {
-        let instance: KindleKey = .getInstance()
+        let instance: some KindleKeyManager = try KindleKey.getManager()
         
         guard let kindleDatabase: KindleDatabase = try instance.kindleKeys(files: instance.getKindleInfoFiles()).first else {
             throw KindleKeyError.noKeysFound

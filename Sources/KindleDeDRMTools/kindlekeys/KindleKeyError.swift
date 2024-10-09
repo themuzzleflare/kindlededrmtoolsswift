@@ -10,7 +10,7 @@ import Foundation
 import OSInfo
 #endif
 
-enum KindleKeyError {
+enum KindleKeyError: Error {
     case stringFromDataFailed(data: Data)
     case dataFromStringFailed(string: String)
     case stringToIntFailed(string: String)
@@ -18,11 +18,8 @@ enum KindleKeyError {
     case unknownVersion(version: Int)
     case unsupportedOperatingSystem
     case noKeysFound
-}
-
-// MARK: - LocalizedError
-extension KindleKeyError: LocalizedError {
-    var errorDescription: String? {
+    
+    var localizedDescription: String {
         switch self {
         case let .stringFromDataFailed(data):
             return "Failed to convert data to string: \(data.formattedForOutput)"
@@ -43,5 +40,19 @@ extension KindleKeyError: LocalizedError {
         case .noKeysFound:
             return "No keys found"
         }
+    }
+}
+
+// MARK: - LocalizedError
+extension KindleKeyError: LocalizedError {
+    var errorDescription: String? {
+        return localizedDescription
+    }
+}
+
+// MARK: - CustomStringConvertible
+extension KindleKeyError: CustomStringConvertible {
+    var description: String {
+        return localizedDescription
     }
 }

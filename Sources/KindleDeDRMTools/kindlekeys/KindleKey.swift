@@ -11,13 +11,13 @@ import OrderedCollections
 import CryptoSwift
 
 class KindleKey: KindleKeyManager {
-    static func getInstance() -> KindleKey {
+    static func getManager() throws -> some KindleKeyManager {
 #if os(macOS)
         return KindleKeyMacOS()
 #elseif os(Windows)
         return KindleKeyWindows()
 #else
-        return .init()
+        throw KindleKeyError.unsupportedOperatingSystem
 #endif
     }
     
