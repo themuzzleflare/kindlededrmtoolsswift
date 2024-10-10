@@ -8,13 +8,13 @@
 import Foundation
 
 extension String {
-    var hexToData: Data? {
-        return Util.hexStringToData(hexString: self)
-    }
+	var hexToData: Data? {
+		return Util.hexStringToData(hexString: self)
+	}
 }
 
 extension String? {
-    var hexToData: Data? {
-        return Util.hexStringToData(hexString: self)
-    }
+	var hexToData: Data? {
+		return Util.hexStringToData(hexString: self)
+	}
 }

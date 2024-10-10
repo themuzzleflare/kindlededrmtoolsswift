@@ -10,9 +10,10 @@ import Testing
 
 @Suite("DeDRM Tests")
 struct DeDRMTests {
-    @Test("generateKeyfileThrowing Test") func testGenerateKeyfileThrowing() throws {
-        Debug.enable()
-        let outpath: String = "/Users/paultavitian/tempFolder/"
-        try DeDRM.generateKeyfileThrowing(outpath: outpath)
-    }
+	@Test("generateKeyfileThrowing Test", arguments: [
+		"/Users/paultavitian/tempFolder/",
+		"/Users/paultavitian/Downloads/kindlekeytest.k4i"
+	]) func testGenerateKeyfileThrowing(outpath: String) throws {
+		try DeDRM.generateKeyfileThrowing(outpath: outpath)
+	}
 }

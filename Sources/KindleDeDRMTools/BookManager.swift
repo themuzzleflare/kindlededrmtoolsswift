@@ -8,10 +8,10 @@
 import OrderedCollections
 
 protocol BookManager: BookCleanup {
-    func getBookTitle() -> String
-    func getBookType() -> String
-    func getBookExtension() -> String
-    func getFile(outpath: String) throws
-    func processBook(pidSet: OrderedSet<String>) throws
-    func getPidMetaInfo() -> PIDMetaInfo
+	func getBookTitle() -> String
+	func getBookType() -> String
+	func getBookExtension() -> String
+	func getFile(outpath: String) throws
+	func processBook(pidSet: OrderedSet<String>) throws
+	func getPidMetaInfo() -> PIDMetaInfo
 }

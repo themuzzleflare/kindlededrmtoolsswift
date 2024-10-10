@@ -8,13 +8,13 @@
 import Foundation
 
 extension Set where Element == Data {
-    var description: String {
-        return map(\.formattedForOutput).joined(separator: ",\n")
-    }
+	var description: String {
+		return map(\.formattedForOutput).joined(separator: ",\n")
+	}
 }
 
 extension Set where Element == Data? {
-    var description: String {
-        return map(\.formattedForOutput).joined(separator: ",\n")
-    }
+	var description: String {
+		return map(\.formattedForOutput).joined(separator: ",\n")
+	}
 }

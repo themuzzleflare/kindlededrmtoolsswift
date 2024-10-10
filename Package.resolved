@@ -1,5 +1,5 @@
 {
-  "originHash" : "55cae02b0e7b2b977511b951e10d914e0a91bf25467a33302f25f85aa1c62677",
+  "originHash" : "c21412bd1f5f272b3854273adcda9593c84cd7cbc80855dfea35f073f10cea4b",
   "pins" : [
     {
       "identity" : "cryptoswift",
@@ -15,8 +15,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/themuzzleflare/kfxtablesswift.git",
       "state" : {
-        "branch" : "main",
-        "revision" : "ee11d80bc3c748bd82d4977a6eba8902b6f30bcc"
+        "revision" : "0dbf11f7219bc31fc49720f4ad4e0d55fc483ee7",
+        "version" : "1.0.0"
       }
     },
     {
@@ -24,7 +24,7 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/themuzzleflare/OSInfo.git",
       "state" : {
-        "revision" : "45cd06762ca0474c638ae062aaab7a749b54932f",
+        "revision" : "6319c24d4944d42ad3fdacd1c773fc860c3649ba",
         "version" : "1.0.0"
       }
     },

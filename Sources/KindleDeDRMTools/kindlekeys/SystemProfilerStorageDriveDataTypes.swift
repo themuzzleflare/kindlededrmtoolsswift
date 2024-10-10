@@ -7,14 +7,14 @@
 
 #if os(macOS)
 enum SystemProfilerStorageDriveDataTypes: String, CaseIterable {
-    case spSerialATADataType = "SPSerialATADataType"
-    case spNVMeDataType = "SPNVMeDataType"
+	case spSerialATADataType = "SPSerialATADataType"
+	case spNVMeDataType = "SPNVMeDataType"
 }
 
 // MARK: - CustomStringConvertible
 extension SystemProfilerStorageDriveDataTypes: CustomStringConvertible {
-    var description: String {
-        return rawValue
-    }
+	var description: String {
+		return rawValue
+	}
 }
 #endif

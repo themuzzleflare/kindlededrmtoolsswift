@@ -8,19 +8,19 @@
 import Foundation
 
 extension URL {
-    static var inputTemporaryDirectory: URL {
-        return Util.appending(base: Util.temporaryDirectory(), add: "input", isDirectory: true)
-    }
-    
-    static var outputTemporaryDirectory: URL {
-        return Util.appending(base: Util.temporaryDirectory(), add: "output", isDirectory: true)
-    }
-    
-    var filename: String {
-        return lastPathComponent
-    }
-    
-    var filenameRoot: String {
-        return deletingPathExtension().lastPathComponent
-    }
+	static var inputTemporaryDirectory: URL {
+		return Util.appending(base: Util.temporaryDirectory(), add: "input", isDirectory: true)
+	}
+	
+	static var outputTemporaryDirectory: URL {
+		return Util.appending(base: Util.temporaryDirectory(), add: "output", isDirectory: true)
+	}
+	
+	var filename: String {
+		return lastPathComponent
+	}
+	
+	var filenameRoot: String {
+		return deletingPathExtension().lastPathComponent
+	}
 }

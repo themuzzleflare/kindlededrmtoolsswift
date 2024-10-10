@@ -14,7 +14,7 @@ typealias MetaDictionary = [Int: Data]
 #endif
 
 extension MetaDictionary {
-    var description: String {
-        return map({"\($0.description): \($1.formattedForOutput)"}).joined(separator: "\n")
-    }
+	var description: String {
+		return map({"\($0.description): \($1.formattedForOutput)"}).joined(separator: "\n")
+	}
 }
