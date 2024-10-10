@@ -14,8 +14,9 @@ import OrderedCollections
 @Suite("KindleKeyMacOS Tests")
 struct KindleKeyMacOSTests {
 	@Test("KindleKey getManager Test") func testKindleKeyGetManager() throws {
-		let instance: some KindleKeyManager = try KindleKey.getManager()
-		#expect(instance is KindleKeyMacOS)
+		let manager: KindleKeyManager = try KindleKey.getManager()
+		
+		#expect(manager is KindleKeyMacOS)
 	}
 	
 	@Test("getMacAddressesMunged Test") func testGetMacAddressesMunged() {

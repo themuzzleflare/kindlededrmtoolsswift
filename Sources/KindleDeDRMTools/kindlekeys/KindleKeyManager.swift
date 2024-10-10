@@ -20,4 +20,8 @@ protocol KindleKeyManager {
 	static func unprotectHeaderData(encryptedData: Data) throws -> Data
 	static func primes(n: Int) -> [Int]
 }
+
+extension KindleKeyManager {
+	func getKeyThrowing(outpath: String, files: OrderedSet<String>? = nil) throws {}
+}
 #endif

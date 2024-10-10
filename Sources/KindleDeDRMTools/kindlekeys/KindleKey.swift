@@ -11,7 +11,7 @@ import OrderedCollections
 import CryptoSwift
 
 class KindleKey: KindleKeyManager {
-	static func getManager() throws -> some KindleKeyManager {
+	static func getManager() throws -> KindleKeyManager {
 #if os(macOS)
 		return KindleKeyMacOS()
 #elseif os(Windows)
