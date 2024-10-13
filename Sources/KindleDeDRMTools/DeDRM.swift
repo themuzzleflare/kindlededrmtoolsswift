@@ -208,7 +208,7 @@ public final class DeDRM {
 	public static func generateKeyFileThrowingData() throws -> Data {
 		let manager: KindleKeyManager = try KindleKey.getManager()
 		
-		guard let kindleDatabase: KindleDatabase = try manager.kindleKeys(files: manager.getKindleInfoFiles()).first else {
+		guard let kindleDatabase: KindleDatabase = try manager.kindleKeys().first else {
 			throw KindleKeyError.noKeysFound
 		}
 		

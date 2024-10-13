@@ -19,7 +19,7 @@ struct IonUtilsTests {
 		
 		let returnValue: Data = .init(returnBytes.map({ .init(bitPattern: $0) }))
 		
-		let result: Data = try IonUtils.obfuscate(secret: IonUtilsTests.bytes, version: IonUtilsTests.version)
+		let result: Data = try IonUtils.obfuscate(secret: Self.bytes, version: Self.version)
 		
 		#expect(returnValue == result)
 	}
@@ -29,7 +29,7 @@ struct IonUtilsTests {
 		
 		let returnValue: Data = .init(returnBytes.map({ .init(bitPattern: $0) }))
 		
-		let result: Data = try IonUtils.obfuscate2(secret: IonUtilsTests.bytes, version: IonUtilsTests.version)
+		let result: Data = try IonUtils.obfuscate2(secret: Self.bytes, version: Self.version)
 		
 		#expect(returnValue == result)
 	}
@@ -39,7 +39,7 @@ struct IonUtilsTests {
 		
 		let returnValue: Data = .init(returnBytes.map({ .init(bitPattern: $0) }))
 		
-		let result: Data = try IonUtils.obfuscate3(secret: IonUtilsTests.bytes, version: IonUtilsTests.version)
+		let result: Data = try IonUtils.obfuscate3(secret: Self.bytes, version: Self.version)
 		
 		#expect(returnValue == result)
 	}
@@ -49,7 +49,7 @@ struct IonUtilsTests {
 		
 		let returnValue: Data = .init(returnBytes.map({ .init(bitPattern: $0) }))
 		
-		let result: Data = IonUtils.processV9708(st: IonUtilsTests.bytes)
+		let result: Data = IonUtils.processV9708(st: Self.bytes)
 		
 		#expect(returnValue == result)
 	}
@@ -59,7 +59,7 @@ struct IonUtilsTests {
 		
 		let returnValue: Data = .init(returnBytes.map({ .init(bitPattern: $0) }))
 		
-		let result: Data = IonUtils.processV1031(st: IonUtilsTests.bytes)
+		let result: Data = IonUtils.processV1031(st: Self.bytes)
 		
 		#expect(returnValue == result)
 	}
@@ -69,7 +69,7 @@ struct IonUtilsTests {
 		
 		let returnValue: Data = .init(returnBytes.map({ .init(bitPattern: $0) }))
 		
-		let result: Data = IonUtils.processV2069(st: IonUtilsTests.bytes)
+		let result: Data = IonUtils.processV2069(st: Self.bytes)
 		
 		#expect(returnValue == result)
 	}
@@ -79,7 +79,7 @@ struct IonUtilsTests {
 		
 		let returnValue: Data = .init(returnBytes.map({ .init(bitPattern: $0) }))
 		
-		let result: Data = IonUtils.processV9041(st: IonUtilsTests.bytes)
+		let result: Data = IonUtils.processV9041(st: Self.bytes)
 		
 		#expect(returnValue == result)
 	}
@@ -89,7 +89,7 @@ struct IonUtilsTests {
 		
 		let returnValue: Data = .init(returnBytes.map({ .init(bitPattern: $0) }))
 		
-		let result: Data = IonUtils.processV3646(st: IonUtilsTests.bytes)
+		let result: Data = IonUtils.processV3646(st: Self.bytes)
 		
 		#expect(returnValue == result)
 	}
@@ -99,7 +99,7 @@ struct IonUtilsTests {
 		
 		let returnValue: Data = .init(returnBytes.map({ .init(bitPattern: $0) }))
 		
-		let result: Data = IonUtils.processV6052(st: IonUtilsTests.bytes)
+		let result: Data = IonUtils.processV6052(st: Self.bytes)
 		
 		#expect(returnValue == result)
 	}
@@ -109,7 +109,7 @@ struct IonUtilsTests {
 		
 		let returnValue: Data = .init(returnBytes.map({ .init(bitPattern: $0) }))
 		
-		let result: Data = IonUtils.processV9479(st: IonUtilsTests.bytes)
+		let result: Data = IonUtils.processV9479(st: Self.bytes)
 		
 		#expect(returnValue == result)
 	}
@@ -119,7 +119,7 @@ struct IonUtilsTests {
 		
 		let returnValue: Data = .init(returnBytes.map({ .init(bitPattern: $0) }))
 		
-		let result: Data = IonUtils.processV9888(st: IonUtilsTests.bytes)
+		let result: Data = IonUtils.processV9888(st: Self.bytes)
 		
 		#expect(returnValue == result)
 	}
@@ -129,7 +129,7 @@ struct IonUtilsTests {
 		
 		let returnValue: Data = .init(returnBytes.map({ .init(bitPattern: $0) }))
 		
-		let result: Data = IonUtils.processV4648(st: IonUtilsTests.bytes)
+		let result: Data = IonUtils.processV4648(st: Self.bytes)
 		
 		#expect(returnValue == result)
 	}
@@ -139,7 +139,7 @@ struct IonUtilsTests {
 		
 		let returnValue: Data = .init(returnBytes.map({ .init(bitPattern: $0) }))
 		
-		let result: Data = IonUtils.processV5683(st: IonUtilsTests.bytes)
+		let result: Data = IonUtils.processV5683(st: Self.bytes)
 		
 		#expect(returnValue == result)
 	}

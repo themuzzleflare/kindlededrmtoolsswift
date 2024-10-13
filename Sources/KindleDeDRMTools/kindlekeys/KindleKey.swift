@@ -89,8 +89,8 @@ class KindleKey: KindleKeyManager {
 		return primeList
 	}
 	
-	final func kindleKeys(files: OrderedSet<String>) throws -> OrderedSet<KindleDatabase> {
-		var files: OrderedSet<String> = files
+	final func kindleKeys(files: OrderedSet<String>?) throws -> OrderedSet<KindleDatabase> {
+		var files: OrderedSet<String> = Util.sanitiseSet(set: files)
 		
 		if Util.practicalIsEmpty(set: files) {
 			files = try getKindleInfoFiles()
@@ -118,7 +118,7 @@ class KindleKey: KindleKeyManager {
 		return keys
 	}
 	
-	final func getKeyThrowing(outpath: String, files: OrderedSet<String>? = nil) throws {
+	final func getKeyThrowing(outpath: String, files: OrderedSet<String>?) throws {
 		// Check if files list is null, and initialise it if necessary
 		let files: OrderedSet<String> = Util.sanitiseSet(files)
 		

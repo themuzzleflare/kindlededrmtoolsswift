@@ -14,7 +14,7 @@ protocol KindleKeyManager {
 	func getKindleInfoFiles() throws -> OrderedSet<String>
 	func getDbFromFile(kinfoFile: String) throws -> OrderedDictionary<String, Data>
 	
-	func kindleKeys(files: OrderedSet<String>) throws -> OrderedSet<KindleDatabase>
+	func kindleKeys(files: OrderedSet<String>?) throws -> OrderedSet<KindleDatabase>
 	func getKeyThrowing(outpath: String, files: OrderedSet<String>?) throws
 	
 	static func unprotectHeaderData(encryptedData: Data) throws -> Data
@@ -22,6 +22,12 @@ protocol KindleKeyManager {
 }
 
 extension KindleKeyManager {
-	func getKeyThrowing(outpath: String, files: OrderedSet<String>? = nil) throws {}
+	func kindleKeys(files: OrderedSet<String>? = nil) throws -> OrderedSet<KindleDatabase> {
+		return try kindleKeys(files: files)
+	}
+	
+	func getKeyThrowing(outpath: String, files: OrderedSet<String>? = nil) throws {
+		try getKeyThrowing(outpath: outpath, files: files)
+	}
 }
 #endif

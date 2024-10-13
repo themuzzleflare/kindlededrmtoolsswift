@@ -281,10 +281,10 @@ final class KindleKeyMacOS: KindleKey {
 	}
 	
 	override func getUsername() throws -> Data {
-		return try getUsernameViaFileManager()
+		return try Self.getUsernameViaFileManager()
 	}
 	
-	private func getUsernameViaFileManager() throws -> Data {
+	private static func getUsernameViaFileManager() throws -> Data {
 		let username: String = NSUserName()
 		
 		guard let usernameData: Data = username.data(using: .utf8) else {
@@ -294,7 +294,7 @@ final class KindleKeyMacOS: KindleKey {
 		return usernameData
 	}
 	
-	private func getUsernameViaEnvironment() throws -> Data {
+	private static func getUsernameViaEnvironment() throws -> Data {
 		let envKey: String = "USER"
 		
 		guard let username: String = ProcessInfo.processInfo.environment[envKey] else {
@@ -310,11 +310,11 @@ final class KindleKeyMacOS: KindleKey {
 		return usernameData
 	}
 	
-	private func getHomeDirectoryViaFileManager() -> String {
+	private static func getHomeDirectoryViaFileManager() -> String {
 		return NSHomeDirectory()
 	}
 	
-	private func getHomeDirectoryViaEnvironment() throws -> String {
+	private static func getHomeDirectoryViaEnvironment() throws -> String {
 		let envKey: String = "HOME"
 		
 		guard let home: String = ProcessInfo.processInfo.environment[envKey] else {
@@ -327,7 +327,7 @@ final class KindleKeyMacOS: KindleKey {
 	override func getKindleInfoFiles() throws -> OrderedSet<String> {
 		var kInfoFiles: OrderedSet<String> = .init()
 		
-		let home: String = getHomeDirectoryViaFileManager()
+		let home: String = Self.getHomeDirectoryViaFileManager()
 		
 		let pathsToCheck: OrderedSet<KindlePath> = KindlePath.getKindlePaths(homeDir: home)
 		
@@ -641,9 +641,8 @@ extension KindleKeyMacOS {
 		
 		init(entropy: Data, idString: Data, username: Data) throws {
 			// Step 1: Concatenate username, "+@#$%+", and idString
-			let usernameData: Data = username
 			let separator: Data = "+@#$%+".data(using: .utf8)!
-			let sp: Data = usernameData + separator + idString
+			let sp: Data = username + separator + idString
 			
 			// Step 2: Compute SHA-256 hash of the concatenated data
 			let sha256Hash: Data = HashUtils.sha256(data: sp)
