@@ -51,6 +51,8 @@ struct KindlePath: Hashable {
 			// original (earlier than K4PC 1.5.0) kindle-info files
 			.init(.K4PCKINDLEINFO, homeDir + "\\Amazon\\Kindle For PC\\{AMAwzsaPaaZAzmZzZQzgZCAkZ3AjA_AY}\\kindle.info")
 		]
+#else
+		return .init()
 #endif
 	}
 }

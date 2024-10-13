@@ -59,7 +59,7 @@ final class KFXZipBook {
 			throw KFXZipBookError.encryptedDrmIonFileWithoutVoucher
 		}
 		
-		print("Decrypting KFX DRM voucher: \(voucherFilename!)")
+		print("Decrypting KFX DRM voucher:", voucherFilename!)
 		
 		Debug.print("PIDs:", pidSet)
 		

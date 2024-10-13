@@ -5,8 +5,8 @@
 //  Created by Paul Tavitian on 7/10/2024.
 //
 
-import Foundation
 #if canImport(OrderedCollections)
+import Foundation
 import OrderedCollections
 
 extension OrderedSet where Element == Data {

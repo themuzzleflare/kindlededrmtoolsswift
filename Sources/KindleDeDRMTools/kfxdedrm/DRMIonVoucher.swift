@@ -50,13 +50,13 @@ final class DRMIonVoucher {
 		
 		for param in lockParams {
 			if param == "ACCOUNT_SECRET" {
-				guard let paramBytes = param.data(using: .ascii) else {
+				guard let paramBytes: Data = param.data(using: .ascii) else {
 					throw DRMIonVoucherError.dataFromStringFailed(string: param)
 				}
 				
 				shared.append(paramBytes + secret)
 			} else if param == "CLIENT_ID" {
-				guard let paramBytes = param.data(using: .ascii) else {
+				guard let paramBytes: Data = param.data(using: .ascii) else {
 					throw DRMIonVoucherError.dataFromStringFailed(string: param)
 				}
 				
