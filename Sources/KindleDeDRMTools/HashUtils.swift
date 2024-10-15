@@ -52,7 +52,7 @@ final class HashUtils {
 	}
 	
 	private static func cryptoswiftSha256(data: [Data?]) -> Data {
-		let bytes: [UInt8] = data.compactMap(\.?.bytes).flatMap(\.self)
+		let bytes: [UInt8] = data.compactMap({$0?.bytes}).flatMap({$0})
 		return .init(bytes.sha2(.sha256))
 	}
 	
@@ -99,7 +99,7 @@ final class HashUtils {
 	}
 	
 	private static func cryptoswiftMd5(data: [Data?]) -> Data {
-		let bytes: [UInt8] = data.compactMap(\.?.bytes).flatMap(\.self)
+		let bytes: [UInt8] = data.compactMap({$0?.bytes}).flatMap({$0})
 		return .init(bytes.md5())
 	}
 	
@@ -146,7 +146,7 @@ final class HashUtils {
 	}
 	
 	private static func cryptoswiftSha1(data: [Data?]) -> Data {
-		let bytes: [UInt8] = data.compactMap(\.?.bytes).flatMap(\.self)
+		let bytes: [UInt8] = data.compactMap({$0?.bytes}).flatMap({$0})
 		return .init(bytes.sha1())
 	}
 	

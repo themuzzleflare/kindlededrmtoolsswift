@@ -8,7 +8,11 @@
 import Foundation
 
 public final class Debug {
+#if swift(>=6.0)
 	nonisolated(unsafe) public private(set) static var isEnabled: Bool = false
+#else
+	public private(set) static var isEnabled: Bool = false
+#endif
 	
 	private init() {}
 	
