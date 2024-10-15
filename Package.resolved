@@ -1,5 +1,5 @@
 {
-  "originHash" : "c21412bd1f5f272b3854273adcda9593c84cd7cbc80855dfea35f073f10cea4b",
+  "originHash" : "127322b3e0b9ce2d0d1286a4a876988af125d34af2e3156086bbf80ce44eb4b1",
   "pins" : [
     {
       "identity" : "cryptoswift",
@@ -24,8 +24,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/themuzzleflare/OSInfo.git",
       "state" : {
-        "revision" : "6319c24d4944d42ad3fdacd1c773fc860c3649ba",
-        "version" : "1.0.0"
+        "revision" : "d77c76c6eb80ff72cc6a0d0313a2fc1d69604717",
+        "version" : "2.0.0"
       }
     },
     {
