@@ -310,10 +310,12 @@ final class KindleKeyMacOS: KindleKey {
 		return usernameData
 	}
 	
+	// only for apps without sandbox
 	private static func getHomeDirectoryViaFileManager() -> String {
 		return NSHomeDirectory()
 	}
 	
+	// only for apps without sandbox
 	private static func getHomeDirectoryViaEnvironment() throws -> String {
 		let envKey: String = "HOME"
 		
@@ -327,9 +329,24 @@ final class KindleKeyMacOS: KindleKey {
 	override func getKindleInfoFiles() throws -> OrderedSet<String> {
 		var kInfoFiles: OrderedSet<String> = .init()
 		
-		let home: String = Self.getHomeDirectoryViaFileManager()
+		let home: String = "/Users/\(NSUserName())"
 		
 		let pathsToCheck: OrderedSet<KindlePath> = KindlePath.getKindlePaths(homeDir: home)
+		
+		//		DispatchQueue.main.asyncAndWait {
+		//			let panel: NSOpenPanel = .init()
+		//
+		//			panel.canChooseFiles = false
+		//			panel.canChooseDirectories = true
+		//			panel.allowsMultipleSelection = false
+		//			panel.directoryURL = Util.url(filePath: home + "/Library", isDirectory: true)
+		//
+		//			let modalResponse: NSApplication.ModalResponse = panel.runModal()
+		//
+		//			if modalResponse == .OK, let selectedURL: URL = panel.urls.first, selectedURL.hasDirectoryPath {
+		//				_ = selectedURL.startAccessingSecurityScopedResource()
+		//			}
+		//		}
 		
 		for testPath in pathsToCheck {
 			Self.checkAndAddFile(testPath: testPath, kInfoFiles: &kInfoFiles)
