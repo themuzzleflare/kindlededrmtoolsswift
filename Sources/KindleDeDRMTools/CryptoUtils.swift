@@ -36,8 +36,8 @@ final class CryptoUtils {
 	}
 	
 	private static func cryptoswiftHmacsha256(key: Data, message: Data) throws -> Data {
-		let hmac: CryptoSwift.HMAC = .init(key: key.bytes, variant: .sha2(.sha256))
-		let authenticationCode: [UInt8] = try hmac.authenticate(message.bytes)
+		let hmac: CryptoSwift.HMAC = .init(key: key.byteArray, variant: .sha2(.sha256))
+		let authenticationCode: [UInt8] = try hmac.authenticate(message.byteArray)
 		return .init(authenticationCode)
 	}
 	
@@ -63,12 +63,12 @@ final class CryptoUtils {
 	
 	private static func cryptoswiftAescbcdecrypt(key: Data, iv: Data, cipherText: Data) throws -> Data {
 		let aes = try AES(
-			key: key.bytes,
-			blockMode: CBC(iv: iv.bytes),
+			key: key.byteArray,
+			blockMode: CBC(iv: iv.byteArray),
 			padding: .pkcs5
 		)
 		
-		let decrypted: [UInt8] = try aes.decrypt(cipherText.bytes)
+		let decrypted: [UInt8] = try aes.decrypt(cipherText.byteArray)
 		return .init(decrypted)
 	}
 	
@@ -78,12 +78,12 @@ final class CryptoUtils {
 	
 	private static func cryptoswiftAesctrdecrypt(key: Data, iv: Data, cipherText: Data) throws -> Data {
 		let aes = try AES(
-			key: key.bytes,
-			blockMode: CTR(iv: iv.bytes),
+			key: key.byteArray,
+			blockMode: CTR(iv: iv.byteArray),
 			padding: .noPadding
 		)
 		
-		let decrypted: [UInt8] = try aes.decrypt(cipherText.bytes)
+		let decrypted: [UInt8] = try aes.decrypt(cipherText.byteArray)
 		return .init(decrypted)
 	}
 	
@@ -124,7 +124,7 @@ final class CryptoUtils {
 	}
 	
 	private static func cryptoswiftPbkdf2hmacsha1(password: Data, salt: Data, iterationCount: Int, keyLength: Int) throws -> Data {
-		let pbkdf2: PKCS5.PBKDF2 = try .init(password: password.bytes, salt: salt.bytes, iterations: iterationCount, keyLength: keyLength, variant: .sha1)
+		let pbkdf2: PKCS5.PBKDF2 = try .init(password: password.byteArray, salt: salt.byteArray, iterations: iterationCount, keyLength: keyLength, variant: .sha1)
 		let key: [UInt8] = try pbkdf2.calculate()
 		return .init(key)
 	}
