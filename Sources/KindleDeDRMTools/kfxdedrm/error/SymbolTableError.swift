@@ -8,15 +8,15 @@
 import Foundation
 
 enum SymbolTableError {
-	case invalidSymbolId(id: Int)
+    case invalidSymbolId(id: Int)
 }
 
 // MARK: - LocalizedError
 extension SymbolTableError: LocalizedError {
-	var errorDescription: String? {
-		switch self {
-		case let .invalidSymbolId(id):
-			return "Invalid Symbol ID: \(id.description)"
-		}
-	}
+    var errorDescription: String? {
+        switch self {
+        case let .invalidSymbolId(id):
+            return "Invalid Symbol ID: \(id.description)"
+        }
+    }
 }

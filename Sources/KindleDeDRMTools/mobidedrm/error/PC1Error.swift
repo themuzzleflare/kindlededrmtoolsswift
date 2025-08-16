@@ -8,15 +8,15 @@
 import Foundation
 
 enum PC1Error {
-	case badKeyLength(length: Int)
+    case badKeyLength(length: Int)
 }
 
 // MARK: - LocalizedError
 extension PC1Error: LocalizedError {
-	var errorDescription: String? {
-		switch self {
-		case let .badKeyLength(length):
-			return "PC1: Bad key length: \(length.description). Must be 16."
-		}
-	}
+    var errorDescription: String? {
+        switch self {
+        case let .badKeyLength(length):
+            return "PC1: Bad key length: \(length.description). Must be 16."
+        }
+    }
 }

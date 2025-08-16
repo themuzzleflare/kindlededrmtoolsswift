@@ -10,14 +10,14 @@ import Foundation
 import OrderedCollections
 
 extension OrderedSet where Element == Data {
-	var description: String {
-		return map(\.formattedForOutput).joined(separator: ",\n")
-	}
+    var description: String {
+        return map(\.formattedForOutput).joined(separator: ",\n")
+    }
 }
 
 extension OrderedSet where Element == Data? {
-	var description: String {
-		return map(\.formattedForOutput).joined(separator: ",\n")
-	}
+    var description: String {
+        return map(\.formattedForOutput).joined(separator: ",\n")
+    }
 }
 #endif

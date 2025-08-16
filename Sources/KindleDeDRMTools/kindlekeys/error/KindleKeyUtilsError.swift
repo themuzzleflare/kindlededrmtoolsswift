@@ -8,15 +8,15 @@
 import Foundation
 
 enum KindleKeyUtilsError {
-	case dataFromStringFailed(string: String)
+    case dataFromStringFailed(string: String)
 }
 
 // MARK: - LocalizedError
 extension KindleKeyUtilsError: LocalizedError {
-	var errorDescription: String? {
-		switch self {
-		case let .dataFromStringFailed(string):
-			return "Failed to convert string to data: \(string)"
-		}
-	}
+    var errorDescription: String? {
+        switch self {
+        case let .dataFromStringFailed(string):
+            return "Failed to convert string to data: \(string)"
+        }
+    }
 }

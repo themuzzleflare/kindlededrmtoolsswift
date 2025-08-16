@@ -8,15 +8,15 @@
 import Foundation
 
 final class SystemSymbols {
-	private init() {}
-	
-	static let ION: String = "$ion"
-	static let ION_1_0: String = "$ion_1_0"
-	static let ION_SYMBOL_TABLE: String = "$ion_symbol_table"
-	static let NAME: String = "name"
-	static let VERSION: String = "version"
-	static let IMPORTS: String = "imports"
-	static let SYMBOLS: String = "symbols"
-	static let MAX_ID: String = "max_id"
-	static let ION_SHARED_SYMBOL_TABLE: String = "$ion_shared_symbol_table"
+    private init() {}
+    
+    static let ION: String = "$ion"
+    static let ION_1_0: String = "$ion_1_0"
+    static let ION_SYMBOL_TABLE: String = "$ion_symbol_table"
+    static let NAME: String = "name"
+    static let VERSION: String = "version"
+    static let IMPORTS: String = "imports"
+    static let SYMBOLS: String = "symbols"
+    static let MAX_ID: String = "max_id"
+    static let ION_SHARED_SYMBOL_TABLE: String = "$ion_shared_symbol_table"
 }

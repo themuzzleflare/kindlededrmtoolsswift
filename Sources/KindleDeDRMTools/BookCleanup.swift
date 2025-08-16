@@ -6,5 +6,5 @@
 //
 
 protocol BookCleanup {
-	func cleanup()
+    func cleanup()
 }
