@@ -102,7 +102,6 @@ final class MobiBook {
         Debug.print("mobiCodepage:", mobiCodepage.description)
         Debug.print("mobiVersion:", mobiVersion.description)
         
-        
         if mobiLength >= 0xE4 && mobiVersion >= 5 {
             extraDataFlags = .init(sect[0xF2..<0xF2 + 2].withUnsafeBytes { $0.load(as: UInt16.self).bigEndian })
         }
@@ -370,7 +369,7 @@ extension MobiBook: BookManager {
         var codec: String.Encoding = .windowsCP1252
         
         if magic == CharMaps.bookmobiBytes {
-            if let data = metaArray[503] {
+            if let data: Data = metaArray[503] {
                 title = data
             } else {
                 let toff: Int = .init(sect[0x54..<0x54 + 4].withUnsafeBytes { $0.load(as: UInt32.self).bigEndian })
@@ -380,7 +379,7 @@ extension MobiBook: BookManager {
                 title = sect.subdata(in: toff..<tend)
             }
             
-            if let data = codecMap[mobiCodepage] {
+            if let data: String.Encoding = codecMap[mobiCodepage] {
                 codec = data
             }
         }
@@ -442,7 +441,7 @@ extension MobiBook: BookManager {
             throw MobiBookError.unknownEncryptionType(type: cryptoType)
         }
         
-        if let data406 = metaArray[406] {
+        if let data406: Data = metaArray[406] {
             let val406: Int = .init(data406.withUnsafeBytes { $0.load(as: UInt64.self).bigEndian })
             
             if val406 != 0 {

@@ -178,7 +178,7 @@ extension KFXZipBook: BookManager {
                 continue
             }
             
-            if let decryptedContent = decrypted[infileEntry.path] {
+            if let decryptedContent: Data = decrypted[infileEntry.path] {
                 try decryptedContent.write(to: url)
                 
                 try outfileArchive.addEntry(with: infileEntry.path, fileURL: url)
@@ -217,11 +217,7 @@ extension KFXZipBook: BookManager {
             
             let outfile: DataOutputStream = .init()
             
-            try DRMIon(
-                ion: data.subdata(in: 8..<data.count - 8),
-                voucher: voucher
-            )
-            .parse(outpages: outfile)
+            try DRMIon(ion: data.subdata(in: 8..<data.count - 8), voucher: voucher).parse(outpages: outfile)
             
             decrypted[entry.path] = outfile.toData()
         }

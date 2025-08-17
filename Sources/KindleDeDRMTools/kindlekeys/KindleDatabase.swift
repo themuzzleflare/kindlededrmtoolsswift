@@ -132,7 +132,7 @@ extension KindleDatabase {
     }
     
     func getKindleAccountTokenBytes() -> Data? {
-        guard let token = getKindleAccountToken() else {
+        guard let token: String = getKindleAccountToken() else {
             return nil
         }
         
@@ -141,7 +141,7 @@ extension KindleDatabase {
     }
     
     func getDSNBytes() -> Data? {
-        guard let dsn = getDSN() else {
+        guard let dsn: String = getDSN() else {
             return nil
         }
         
@@ -150,7 +150,7 @@ extension KindleDatabase {
     }
     
     func getMazamaRandomNumberBytes() -> Data? {
-        guard let mazama = getMazamaRandomNumber() else {
+        guard let mazama: String = getMazamaRandomNumber() else {
             return nil
         }
         
@@ -159,7 +159,7 @@ extension KindleDatabase {
     }
     
     func getSerialNumberBytes() -> Data? {
-        guard let serialnum = getSerialNumber() else {
+        guard let serialnum: String = getSerialNumber() else {
             return nil
         }
         
@@ -168,7 +168,7 @@ extension KindleDatabase {
     }
     
     func getIDStringBytes() -> Data? {
-        guard let idString = getIDString() else {
+        guard let idString: String = getIDString() else {
             return nil
         }
         
@@ -177,7 +177,7 @@ extension KindleDatabase {
     }
     
     func getUsernameHashBytes() -> Data? {
-        guard let hash = getUsernameHash() else {
+        guard let hash: String = getUsernameHash() else {
             return nil
         }
         
@@ -186,7 +186,7 @@ extension KindleDatabase {
     }
     
     func getUserNameBytes() -> Data? {
-        guard let username = getUserName() else {
+        guard let username: String = getUserName() else {
             return nil
         }
         
