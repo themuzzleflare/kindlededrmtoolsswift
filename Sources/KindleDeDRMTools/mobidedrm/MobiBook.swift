@@ -551,7 +551,7 @@ extension MobiBook: BookManager {
         var rec209: Data = .init()
         var token: Data = .init()
         
-        if let data = metaArray[209] {
+        if let data: Data = metaArray[209] {
             rec209 = data
             
             for i in stride(from: 0, to: rec209.count, by: 5) {

@@ -195,7 +195,7 @@ final class DRMIonVoucher {
             var field: String = try envelope.getFieldName()
             
             if field == "voucher" {
-                guard let lobValue = try envelope.lobValue() else {
+                guard let lobValue: Data = try envelope.lobValue() else {
                     throw DRMIonVoucherError.lobValueNull
                 }
                 
@@ -297,11 +297,11 @@ extension DRMIonVoucher {
     }
     
     convenience init(voucherenv: DataInputStream, dsn: String, secret: String) throws {
-        guard let dsnData = dsn.data(using: .ascii) else {
+        guard let dsnData: Data = dsn.data(using: .ascii) else {
             throw DRMIonVoucherError.dataFromStringFailed(string: dsn)
         }
         
-        guard let secretData = secret.data(using: .ascii) else {
+        guard let secretData: Data = secret.data(using: .ascii) else {
             throw DRMIonVoucherError.dataFromStringFailed(string: secret)
         }
         
