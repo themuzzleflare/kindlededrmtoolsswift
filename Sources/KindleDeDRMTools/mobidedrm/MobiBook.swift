@@ -29,7 +29,7 @@ final class MobiBook {
     private var mobiVersion: Int = -1
     
     init(data: Data) throws {
-        print("MobiDeDrm v\(MobiBook.version.description).")
+        print("MobiDeDrm v\(Self.version.description).")
         print("\(Util.copyright).")
         print("Removes protection from Kindle/Mobipocket, Kindle/KF8 and Kindle/Print Replica eBooks.")
         
@@ -243,9 +243,7 @@ final class MobiBook {
         let keyvec1: Data = .init([0x72, 0x38, 0x33, 0xB0, 0xB4, 0xF2, 0xE3, 0xCA, 0xDF, 0x09, 0x01, 0xD6, 0xE2, 0xE0, 0x3F, 0x96])
         
         for pid in pidSet {
-            guard let bigPidBytes: Data = pid.data(using: .utf8) else {
-                continue
-            }
+            guard let bigPidBytes: Data = pid.data(using: .utf8) else { continue }
             
             let bigPid: Data = Util.ljustBytes(data: bigPidBytes, width: 16, padByte: 0)
             let tempKey: Data = try PukallCipher.pc1(key: keyvec1, src: bigPid, decryption: false)
@@ -339,10 +337,7 @@ final class MobiBook {
         for pid in pidSet {
             if pid.count == 10 {
                 let string: String = .init(pid.prefix(pid.count - 2))
-                let checksumPid: String = try KindleKeyUtils.checksumPid(
-                    data: string,
-                    charMap: CharMaps.letters
-                )
+                let checksumPid: String = try KindleKeyUtils.checksumPid(data: string, charMap: CharMaps.letters)
                 
                 if checksumPid != pid {
                     print("Warning: PID", pid, "has an incorrect checksum, should have been", checksumPid)
@@ -449,9 +444,7 @@ extension MobiBook: BookManager {
             }
         }
         
-        let goodPids: OrderedSet<String> = try MobiBook.normalisePids(
-            pidSet: pidSet
-        )
+        let goodPids: OrderedSet<String> = try Self.normalisePids(pidSet: pidSet)
         
         Debug.print("PIDs:", pidSet)
         Debug.print("Good PIDs:", goodPids)
@@ -484,7 +477,7 @@ extension MobiBook: BookManager {
             
             let drmData: Data = sect.subdata(in: drmPtr..<drmPtr + drmSize)
             
-            let drmResult: DRMInfo = try MobiBook.parseDrm(data: drmData, count: drmCount, pidSet: goodPids)
+            let drmResult: DRMInfo = try Self.parseDrm(data: drmData, count: drmCount, pidSet: goodPids)
             
             foundKey = drmResult.key
             pid = drmResult.pid
@@ -500,9 +493,7 @@ extension MobiBook: BookManager {
         if pid == "00000000" {
             print("File has default encryption, no specific key needed.")
         } else {
-            print(
-                "File is encoded with PID \(try KindleKeyUtils.checksumPid(data: pid, charMap: CharMaps.letters))."
-            )
+            print("File is encoded with PID \(try KindleKeyUtils.checksumPid(data: pid, charMap: CharMaps.letters)).")
         }
         
         patchSection(section: 0, newContent: .init(count: 2), inOff: 0xC)
@@ -516,7 +507,7 @@ extension MobiBook: BookManager {
         
         for i in 1...records {
             let data: Data = loadSection(section: i)
-            let extraSize: Int = MobiBook.getSizeOfTrailingDataEntries(ptr: data, size: data.count, flags: extraDataFlags)
+            let extraSize: Int = Self.getSizeOfTrailingDataEntries(ptr: data, size: data.count, flags: extraDataFlags)
             
             if i % 100 == 0 {
                 print(" .", terminator: "")

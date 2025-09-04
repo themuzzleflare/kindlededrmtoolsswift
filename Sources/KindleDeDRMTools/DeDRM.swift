@@ -110,9 +110,17 @@ public final class DeDRM {
         return kDatabaseRecords
     }
     
-    private static func decryptionRoutine(infile: String, outdir: String, kDatabaseRecords: OrderedSet<KDatabaseRecord>, serials: OrderedSet<String>, pids: OrderedSet<String>, startTime: Date = Util.dateNow()) throws {
+    private static func decryptionRoutine(infile: String,
+                                          outdir: String,
+                                          kDatabaseRecords: OrderedSet<KDatabaseRecord>,
+                                          serials: OrderedSet<String>,
+                                          pids: OrderedSet<String>,
+                                          startTime: Date = Util.dateNow()) throws {
         do {
-            let book: BookManager = try getDecryptedBook(infile: infile, kDatabaseRecords: kDatabaseRecords, serials: serials, pids: pids)
+            let book: BookManager = try getDecryptedBook(infile: infile,
+                                                         kDatabaseRecords: kDatabaseRecords,
+                                                         serials: serials,
+                                                         pids: pids)
             
             let outfilename: String = try calculateOutfileName(filename: infile, booktitle: book.getBookTitle())
             
@@ -141,7 +149,11 @@ public final class DeDRM {
         }
     }
     
-    private static func getDecryptedBook(infile: String, kDatabaseRecords: OrderedSet<KDatabaseRecord>, serials: OrderedSet<String>, pids: OrderedSet<String>, startTime: Date = Util.dateNow()) throws -> BookManager {
+    private static func getDecryptedBook(infile: String,
+                                         kDatabaseRecords: OrderedSet<KDatabaseRecord>,
+                                         serials: OrderedSet<String>,
+                                         pids: OrderedSet<String>,
+                                         startTime: Date = Util.dateNow()) throws -> BookManager {
         let book: BookManager!
         
         var mobi: Bool = true
@@ -180,7 +192,10 @@ public final class DeDRM {
         let rec209: Data? = pidMetaInfo.rec209
         let token: Data? = pidMetaInfo.token
         
-        totalPids.append(contentsOf: KindlePID.getPidSet(rec209: rec209, token: token, serials: serials, kDatabaseRecords: kDatabaseRecords))
+        totalPids.append(contentsOf: KindlePID.getPidSet(rec209: rec209,
+                                                         token: token,
+                                                         serials: serials,
+                                                         kDatabaseRecords: kDatabaseRecords))
         
         print(
             "Found \(totalPids.count.description) keys to try after \(Util.dateNow().timeIntervalSince(startTime).oneDecimalPlace) seconds"
@@ -224,7 +239,7 @@ public final class DeDRM {
         pids: OrderedSet<String>,
         startTime: Date = .init()
     ) {
-        print("K4MobiDeDrm v\(DeDRM.version).")
+        print("K4MobiDeDrm v\(Self.version).")
         print("\(Util.copyright).")
         print("Removes DRM protection from Mobipocket, Amazon KF8, Amazon Print Replica, and Amazon Topaz eBooks.")
         
@@ -235,13 +250,23 @@ public final class DeDRM {
         let kDatabaseRecords: OrderedSet<KDatabaseRecord> = loadKDatabaseRecords(kDatabaseFiles: kDatabaseFiles)
         
         do {
-            try decryptionRoutine(infile: infile, outdir: outdir, kDatabaseRecords: kDatabaseRecords, serials: serials, pids: pids, startTime: startTime)
+            try decryptionRoutine(infile: infile,
+                                  outdir: outdir,
+                                  kDatabaseRecords: kDatabaseRecords,
+                                  serials: serials,
+                                  pids: pids,
+                                  startTime: startTime)
         } catch {
         }
     }
     
-    public static func decryptBookThrowing(infile: String, outdir: String, kDatabaseFiles: OrderedSet<String>, serials: OrderedSet<String>, pids: OrderedSet<String>, startTime: Date = .init()) throws {
-        print("K4MobiDeDrm v\(DeDRM.version).")
+    public static func decryptBookThrowing(infile: String,
+                                           outdir: String,
+                                           kDatabaseFiles: OrderedSet<String>,
+                                           serials: OrderedSet<String>,
+                                           pids: OrderedSet<String>,
+                                           startTime: Date = .init()) throws {
+        print("K4MobiDeDrm v\(Self.version).")
         print("\(Util.copyright).")
         print("Removes DRM protection from Mobipocket, Amazon KF8, Amazon Print Replica, and Amazon Topaz eBooks.")
         
@@ -251,7 +276,12 @@ public final class DeDRM {
         
         let kDatabaseRecords: OrderedSet<KDatabaseRecord> = loadKDatabaseRecords(kDatabaseFiles: kDatabaseFiles)
         
-        try decryptionRoutine(infile: infile, outdir: outdir, kDatabaseRecords: kDatabaseRecords, serials: serials, pids: pids, startTime: startTime)
+        try decryptionRoutine(infile: infile,
+                              outdir: outdir,
+                              kDatabaseRecords: kDatabaseRecords,
+                              serials: serials,
+                              pids: pids,
+                              startTime: startTime)
     }
     
     public static func decryptBooks(
@@ -262,7 +292,7 @@ public final class DeDRM {
         pids: OrderedSet<String>,
         startTime: Date = .init()
     ) {
-        print("K4MobiDeDrm v\(DeDRM.version).")
+        print("K4MobiDeDrm v\(Self.version).")
         print("\(Util.copyright).")
         print("Removes DRM protection from Mobipocket, Amazon KF8, Amazon Print Replica, and Amazon Topaz eBooks.")
         
@@ -280,7 +310,12 @@ public final class DeDRM {
                     print()
                 }
                 
-                try decryptionRoutine(infile: infile, outdir: outdir, kDatabaseRecords: kDatabaseRecords, serials: serials, pids: pids, startTime: startTime)
+                try decryptionRoutine(infile: infile,
+                                      outdir: outdir,
+                                      kDatabaseRecords: kDatabaseRecords,
+                                      serials: serials,
+                                      pids: pids,
+                                      startTime: startTime)
                 decryptionCounter += 1
             } catch {
             }

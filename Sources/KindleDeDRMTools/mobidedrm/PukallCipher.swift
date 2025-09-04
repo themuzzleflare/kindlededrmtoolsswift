@@ -10,13 +10,18 @@ import Foundation
 final class PukallCipher {
     private init() {}
     
-    static func pc1(key: Data, src: Data, decryption: Bool = true) throws -> Data {
+    static func pc1(key: Data,
+                    src: Data,
+                    decryption: Bool = true) throws -> Data {
         try validateKeyLength(key: key)
         
         var wkey: [UInt16] = initialiseWKey(key: key)
         var dst: Data = .init(count: src.count)
         
-        processSourceArray(src: src, decryption: decryption, wkey: &wkey, dst: &dst)
+        processSourceArray(src: src,
+                           decryption: decryption,
+                           wkey: &wkey,
+                           dst: &dst)
         
         return dst
     }
@@ -39,7 +44,10 @@ final class PukallCipher {
         return wkey
     }
     
-    private static func processSourceArray(src: Data, decryption: Bool, wkey: inout [UInt16], dst: inout Data) {
+    private static func processSourceArray(src: Data,
+                                           decryption: Bool,
+                                           wkey: inout [UInt16],
+                                           dst: inout Data) {
         var sum1: UInt32 = 0
         var sum2: UInt32 = 0
         var keyXorVal: UInt16 = 0
@@ -80,7 +88,11 @@ final class PukallCipher {
 
 // MARK: - Convenience Methods
 extension PukallCipher {
-    static func pc1(_ key: Data, _ src: Data, _ decryption: Bool = true) throws -> Data {
-        return try pc1(key: key, src: src, decryption: decryption)
+    static func pc1(_ key: Data,
+                    _ src: Data,
+                    _ decryption: Bool = true) throws -> Data {
+        return try pc1(key: key,
+                       src: src,
+                       decryption: decryption)
     }
 }
