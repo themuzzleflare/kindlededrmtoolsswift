@@ -309,12 +309,16 @@ final class Util {
     }
     
     static func dateNow() -> Date {
+#if compiler(>=5.5.1)
         if usePlatformChecks, #available(macOS 12, iOS 15, *) {
             return .now
         } else {
             // Fallback on earlier versions
             return Date()
         }
+#else
+        return Date()
+#endif
     }
     
     static func appending(base: URL, add: String) -> URL {

@@ -19,11 +19,15 @@ final class HashUtils {
      * - Returns: The SHA-256 hash of the data.
      */
     static func sha256(data: [Data?]) -> Data {
+#if compiler(>=5.1)
         if !preferCryptoSwift, usePlatformChecks, #available(macOS 10.15, iOS 13.0, *) {
             return cryptokitSha256(data: data)
         } else {
             return cryptoswiftSha256(data: data)
         }
+#else
+        return cryptoswiftSha256(data: data)
+#endif
     }
     
     private static func commoncryptoSha256(data: Data) -> Data {
@@ -36,6 +40,7 @@ final class HashUtils {
         return digest
     }
     
+#if compiler(>=5.1)
     @available(macOS 10.15, iOS 13.0, *)
     private static func cryptokitSha256(data: [Data?]) -> Data {
         var hasher: SHA256 = .init()
@@ -50,6 +55,7 @@ final class HashUtils {
         
         return .init(hasher.finalize())
     }
+#endif
     
     private static func cryptoswiftSha256(data: [Data?]) -> Data {
         let bytes: [UInt8] = data.compactMap({$0?.byteArray}).flatMap({$0})
@@ -66,11 +72,15 @@ final class HashUtils {
      * - Returns: The MD5 hash of the data.
      */
     static func md5(data: [Data?]) -> Data {
+#if compiler(>=5.1)
         if !preferCryptoSwift, usePlatformChecks, #available(macOS 10.15, iOS 13.0, *) {
             return cryptokitMd5(data: data)
         } else {
             return cryptoswiftMd5(data: data)
         }
+#else
+        return cryptoswiftMd5(data: data)
+#endif
     }
     
     private static func commoncryptoMd5(data: Data) -> Data {
@@ -83,6 +93,7 @@ final class HashUtils {
         return digest
     }
     
+#if compiler(>=5.1)
     @available(macOS 10.15, iOS 13.0, *)
     private static func cryptokitMd5(data: [Data?]) -> Data {
         var hasher: Insecure.MD5 = .init()
@@ -97,6 +108,7 @@ final class HashUtils {
         
         return .init(hasher.finalize())
     }
+#endif
     
     private static func cryptoswiftMd5(data: [Data?]) -> Data {
         let bytes: [UInt8] = data.compactMap({$0?.byteArray}).flatMap({$0})
@@ -113,11 +125,15 @@ final class HashUtils {
      * - Returns: The SHA-1 hash of the data.
      */
     static func sha1(data: [Data?]) -> Data {
+#if compiler(>=5.1)
         if !preferCryptoSwift, usePlatformChecks, #available(macOS 10.15, iOS 13.0, *) {
             return cryptokitSha1(data: data)
         } else {
             return cryptoswiftSha1(data: data)
         }
+#else
+        return cryptoswiftSha1(data: data)
+#endif
     }
     
     private static func commoncryptoSha1(data: Data) -> Data {
@@ -130,6 +146,7 @@ final class HashUtils {
         return digest
     }
     
+#if compiler(>=5.1)
     @available(macOS 10.15, iOS 13.0, *)
     private static func cryptokitSha1(data: [Data?]) -> Data {
         var hasher: Insecure.SHA1 = .init()
@@ -144,6 +161,7 @@ final class HashUtils {
         
         return .init(hasher.finalize())
     }
+#endif
     
     private static func cryptoswiftSha1(data: [Data?]) -> Data {
         let bytes: [UInt8] = data.compactMap({$0?.byteArray}).flatMap({$0})

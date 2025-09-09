@@ -24,11 +24,11 @@ struct MobiBookTests {
         let mobiBook4: MobiBook = try .init(infile: book4)
         let mobiBook5: MobiBook = try .init(infile: book5)
         
-        let token1 = try #require(mobiBook1.getPidMetaInfo().token)
-        let token2 = try #require(mobiBook2.getPidMetaInfo().token)
-        let token3 = try #require(mobiBook3.getPidMetaInfo().token)
-        let token4 = try #require(mobiBook4.getPidMetaInfo().token)
-        let token5 = try #require(mobiBook5.getPidMetaInfo().token)
+        let token1: Data = try #require(mobiBook1.getPidMetaInfo().token)
+        let token2: Data = try #require(mobiBook2.getPidMetaInfo().token)
+        let token3: Data = try #require(mobiBook3.getPidMetaInfo().token)
+        let token4: Data = try #require(mobiBook4.getPidMetaInfo().token)
+        let token5: Data = try #require(mobiBook5.getPidMetaInfo().token)
         
         let expectedToken1: Data = .init([97, 116, 118, 58, 107, 105, 110, 58, 50, 58, 87, 98, 86, 80, 116, 54, 109, 69, 69, 68, 109, 69, 55, 115, 80, 98, 117, 98, 107, 83, 87, 48, 105, 112, 107, 82, 82, 52, 47, 72, 66, 114, 85, 68, 82, 121, 75, 115, 75, 47, 112, 76, 114, 76, 112, 86, 79, 118, 108, 55, 65, 108, 72, 90, 122, 110, 85, 83, 43, 81, 71, 43, 117, 121, 69, 68, 76, 48, 47, 82, 111, 117, 100, 106, 107, 81, 86, 72, 66, 119, 75, 120, 98, 71, 114, 78, 78, 66, 51, 100, 101, 122, 116, 78, 110, 52, 74, 83, 86, 110, 52, 106, 66, 99, 90, 98, 70, 101, 51, 83, 66, 54, 102, 69, 103, 88, 76, 116, 117, 69, 105, 114, 98, 50, 79, 80, 74, 77, 56, 57, 105, 75, 113, 66, 67, 107, 85, 72, 99, 73, 69, 77, 69, 115, 115, 108, 105, 106, 81, 79, 79, 115, 90, 87, 55, 98, 83, 102, 77, 65, 47, 118, 47, 117, 72, 109, 80, 88, 110, 89, 52, 61, 58, 86, 83, 57, 77, 101, 97, 82, 43, 74, 49, 83, 67, 48, 88, 107, 79, 87, 82, 53, 69, 113, 47, 105, 104, 121, 117, 119, 61, 0, 10, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0])
         
