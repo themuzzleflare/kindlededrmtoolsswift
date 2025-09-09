@@ -206,15 +206,20 @@ final class Util {
     }
     
     static func url(filePath: String) -> URL {
+#if compiler(>=5.7.1)
         if usePlatformChecks, #available(macOS 13.0, iOS 16.0, *) {
             return .init(filePath: filePath)
         } else {
             // Fallback on earlier versions
             return .init(fileURLWithPath: filePath)
         }
+#else
+        return .init(fileURLWithPath: filePath)
+#endif
     }
     
     static func url(filePath path: String, isDirectory: Bool, relativeTo base: URL? = nil) -> URL {
+#if compiler(>=5.7.1)
         if usePlatformChecks, #available(macOS 13.0, iOS 16.0, *) {
             return .init(
                 filePath: path,
@@ -228,9 +233,17 @@ final class Util {
                 relativeTo: base
             )
         }
+#else
+        return .init(
+            fileURLWithPath: path,
+            isDirectory: isDirectory,
+            relativeTo: base
+        )
+#endif
     }
     
     static func url(filePath path: String, relativeTo base: URL? = nil) -> URL {
+#if compiler(>=5.7.1)
         if usePlatformChecks, #available(macOS 13.0, iOS 16.0, *) {
             return .init(
                 filePath: path,
@@ -242,24 +255,38 @@ final class Util {
                 relativeTo: base
             )
         }
+#else
+        return .init(
+            fileURLWithPath: path,
+            relativeTo: base
+        )
+#endif
     }
     
     static func urlPath(url: URL, percentEncoded: Bool = true) -> String {
+#if compiler(>=5.7.1)
         if usePlatformChecks, #available(macOS 13.0, iOS 16.0, *) {
             return url.path(percentEncoded: percentEncoded)
         } else {
             // Fallback on earlier versions
             return url.path
         }
+#else
+        return url.path
+#endif
     }
     
     static func temporaryDirectory() -> URL {
+#if compiler(>=5.7.1)
         if usePlatformChecks, #available(macOS 13.0, iOS 16.0, *) {
             return .temporaryDirectory
         } else {
             // Fallback on earlier versions
             return .init(fileURLWithPath: NSTemporaryDirectory())
         }
+#else
+        return .init(fileURLWithPath: NSTemporaryDirectory())
+#endif
     }
     
     
@@ -268,12 +295,17 @@ final class Util {
             return false
         }
         
+#if compiler(>=5.7.1)
         if usePlatformChecks, #available(macOS 13.0, iOS 16.0, *) {
             return haystack.contains(needle)
         } else {
             let range: Range<Data.Index>? = haystack.range(of: needle)
             return range != nil
         }
+#else
+        let range: Range<Data.Index>? = haystack.range(of: needle)
+        return range != nil
+#endif
     }
     
     static func dateNow() -> Date {
@@ -286,15 +318,20 @@ final class Util {
     }
     
     static func appending(base: URL, add: String) -> URL {
+#if compiler(>=5.7.1)
         if usePlatformChecks, #available(macOS 13.0, iOS 16.0, *) {
             return base.appending(path: add)
         } else {
             // Fallback on earlier versions
             return base.appendingPathComponent(add)
         }
+#else
+        return base.appendingPathComponent(add)
+#endif
     }
     
     static func appending(base: URL, add: String, isDirectory: Bool) -> URL {
+#if compiler(>=5.7.1)
         if usePlatformChecks, #available(macOS 13.0, iOS 16.0, *) {
             return base
                 .appending(path: add, directoryHint: isDirectory ? .isDirectory : .inferFromPath)
@@ -302,6 +339,9 @@ final class Util {
             // Fallback on earlier versions
             return base.appendingPathComponent(add, isDirectory: isDirectory)
         }
+#else
+        return base.appendingPathComponent(add, isDirectory: isDirectory)
+#endif
     }
 }
 

@@ -30,6 +30,10 @@ let package = Package(
                 "CryptoSwift",
                 "OSInfo"
             ]
-        )
+        ),
+        .testTarget(
+            name: "KindleDeDRMToolsLegacyTests",
+            dependencies: ["KindleDeDRMTools"],
+            resources: [.copy("testdata")])
     ]
 )
