@@ -206,7 +206,7 @@ final class Util {
     }
     
     static func url(filePath: String) -> URL {
-#if compiler(>=5.7.1)
+#if (os(iOS) && compiler(>=5.7)) || (os(macOS) && compiler(>=5.7.1))
         if usePlatformChecks, #available(macOS 13.0, iOS 16.0, *) {
             return .init(filePath: filePath)
         } else {
@@ -219,7 +219,7 @@ final class Util {
     }
     
     static func url(filePath path: String, isDirectory: Bool, relativeTo base: URL? = nil) -> URL {
-#if compiler(>=5.7.1)
+#if (os(iOS) && compiler(>=5.7)) || (os(macOS) && compiler(>=5.7.1))
         if usePlatformChecks, #available(macOS 13.0, iOS 16.0, *) {
             return .init(
                 filePath: path,
@@ -243,7 +243,7 @@ final class Util {
     }
     
     static func url(filePath path: String, relativeTo base: URL? = nil) -> URL {
-#if compiler(>=5.7.1)
+#if (os(iOS) && compiler(>=5.7)) || (os(macOS) && compiler(>=5.7.1))
         if usePlatformChecks, #available(macOS 13.0, iOS 16.0, *) {
             return .init(
                 filePath: path,
@@ -264,7 +264,7 @@ final class Util {
     }
     
     static func urlPath(url: URL, percentEncoded: Bool = true) -> String {
-#if compiler(>=5.7.1)
+#if (os(iOS) && compiler(>=5.7)) || (os(macOS) && compiler(>=5.7.1))
         if usePlatformChecks, #available(macOS 13.0, iOS 16.0, *) {
             return url.path(percentEncoded: percentEncoded)
         } else {
@@ -277,7 +277,7 @@ final class Util {
     }
     
     static func temporaryDirectory() -> URL {
-#if compiler(>=5.7.1)
+#if (os(iOS) && compiler(>=5.7)) || (os(macOS) && compiler(>=5.7.1))
         if usePlatformChecks, #available(macOS 13.0, iOS 16.0, *) {
             return .temporaryDirectory
         } else {
@@ -295,7 +295,7 @@ final class Util {
             return false
         }
         
-#if compiler(>=5.7.1)
+#if (os(iOS) && compiler(>=5.7)) || (os(macOS) && compiler(>=5.7.1))
         if usePlatformChecks, #available(macOS 13.0, iOS 16.0, *) {
             return haystack.contains(needle)
         } else {
@@ -309,7 +309,7 @@ final class Util {
     }
     
     static func dateNow() -> Date {
-#if compiler(>=5.5.1)
+#if (os(iOS) && compiler(>=5.5)) || (os(macOS) && compiler(>=5.5.1))
         if usePlatformChecks, #available(macOS 12, iOS 15, *) {
             return .now
         } else {
@@ -322,7 +322,7 @@ final class Util {
     }
     
     static func appending(base: URL, add: String) -> URL {
-#if compiler(>=5.7.1)
+#if (os(iOS) && compiler(>=5.7)) || (os(macOS) && compiler(>=5.7.1))
         if usePlatformChecks, #available(macOS 13.0, iOS 16.0, *) {
             return base.appending(path: add)
         } else {
@@ -335,7 +335,7 @@ final class Util {
     }
     
     static func appending(base: URL, add: String, isDirectory: Bool) -> URL {
-#if compiler(>=5.7.1)
+#if (os(iOS) && compiler(>=5.7)) || (os(macOS) && compiler(>=5.7.1))
         if usePlatformChecks, #available(macOS 13.0, iOS 16.0, *) {
             return base
                 .appending(path: add, directoryHint: isDirectory ? .isDirectory : .inferFromPath)
