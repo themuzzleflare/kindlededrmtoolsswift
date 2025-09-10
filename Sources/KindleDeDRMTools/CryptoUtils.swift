@@ -6,7 +6,9 @@
 //
 
 import Foundation
+#if canImport(CryptoKit)
 import CryptoKit
+#endif
 import CommonCrypto
 import CryptoSwift
 
@@ -21,7 +23,7 @@ final class CryptoUtils {
      * - Returns: The HMAC-SHA256 hash of the message as `Data`.
      */
     static func hmacsha256(key: Data, message: Data) throws -> Data {
-#if compiler(>=5.1)
+#if canImport(CryptoKit) && compiler(>=5.1)
         if !preferCryptoSwift, usePlatformChecks, #available(macOS 10.15, iOS 13.0, *) {
             return cryptokitHmacsha256(key: key, message: message)
         } else {
@@ -32,7 +34,7 @@ final class CryptoUtils {
 #endif
     }
     
-#if compiler(>=5.1)
+#if canImport(CryptoKit) && compiler(>=5.1)
     @available(macOS 10.15, iOS 13.0, *)
     private static func cryptokitHmacsha256(key: Data, message: Data) -> Data {
         let symmetricKey: SymmetricKey = .init(data: key)
