@@ -37,5 +37,5 @@ let package = Package(
             resources: [.copy("testdata")]
         )
     ],
-    swiftLanguageModes: [.v6]
+    swiftLanguageModes: [.v5, .v6]
 )
