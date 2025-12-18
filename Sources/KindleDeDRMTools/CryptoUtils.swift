@@ -14,7 +14,7 @@ import CryptoSwift
 
 final class CryptoUtils {
     private init() {}
-    
+
     /**
      * Computes the HMAC-SHA256 hash of the given message using the provided key.
      * - Parameters:
@@ -33,7 +33,7 @@ final class CryptoUtils {
         return try cryptoswiftHmacsha256(key: key, message: message)
 #endif
     }
-    
+
 #if canImport(CryptoKit) && compiler(>=5.1)
     @available(macOS 10.15, iOS 13.0, *)
     private static func cryptokitHmacsha256(key: Data, message: Data) -> Data {
@@ -42,13 +42,13 @@ final class CryptoUtils {
         return .init(authenticationCode)
     }
 #endif
-    
+
     private static func cryptoswiftHmacsha256(key: Data, message: Data) throws -> Data {
         let hmac: CryptoSwift.HMAC = .init(key: key.byteArray, variant: .sha2(.sha256))
         let authenticationCode: [UInt8] = try hmac.authenticate(message.byteArray)
         return .init(authenticationCode)
     }
-    
+
     /**
      * Decrypts the given ciphertext using AES/CBC with the provided key and IV.
      * - Parameters:
@@ -64,37 +64,37 @@ final class CryptoUtils {
             return try commoncryptoAescbcdecrypt(key: key, iv: iv, cipherText: cipherText)
         }
     }
-    
+
     private static func commoncryptoAescbcdecrypt(key: Data, iv: Data, cipherText: Data) throws -> Data {
         return try .init(QCCAESPadCBCDecrypt(key: .init(key), iv: .init(iv), cipherText: .init(cipherText)))
     }
-    
+
     private static func cryptoswiftAescbcdecrypt(key: Data, iv: Data, cipherText: Data) throws -> Data {
-        let aes = try AES(
+        let aes: CryptoSwift.AES = try .init(
             key: key.byteArray,
             blockMode: CBC(iv: iv.byteArray),
             padding: .pkcs5
         )
-        
+
         let decrypted: [UInt8] = try aes.decrypt(cipherText.byteArray)
         return .init(decrypted)
     }
-    
+
     static func aesctrdecrypt(key: Data, iv: Data, cipherText: Data) throws -> Data {
         return try cryptoswiftAesctrdecrypt(key: key, iv: iv, cipherText: cipherText)
     }
-    
+
     private static func cryptoswiftAesctrdecrypt(key: Data, iv: Data, cipherText: Data) throws -> Data {
-        let aes = try AES(
+        let aes: CryptoSwift.AES = try .init(
             key: key.byteArray,
             blockMode: CTR(iv: iv.byteArray),
             padding: .noPadding
         )
-        
+
         let decrypted: [UInt8] = try aes.decrypt(cipherText.byteArray)
         return .init(decrypted)
     }
-    
+
     static func pbkdf2hmacsha1(password: Data, salt: Data, iterationCount: Int, keyLength: Int) throws -> Data {
         if preferCryptoSwift {
             return try cryptoswiftPbkdf2hmacsha1(password: password, salt: salt, iterationCount: iterationCount, keyLength: keyLength)
@@ -102,10 +102,10 @@ final class CryptoUtils {
             return try commoncryptoPbkdf2hmacsha1(password: password, salt: salt, iterationCount: iterationCount, keyLength: keyLength)
         }
     }
-    
+
     private static func commoncryptoPbkdf2hmacsha1(password: Data, salt: Data, iterationCount: Int, keyLength: Int) throws -> Data {
         var derivedKey: Data = .init(count: keyLength)
-        
+
         let status: Int32 = derivedKey.withUnsafeMutableBytes { derivedKeyBytes in
             password.withUnsafeBytes { passwordBytes in
                 salt.withUnsafeBytes { saltBytes in
@@ -123,20 +123,20 @@ final class CryptoUtils {
                 }
             }
         }
-        
+
         guard status == kCCSuccess else {
             throw QCCError(code: status)
         }
-        
+
         return derivedKey
     }
-    
+
     private static func cryptoswiftPbkdf2hmacsha1(password: Data, salt: Data, iterationCount: Int, keyLength: Int) throws -> Data {
         let pbkdf2: PKCS5.PBKDF2 = try .init(password: password.byteArray, salt: salt.byteArray, iterations: iterationCount, keyLength: keyLength, variant: .sha1)
         let key: [UInt8] = try pbkdf2.calculate()
         return .init(key)
     }
-    
+
     /// Encrypts data using AES with PKCS#7 padding in CBC mode.
     ///
     /// - note: PKCS#7 padding is also known as PKCS#5 padding.
@@ -157,7 +157,7 @@ final class CryptoUtils {
         else {
             throw QCCError(code: kCCParamError)
         }
-        
+
         // Padding can expand the data, so we have to allocate space for that.  The
         // rule for block ciphers, like AES, is that the padding only adds space on
         // encryption (on decryption it can reduce space, obviously, but we don't
@@ -175,20 +175,20 @@ final class CryptoUtils {
             &ciphertext, ciphertext.count,
             &ciphertextCount
         )
-        
+
         guard err == kCCSuccess else {
             throw QCCError(code: err)
         }
-        
+
         // The ciphertext can expand by up to one block but it doesn’t always use the full block,
         // so trim off any unused bytes.
         assert(ciphertextCount <= ciphertext.count)
         ciphertext.removeLast(ciphertext.count - ciphertextCount)
         assert(ciphertext.count.isMultiple(of: kCCBlockSizeAES128))
-        
+
         return ciphertext
     }
-    
+
     /// Decrypts data that was encrypted using AES with PKCS#7 padding in CBC mode.
     ///
     /// - note: PKCS#7 padding is also known as PKCS#5 padding.
@@ -212,7 +212,7 @@ final class CryptoUtils {
         else {
             throw QCCError(code: kCCParamError)
         }
-        
+
         // Padding can expand the data on encryption, but on decryption the data can
         // only shrink so we use the ciphertext size as our plaintext size.
         var plaintext: [UInt8] = .init(repeating: 0, count: cipherText.count)
@@ -227,15 +227,15 @@ final class CryptoUtils {
             &plaintext, plaintext.count,
             &plaintextCount
         )
-        
+
         guard err == kCCSuccess else {
             throw QCCError(code: err)
         }
-        
+
         // Trim any unused bytes off the plaintext.
         assert(plaintextCount <= plaintext.count)
         plaintext.removeLast(plaintext.count - plaintextCount)
-        
+
         return plaintext
     }
 }
@@ -245,15 +245,15 @@ extension CryptoUtils {
     static func hmacsha256(_ key: Data, _ message: Data) throws -> Data {
         return try hmacsha256(key: key, message: message)
     }
-    
+
     static func aescbcdecrypt(_ key: Data, _ iv: Data, _ cipherText: Data) throws -> Data {
         return try aescbcdecrypt(key: key, iv: iv, cipherText: cipherText)
     }
-    
+
     static func aesctrdecrypt(_ key: Data, _ iv: Data, _ cipherText: Data) throws -> Data {
         return try aesctrdecrypt(key: key, iv: iv, cipherText: cipherText)
     }
-    
+
     static func pbkdf2hmacsha1(_ password: Data, _ salt: Data, _ iterationCount: Int, _ keyLength: Int) throws -> Data {
         return try pbkdf2hmacsha1(password: password, salt: salt, iterationCount: iterationCount, keyLength: keyLength)
     }
