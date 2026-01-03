@@ -10,7 +10,7 @@ import OrderedCollections
 import CryptoSwift
 
 final class Util {
-    static let copyright: String = "Copyright © 2024-2025 Paul Tavitian"
+    static let copyright: String = "Copyright © 2024-2026 Paul Tavitian"
 
     private init() {}
 
