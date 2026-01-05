@@ -8,11 +8,11 @@
 import Foundation
 
 struct BookSection {
-    let offset: Int
-    let flags: Int
-    let val: Int
-    
-    init(offset: Int, flags: Int, val: Int) {
+    let offset: UInt32
+    let flags: UInt8
+    let val: UInt32
+
+    init(offset: UInt32, flags: UInt8, val: UInt32) {
         self.offset = offset
         self.flags = flags
         self.val = val
@@ -28,15 +28,7 @@ extension BookSection: CustomStringConvertible {
 
 // MARK: - Convenience Initialisers
 extension BookSection {
-    init(_ offset: Int, _ flags: Int, _ val: Int) {
-        self.init(offset: offset, flags: flags, val: val)
-    }
-    
-    init(offset: Int, flags: UInt8, val: Int) {
-        self.init(offset: offset, flags: Int(flags), val: val)
-    }
-    
-    init(_ offset: Int, _ flags: UInt8, _ val: Int) {
+    init(_ offset: UInt32, _ flags: UInt8, _ val: UInt32) {
         self.init(offset: offset, flags: flags, val: val)
     }
 }

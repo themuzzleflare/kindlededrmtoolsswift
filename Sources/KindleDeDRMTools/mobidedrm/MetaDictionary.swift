@@ -8,9 +8,9 @@
 import Foundation
 #if canImport(OrderedCollections)
 import OrderedCollections
-typealias MetaDictionary = OrderedDictionary<Int, Data>
+typealias MetaDictionary = OrderedDictionary<UInt32, Data>
 #else
-typealias MetaDictionary = [Int: Data]
+typealias MetaDictionary = [UInt32: Data]
 #endif
 
 extension MetaDictionary {
