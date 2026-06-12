@@ -11,7 +11,7 @@ struct IonCatalogItem {
     let name: String
     let version: Int
     let symnames: [String]
-    
+
     init(name: String = "",
          version: Int = 0,
          symnames: [String] = .init()) {
