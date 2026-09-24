@@ -1,4 +1,4 @@
-// swift-tools-version: 6.2
+// swift-tools-version: 6.4
 
 import PackageDescription
 
@@ -14,7 +14,7 @@ let package = Package(
             targets: ["KindleDeDRMTools"])
     ],
     dependencies: [
-        .package(url: "https://github.com/apple/swift-collections.git", .upToNextMajor(from: "1.6.0")),
+        .package(url: "https://github.com/apple/swift-collections.git", .upToNextMajor(from: "1.7.0")),
         .package(url: "https://github.com/themuzzleflare/kfxtablesswift.git", .upToNextMajor(from: "1.0.0")),
         .package(url: "https://github.com/weichsel/ZIPFoundation.git", .upToNextMajor(from: "0.9.20")),
         .package(url: "https://github.com/krzyzanowskim/CryptoSwift.git", .upToNextMajor(from: "1.10.0")),
@@ -29,12 +29,18 @@ let package = Package(
                 "ZIPFoundation",
                 "CryptoSwift",
                 "OSInfo"
+            ],
+            swiftSettings: [
+                .enableUpcomingFeature("ApproachableConcurrency"),
             ]
         ),
         .testTarget(
             name: "KindleDeDRMToolsTests",
             dependencies: ["KindleDeDRMTools"],
-            resources: [.copy("testdata")]
+            resources: [.copy("testdata")],
+            swiftSettings: [
+                .enableUpcomingFeature("ApproachableConcurrency"),
+            ]
         )
     ],
     swiftLanguageModes: [.v5, .v6]

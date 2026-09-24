@@ -85,15 +85,15 @@ final class HashUtils {
 #endif
     }
     
-    private static func commoncryptoMd5(data: Data) -> Data {
-        var digest = Data(count: Int(CC_MD5_DIGEST_LENGTH))
-        _ = digest.withUnsafeMutableBytes { digestBytes in
-            data.withUnsafeBytes { dataBytes in
-                CC_MD5(dataBytes.baseAddress, CC_LONG(data.count), digestBytes.bindMemory(to: UInt8.self).baseAddress)
-            }
-        }
-        return digest
-    }
+//    private static func commoncryptoMd5(data: Data) -> Data {
+//        var digest = Data(count: Int(CC_MD5_DIGEST_LENGTH))
+//        _ = digest.withUnsafeMutableBytes { digestBytes in
+//            data.withUnsafeBytes { dataBytes in
+//                CC_MD5(dataBytes.baseAddress, CC_LONG(data.count), digestBytes.bindMemory(to: UInt8.self).baseAddress)
+//            }
+//        }
+//        return digest
+//    }
     
 #if canImport(CryptoKit) && compiler(>=5.1)
     @available(macOS 10.15, iOS 13.0, *)
